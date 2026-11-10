@@ -164,7 +164,7 @@ const MIME_TYPES = {
 // Template yang boleh dipakai. Tanpa daftar ini, nama template sembarang
 // (mis. karena localStorage usang atau permintaan manual) bisa membuat server
 // menyajikan halaman 404 di layar siaran.
-const ALLOWED_TEMPLATES = ['default.html', 'lower_third.html', 'lower_third_dark.html', 'lower_third_dual.html', 'pip_video.html', 'lower_third_glass.html', 'lower_third_midnight.html', 'lower_third_paper.html', 'lower_third_dual_sapphire.html'];
+const ALLOWED_TEMPLATES = ['default.html', 'lower_third.html', 'lower_third_dark.html', 'lower_third_dual.html', 'pip_video.html', 'lower_third_glass.html', 'lower_third_midnight.html', 'lower_third_paper.html', 'lower_third_dual_sapphire.html', 'lower_third_mihrab.html', 'fullscreen_mihrab.html', 'dual_mihrab.html'];
 
 // ── Pengaturan persisten (settings.json) ─────────────────────
 // Disimpan di samping EXE untuk build portable, di folder aplikasi saat

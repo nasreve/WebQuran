@@ -550,7 +550,7 @@
           </div>
         </div>
       </div>
-      ${isLongText ? '<div class="hd-long-warning">⚠️ <strong>Teks Panjang:</strong> Untuk keterbacaan optimal di proyektor, disarankan memilih <strong>Full Screen</strong> pada pilihan Tampilan Layar di atas.</div>' : ''}
+      ${isLongText ? '<div class="hd-long-warning">⚠️ <strong>Teks Panjang:</strong> Untuk keterbacaan optimal di proyektor, pilih <strong>Full Screen (Proyektor)</strong> pada <em>Target layar</em> di panel kiri.</div>' : ''}
       <h3>${esc(displayTitle(item))}</h3><div class="hd-reference">${esc(item.collection)}${item.number ? ' <span aria-hidden="true">/</span> <strong>No. '+esc(item.number)+'</strong>' : ''}</div>
       ${item.arabic ? `<div class="hd-arabic" lang="ar" dir="rtl">${E.highlight(item.arabic,query,mode)}</div>` : ''}
       ${(item.arabic_images || []).length ? `<div class="hd-arabic-images">${(item.arabic_images || []).map(src => `<img src="${esc(safeUrl(src,'data/hadith/assets/'))}" alt="Teks Arab dalam gambar dari ${esc(source.label)}" loading="lazy">`).join('')}</div><p class="hd-reference">Teks Arab dipertahankan sebagai gambar dari sumber.</p>` : ''}

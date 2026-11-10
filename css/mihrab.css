@@ -1,0 +1,157 @@
+/* ============================================================
+   Keluarga template "Mihrab" — fondasi bersama
+   Tinta biru-kehijauan pekat + emas, pola bintang delapan (khatam)
+   yang sangat samar, label surat bergaris emas, ayat muncul kata
+   demi kata. Semua template selebar layar dan menyisakan jalur
+   kosong di bawah untuk running text.
+   ============================================================ */
+:root {
+    --mh-ink-1: #0c1c2a;
+    --mh-ink-2: #071420;
+    --mh-ink-3: #040c14;
+    --mh-gold: #d9b45a;
+    --mh-gold-bright: #f3d98f;
+    --mh-gold-soft: rgba(217, 180, 90, 0.55);
+    --mh-text: #ffffff;
+    --mh-trans: #e3ebf4;
+    --mh-label: #e9cf86;
+    --mh-lane: clamp(56px, 7.5vh, 96px);      /* jalur running text di bawah */
+    --arabic-font: 'Amiri', 'Traditional Arabic', serif;
+    --latin-font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --mh-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23d9b45a' stroke-width='1'%3E%3Cpath d='M36 10l7.6 12.4L58 20l-2.4 14.4L68 42l-12.4 7.6L58 64l-14.4-2.4L36 74l-7.6-12.4L14 64l2.4-14.4L4 42l12.4-7.6L14 20l14.4 2.4z' transform='translate(0 -6)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { width: 100%; height: 100%; }
+
+body {
+    background: transparent;
+    overflow: hidden;
+    font-family: var(--latin-font);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Bintang delapan ─────────────────────────────────────────── */
+.mh-star {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 1.15em;
+    height: 1.15em;
+    color: var(--mh-gold);
+}
+
+.mh-star svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+/* ── Label surat: garis — bintang — LABEL — bintang — garis ──── */
+.mh-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9em;
+    color: var(--mh-label);
+    font-family: var(--latin-font);
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.mh-label-text { padding-left: 0.28em; /* imbangi letter-spacing di huruf terakhir */ }
+
+.mh-rule {
+    flex: 0 0 auto;
+    width: clamp(48px, 7vw, 140px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--mh-gold-soft));
+}
+
+.mh-rule.is-right { background: linear-gradient(90deg, var(--mh-gold-soft), transparent); }
+
+/* ── Teks ────────────────────────────────────────────────────── */
+.arabic-text {
+    font-family: var(--arabic-font);
+    color: var(--mh-text);
+    direction: rtl;
+    text-align: center;
+    font-weight: 400;
+    word-wrap: break-word;
+    font-feature-settings: "kern" 1, "mark" 1, "mkmk" 1;
+    text-rendering: optimizeLegibility;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.arabic-text .mw { display: inline-block; }
+
+.trans-text {
+    font-family: var(--latin-font);
+    color: var(--mh-trans);
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    overflow-wrap: break-word;
+}
+
+/* Pergantian Arab ↔ terjemahan: tinggi menyesuaikan dengan halus */
+.morph-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    width: 100%;
+    overflow: hidden;
+    transition: grid-template-rows 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+}
+
+.morph-wrapper.active {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, opacity 0.45s ease 0.2s;
+}
+
+.morph-inner { min-height: 0; }
+
+/* ── Keyframe bersama ────────────────────────────────────────── */
+@keyframes mhWordIn {
+    from { opacity: 0; transform: translateY(0.32em); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes mhRise {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes mhFadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes mhRuleIn {
+    from { opacity: 0; transform: scaleX(0); }
+    to { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes mhStarIn {
+    0% { opacity: 0; transform: rotate(-135deg) scale(0.3); }
+    70% { opacity: 1; transform: rotate(8deg) scale(1.08); }
+    100% { opacity: 1; transform: none; }
+}
+
+/* Koreografi label (dipakai ketiga template) */
+.is-entering .mh-rule { transform-origin: right center; animation: mhRuleIn 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.25s backwards; }
+.is-entering .mh-rule.is-right { transform-origin: left center; }
+.is-entering .mh-star { animation: mhStarIn 0.8s cubic-bezier(0.34, 1.4, 0.64, 1) 0.15s backwards; }
+.is-entering .mh-label-text { animation: mhFadeDown 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.35s backwards; }
+.is-swapping-in .mh-label-text { animation: mhFadeDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
+
+/* Ayat muncul kata demi kata (kanan → kiri mengikuti arah baca) */
+.is-entering .arabic-text .mw { animation: mhWordIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) calc(0.45s + var(--d, 0ms)) backwards; }
+.is-swapping-in .arabic-text .mw { animation: mhWordIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d, 0ms) * 0.7) backwards; }
+.is-entering .trans-text { animation: mhRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards; }
+.is-swapping-in .trans-text { animation: mhRise 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+    .is-entering *, .is-entering *::before, .is-entering *::after,
+    .is-swapping-in *, .is-swapping-in *::before, .is-swapping-in *::after { animation: none !important; }
+}

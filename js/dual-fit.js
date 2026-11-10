@@ -128,10 +128,23 @@
     setupLane('arabic', arabic);
     setupLane('latin', latin);
 
-    const arMax = Math.round(36 * scale);
-    const trMax = Math.round(20 * scale);
-    arabic.minimum = Math.round(MIN_ARABIC_PX * scale);
-    latin.minimum = Math.round(MIN_LATIN_PX * scale);
+    // Panel yang tingginya ditransisikan CSS (mis. Dual Mihrab) akan melaporkan
+    // tinggi LAMA saat diukur — ayat berikutnya dikira muat, lalu terpotong
+    // tanpa gulir setelah panel menyusut. Matikan transisi selama pengukuran,
+    // lalu animasikan dari tinggi lama ke tinggi baru di akhir.
+    const heightAnimated = /(^|,\s*)(height|all)(\s*,|$)/.test(getComputedStyle(panel).transitionProperty);
+    const previousHeight = panel.getBoundingClientRect().height;
+    if (heightAnimated) panel.style.transition = 'none';
+
+    // Ukuran maksimum bisa ditentukan template (mis. Dual Mihrab yang lebih
+    // lega); bawaannya tetap 36/20 seperti template dua kolom lama.
+    const arMax = Math.round((Number(options.arabicMax) || 36) * scale);
+    const trMax = Math.round((Number(options.latinMax) || 20) * scale);
+    // Batas minimum juga bisa ditentukan template. Makin tinggi batasnya,
+    // makin cepat ayat panjang beralih ke gulir alih-alih mengecil sampai
+    // sulit dibaca (Dual Mihrab: 30/20). Bawaannya tetap 22/13.
+    arabic.minimum = Math.round((Number(options.arabicMin) || MIN_ARABIC_PX) * scale);
+    latin.minimum = Math.round((Number(options.latinMin) || MIN_LATIN_PX) * scale);
     const enough = Math.round(arMax * TARGET_RATIO);
 
     // Tahap 1: cari tinggi panel terkecil yang membuat huruf Arab cukup besar.
@@ -195,6 +208,21 @@
       arOverflow: isOverflowing(arabic), trSh: latin.el.scrollHeight,
       arFont: parseFloat(arabic.el.style.fontSize) || 0
     };
+
+    // Semua ukuran sudah dihitung pada tinggi akhir: pulihkan transisi dan
+    // biarkan panel bergerak halus dari tinggi lama ke tinggi baru.
+    if (heightAnimated) {
+      const target = panel.style.height;
+      const finalHeight = panel.getBoundingClientRect().height;
+      if (previousHeight > 0 && Math.abs(finalHeight - previousHeight) > 1) {
+        panel.style.height = previousHeight + 'px';
+        void panel.offsetHeight;
+        panel.style.transition = '';
+        panel.style.height = target;
+      } else {
+        panel.style.transition = '';
+      }
+    }
 
     return { height: chosen, arSize, trSize, scrolling, paused };
   }

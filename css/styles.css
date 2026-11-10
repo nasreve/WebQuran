@@ -6994,3 +6994,676 @@ body.light-mode .btn-sidebar-primary .sidebar-kbd {
   .surah-breadcrumb:has(.broadcast-group.is-pvw-mode) .dock-secondary { display: none !important; }
   .surah-breadcrumb:has(.broadcast-group.is-pvw-mode) .dock-overflow { display: block; }
 }
+
+/* ── 9 & 10 · Kartu ayat ──
+   Kepala kartu dulu memakai --bg-dark, sama dengan latar halaman, sehingga
+   kepala "tenggelam" dan border atas kartu tampak sebagai garis lepas di atas
+   kartu. Kini kepala ikut warna kartu; judulnya nama surat & ayat, dan label
+   jenis kartu (ARAB / TERJEMAHAN) jadi kicker kecil. */
+.result-card > .card-header {
+  background: transparent;
+  height: auto;
+  min-height: 56px;
+  padding: 12px 22px;
+  border-bottom-color: var(--section-border);
+  border-radius: 16px 16px 0 0;
+  gap: 12px;
+}
+
+.card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.result-card .card-label {
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  line-height: 1.2;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.verse-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.verse-label.is-custom { color: var(--warn-text); }
+
+.verse-custom-badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--warn-soft);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-text);
+}
+
+/* Mode PVW di <=1366 px: Sebelumnya/Berikutnya jadi ikon panah (aria-label &
+   tooltip tetap ada) agar nama surat tidak terpotong. */
+@media (max-width: 1366px) {
+  .surah-breadcrumb:has(.broadcast-group.is-pvw-mode) .dock-nav-cluster .btn-dock-nav span { display: none; }
+}
+
+/* ── Dropdown versi terjemahan (kartu Terjemahan) ──
+   Dulu <select> hanya selebar teksnya (±101×13 px) di dalam chip 157×30 px:
+   klik ikon/panah tidak membuka apa pun. Di tema terang, hover membuat teks
+   hampir putih (aturan :hover lama lebih spesifik). Kini <select> menutupi
+   seluruh chip; ikon & panah hanya hiasan di atasnya (pointer-events: none). */
+.card-heading.stage-trans-wrap {
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.result-card .card-header .stage-trans-selector {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  height: 30px;
+  padding: 0;
+  gap: 0;
+  border-radius: 9px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  box-shadow: none;
+  color: var(--ctl-text-muted);
+  cursor: pointer;
+}
+
+.result-card .card-header .stage-trans-selector:hover {
+  background: var(--ctl-bg-hover);
+  border-color: var(--ctl-border-hover);
+  box-shadow: none;
+}
+
+.result-card .card-header .stage-trans-selector:focus-within {
+  border-color: var(--accent-soft-border);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.result-card .card-header .stage-trans-select,
+.result-card .card-header .stage-trans-selector:hover .stage-trans-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 100%;
+  margin: 0;
+  padding: 0 30px 0 31px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--chip-text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  outline: none;
+}
+
+.result-card .card-header .stage-trans-select option {
+  background: var(--bg-panel);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.result-card .card-header .stage-trans-icon,
+.result-card .card-header .stage-chevron {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  pointer-events: none;
+  color: var(--ctl-text-muted);
+}
+
+.result-card .card-header .stage-trans-icon {
+  left: 11px;
+  transform: translateY(-50%);
+}
+
+.result-card .card-header .stage-chevron {
+  right: 10px;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+}
+
+.result-card .card-header .stage-trans-selector:focus-within .stage-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* ── Sidebar polish ── */
+
+/* 1 · Scrollbar tipis. scrollbar-width/scrollbar-color (standar) mengalahkan
+   ::-webkit-scrollbar di Chromium baru, sehingga gaya 6 px tak pernah tampil
+   dan yang muncul scrollbar sistem bertombol panah. Dikembalikan ke auto. */
+.sidebar-content {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+
+.sidebar-content::-webkit-scrollbar { width: 6px; }
+.sidebar-content::-webkit-scrollbar-button { display: none; height: 0; }
+.sidebar-content::-webkit-scrollbar-track { background: transparent; }
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: var(--ctl-border-hover);
+  border-radius: 999px;
+}
+.sidebar-content::-webkit-scrollbar-thumb:hover { background: var(--ctl-text-muted); }
+
+/* 2 · Sebelumnya / Berikutnya. Blok lama tak sengaja memberi tombol ini gaya
+   kotak pintasan (9,5 px, padding 2×6, latar hitam). Pintasan ← → sudah ada
+   di tooltip, jadi kotak kbd-nya disembunyikan. */
+.sidebar-nav-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.sidebar .btn-sidebar-secondary {
+  min-width: 0;
+  height: 36px;
+  padding: 0 10px;
+  gap: 6px;
+  border-radius: 9px;
+  border: 1px solid var(--ctl-border);
+  background: var(--ctl-bg);
+  color: var(--ctl-text);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.sidebar .btn-sidebar-secondary span { overflow: hidden; text-overflow: ellipsis; }
+
+.sidebar .btn-sidebar-secondary:hover {
+  background: var(--ctl-bg-hover);
+  border-color: var(--ctl-border-hover);
+  color: var(--ctl-text);
+  transform: none;
+}
+
+.sidebar .btn-sidebar-secondary .sidebar-kbd { display: none; }
+
+/* 3 · Label dengan keterangan kecil (Jumlah — maks. 10) */
+.sidebar .label-with-hint {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.sidebar .label-hint {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  color: var(--ctl-text-muted);
+  opacity: 0.85;
+}
+
+/* 4 · Dropdown sidebar: teks panjang diberi elipsis, bukan terpotong */
+.sidebar select,
+.sidebar .app-select {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 5 · Tombol utama: biru aksen yang sama di kedua tema (tema terang dulu
+   memakai biru-langit kusam) */
+body.light-mode .btn-sidebar-primary,
+body.light-theme .btn-sidebar-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: rgba(37, 99, 235, 0.55);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+}
+
+/* 6 · Teks mini dinaikkan agar terbaca dari jarak duduk operator */
+.sidebar label { font-size: 11px; }
+.sidebar-section-hint { font-size: 10px; }
+.history-count-badge { font-size: 10px; padding: 1px 7px; }
+.section-chevron { font-size: 12px; color: var(--ctl-text-muted); }
+.broadcast-mode-btn { font-size: 11px; }
+
+/* ── Modal Template ayat ──
+   Dulu: gelap mutlak di kedua tema, dua lapis lencana warna-warni per kartu,
+   nama berkas, deskripsi panjang (sebagian usang), status aktif ditandai tiga
+   kali dengan hijau, 9 kartu tanpa kelompok, dan scrollbar sistem. */
+#templateModal .modal-content.modal-template-wide {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--section-border) !important;
+  box-shadow: 0 30px 70px -20px rgba(2, 6, 23, 0.6) !important;
+  scrollbar-width: auto;
+}
+
+#templateModal .modal-content.modal-template-wide::-webkit-scrollbar { width: 8px; }
+#templateModal .modal-content.modal-template-wide::-webkit-scrollbar-button { display: none; height: 0; }
+#templateModal .modal-content.modal-template-wide::-webkit-scrollbar-track { background: transparent; }
+#templateModal .modal-content.modal-template-wide::-webkit-scrollbar-thumb {
+  background: var(--ctl-border-hover);
+  border-radius: 999px;
+  border: 2px solid var(--bg-panel);
+}
+
+#templateModal .modal-header-pro.tpl-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--section-border) !important;
+}
+
+.tpl-header-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+.tpl-header-icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.tpl-header-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--text-main);
+}
+
+.tpl-header-sub {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--ctl-text-muted);
+}
+
+#templateModal .tpl-close {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  border: 1px solid var(--ctl-border);
+  background: var(--ctl-bg);
+  color: var(--ctl-text-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#templateModal .tpl-close:hover { background: var(--ctl-bg-hover); color: var(--ctl-text); }
+
+/* Kelompok */
+.tpl-group + .tpl-group { margin-top: 26px; }
+
+.tpl-group-title {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 0 2px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--section-title);
+}
+
+.tpl-group-hint {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ctl-text-muted);
+}
+
+#templateModal .template-grid-pro {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 0;
+}
+
+/* Kartu */
+#templateModal .template-card-pro {
+  background: var(--card-bg);
+  border: 1px solid var(--section-border);
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+#templateModal .template-card-pro:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-soft-border);
+  background: var(--card-bg);
+  box-shadow: 0 12px 26px -14px rgba(2, 6, 23, 0.55);
+}
+
+#templateModal .template-card-pro:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#templateModal .template-card-pro.active {
+  border-color: var(--accent) !important;
+  background: var(--card-bg) !important;
+  box-shadow: 0 0 0 1px var(--accent), 0 12px 28px -14px rgba(37, 99, 235, 0.55) !important;
+}
+
+/* Satu sinyal aktif: bingkai biru + "✓ Dipakai" di bawah. Lencana pojok &
+   label teknis di atas pratinjau disembunyikan. */
+#templateModal .template-card-badge.badge-active,
+#templateModal .monitor-header { display: none !important; }
+
+#templateModal .screen-monitor { border-bottom: 1px solid var(--section-border); }
+
+#templateModal .template-card-body { padding: 14px 16px 12px; gap: 6px; }
+
+#templateModal .template-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-main);
+}
+
+#templateModal .template-card-desc {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ctl-text-muted);
+}
+
+#templateModal .template-card-action {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--section-border);
+  font-size: 11.5px;
+}
+
+.template-card-meta {
+  color: var(--ctl-text-muted);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+#templateModal .template-action-btn { color: var(--ctl-text-muted); font-weight: 700; }
+#templateModal .template-card-pro:hover .template-action-btn { color: var(--accent); }
+#templateModal .template-card-pro.active .template-action-btn { color: var(--accent); }
+
+#templateModal .template-theme-note {
+  margin-top: 22px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: var(--ctl-text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  #templateModal .template-grid-pro { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Judul modal Template memakai warna teks utama (aturan lama .modal-header h2
+   mewarnainya biru aksen) */
+#templateModal .tpl-header-title {
+  font-size: 17px;
+  color: var(--text-main);
+}
+
+/* Thumbnail kartu lower third: tangkapan layar asli template (1920×1080)
+   di atas latar "kamera" netral, dibuat dengan alat tangkap Electron. */
+.screen-monitor .tpl-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Pratinjau mini kartu template "Mihrab" (modal Template) ── */
+.tpl-mini {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 28% 28%, #34465c, #151e2a 70%);
+  font-family: 'Inter', sans-serif;
+}
+
+.tpl-mini-fs { background: radial-gradient(ellipse 75% 60% at 50% 42%, #10273a, #071420 55%, #040c14); }
+
+/* Jalur running text (sengaja dikosongkan template) */
+.tpl-mini-lane {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 9%;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0 14%, transparent 14% 18%);
+  opacity: 0.45;
+}
+
+.tpl-mini-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #e9cf86;
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  white-space: nowrap;
+}
+
+.tpl-mini-label i,
+.tpl-mini-foot i {
+  width: 14%;
+  height: 1px;
+  background: rgba(217, 180, 90, 0.6);
+}
+
+.tpl-mini-label svg,
+.tpl-mini-foot svg { width: 7px; height: 7px; color: #d9b45a; flex: 0 0 auto; }
+
+.tpl-mini-ar {
+  margin-top: 4px;
+  font-family: 'Amiri', serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #ffffff;
+  direction: rtl;
+  white-space: nowrap;
+}
+
+.tpl-mini-ar.is-big { font-size: 19px; margin: 6px 0 2px; }
+
+.tpl-mini-fs-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 9%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-mini-foot { display: flex; align-items: center; justify-content: center; gap: 4px; width: 40%; }
+
+#templateModal .template-action-btn { white-space: nowrap; flex: 0 0 auto; }
+
+/* ═══════════════════════════════════════════════════════════
+   POLESAN MODAL BANTUAN (F1)
+   ═══════════════════════════════════════════════════════════ */
+
+/* Tinggi tetap: modal tidak melompat naik-turun saat ganti tab */
+@media (min-width: 821px) {
+  #helpModal .modal-help-pro { height: min(88vh, 760px) !important; }
+}
+
+/* Bar tab: tanpa scrollbar vertikal yang muncul karena luapan 1–2 px */
+#helpModal .help-nav-tabs {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+#helpModal .help-nav-tabs::-webkit-scrollbar { display: none; }
+
+/* Tab aktif: cukup satu penanda (garis bawah), bukan kotak + garis */
+#helpModal .help-tab-btn.active {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Isi tab: gulir tipis seperti panel lain */
+#helpModal .modal-body-help { scrollbar-width: auto; scrollbar-color: auto; }
+#helpModal .modal-body-help::-webkit-scrollbar { width: 8px; }
+#helpModal .modal-body-help::-webkit-scrollbar-button { display: none; height: 0; }
+#helpModal .modal-body-help::-webkit-scrollbar-track { background: transparent; }
+#helpModal .modal-body-help::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Lencana versi: penanda tenang, bukan label pemasaran */
+#helpModal .badge-v5-pill {
+  color: var(--help-muted);
+  background: rgba(148, 163, 184, 0.1);
+  border-color: rgba(148, 163, 184, 0.28);
+  letter-spacing: 0.04em;
+}
+
+/* Ikon fitur: satu warna aksen (dulu enam warna berbeda per kartu) */
+#helpModal .feature-icon {
+  color: var(--help-accent) !important;
+  background: rgba(56, 189, 248, 0.1) !important;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+/* Pintasan: kelompok pendek tidak ikut meregang setinggi tetangganya */
+#helpModal .shortcuts-grid { align-items: start; }
+
+/* Label kotak centang tidak berteriak (aturan global label = KAPITAL tebal) */
+#helpModal label,
+#helpModal .lan-toggle,
+#helpModal .lan-toggle span {
+  text-transform: none;
+  letter-spacing: 0;
+}
+#helpModal .lan-toggle { font-weight: 600; }
+#helpModal .help-checkbox-wrap span { font-weight: 500; }
+
+/* "Salin laporan" adalah tombol sekunder, bukan kolom teks */
+#helpModal .diag-actions { align-items: center; }
+#helpModal .diag-copy {
+  width: auto;
+  min-height: 0;
+  height: 38px;
+  padding: 0 16px;
+  justify-content: center;
+  border: 1px solid var(--help-border);
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+#helpModal .diag-copy .copy-box-text {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--help-text);
+}
+#helpModal .diag-copy:hover {
+  border-color: var(--help-accent);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+/* ── Tema terang: teks yang tadinya nyaris tak terbaca ── */
+body.light-mode #helpModal .help-tab-btn.active,
+body.light-theme #helpModal .help-tab-btn.active {
+  color: #0369a1;
+  background: #e0f2fe;
+}
+body.light-mode #helpModal .help-tab-btn.active::after,
+body.light-theme #helpModal .help-tab-btn.active::after { background: #0284c7; }
+
+body.light-mode #helpModal .badge-v5-pill,
+body.light-theme #helpModal .badge-v5-pill {
+  color: #475569;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+body.light-mode #helpModal code,
+body.light-theme #helpModal code {
+  color: #075985;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+body.light-mode #helpModal .feature-icon,
+body.light-theme #helpModal .feature-icon {
+  color: #0284c7 !important;
+  background: #f0f9ff !important;
+  border-color: #bae6fd;
+}
+
+body.light-mode #helpModal .modal-body-help::-webkit-scrollbar-thumb,
+body.light-theme #helpModal .modal-body-help::-webkit-scrollbar-thumb { background-color: rgba(100, 116, 139, 0.35); }
+
+/* Tema terang: teks tab Setup & Pintasan yang dirancang untuk latar gelap */
+body.light-mode #helpModal .browser-source-label,
+body.light-theme #helpModal .browser-source-label { color: #0f172a; font-weight: 600; }
+body.light-mode #helpModal .browser-source-hint,
+body.light-theme #helpModal .browser-source-hint { color: #475569; }
+body.light-mode #helpModal .browser-source-hint strong,
+body.light-theme #helpModal .browser-source-hint strong { color: #0f172a; }
+body.light-mode #helpModal .shortcut-group-title,
+body.light-theme #helpModal .shortcut-group-title { color: #0369a1; }
+
+body.light-mode #helpModal .copy-box .copy-box-text,
+body.light-theme #helpModal .copy-box .copy-box-text { color: #0369a1 !important; }
+body.light-mode #helpModal #obsOverlayUrlDisplay,
+body.light-theme #helpModal #obsOverlayUrlDisplay { color: #047857 !important; }
+body.light-mode #helpModal .copy-box-hadith .copy-box-text,
+body.light-theme #helpModal .copy-box-hadith .copy-box-text { color: #92400e !important; }
+body.light-mode #helpModal .diag-copy .copy-box-text,
+body.light-theme #helpModal .diag-copy .copy-box-text { color: #0f172a !important; }
+
+body.light-mode #helpModal .copy-box-btn,
+body.light-theme #helpModal .copy-box-btn {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0369a1 !important;
+}
+body.light-mode #helpModal .copy-box-hadith .copy-box-btn,
+body.light-theme #helpModal .copy-box-hadith .copy-box-btn { color: #92400e !important; }

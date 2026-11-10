@@ -873,3 +873,251 @@
   text-transform: uppercase;
   color: var(--text-muted, #94a3b8);
 }
+
+/* ==========================================================================
+   Polesan modal Pencarian Hadits
+   ========================================================================== */
+
+/* Hierarki rail: judul blok (KOLEKSI, SIARAN) tetap huruf kapital berjarak;
+   label kolom (Rujukan, Mode pencarian, Target layar, Ukuran tayang) jadi
+   label biasa — sebelumnya keduanya tampil sama sehingga sulit dibedakan. */
+.hd-dialog .hd-rail-block label,
+.hd-dialog .hd-rail-block label.hd-rail-label,
+.hd-dialog .hd-rail-block label.hd-rail-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-main, #f1f5f9);
+}
+
+.hd-dialog .hd-rail-block > .hd-rail-label:first-child { margin-bottom: 2px; }
+
+.hd-dialog .hd-rail-block .hd-rail-hint:not(label),
+.hd-dialog .hd-source-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted, #94a3b8);
+}
+
+/* Gulir tipis yang menyatu. scrollbar-width/scrollbar-color di Chromium baru
+   membuat ::-webkit-scrollbar diabaikan (muncul scrollbar sistem bertombol
+   panah), jadi keduanya dikembalikan ke auto dan gaya webkit yang dipakai. */
+.hd-dialog .hd-rail { gap: 10px; }
+
+.hd-dialog .hd-rail,
+.hd-dialog .hd-results,
+.hd-dialog .hd-reader {
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+
+.hd-dialog .hd-rail::-webkit-scrollbar,
+.hd-dialog .hd-results::-webkit-scrollbar,
+.hd-dialog .hd-reader::-webkit-scrollbar { width: 8px; }
+
+.hd-dialog .hd-rail::-webkit-scrollbar-button,
+.hd-dialog .hd-results::-webkit-scrollbar-button,
+.hd-dialog .hd-reader::-webkit-scrollbar-button { display: none; height: 0; }
+
+.hd-dialog .hd-rail::-webkit-scrollbar-track,
+.hd-dialog .hd-results::-webkit-scrollbar-track,
+.hd-dialog .hd-reader::-webkit-scrollbar-track { background: transparent; }
+
+.hd-dialog .hd-rail::-webkit-scrollbar-thumb,
+.hd-dialog .hd-results::-webkit-scrollbar-thumb,
+.hd-dialog .hd-reader::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.hd-dialog .hd-rail::-webkit-scrollbar-thumb:hover,
+.hd-dialog .hd-results::-webkit-scrollbar-thumb:hover,
+.hd-dialog .hd-reader::-webkit-scrollbar-thumb:hover { background-color: rgba(148, 163, 184, 0.45); }
+
+/* Tombol di rail: satu gaya, isi rata tengah */
+.hd-dialog .hd-rail .hd-action,
+.hd-dialog .hd-saved-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 1px solid var(--border, #334155);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-main, #f1f5f9);
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.hd-dialog .hd-rail .hd-action:hover:not(:disabled),
+.hd-dialog .hd-saved-filter:hover {
+  border-color: var(--accent, #3b82f6);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.hd-dialog .hd-saved-filter { color: var(--text-muted, #94a3b8); }
+
+.hd-dialog .hd-projector-status {
+  margin-left: 0;
+  font-size: 11px;
+  white-space: normal;
+}
+
+.hd-dialog .hd-fit-badge { justify-self: start; }
+
+/* ── Panel baca berdampingan dengan daftar hasil (bukan menutupinya) ── */
+@media (min-width: 1025px) {
+  .hd-dialog .hd-body { --hd-list-w: clamp(300px, 34%, 380px); }
+
+  .hd-dialog .hd-results-pane { transition: width 0.26s ease; }
+
+  .hd-dialog .hd-body.hd-reading .hd-results-pane {
+    right: auto;
+    width: var(--hd-list-w);
+    border-right: 1px solid var(--border, #334155);
+  }
+
+  .hd-dialog .hd-body.hd-reading .hd-results { padding: 12px 12px 24px 14px; }
+
+  .hd-dialog .hd-reader {
+    left: var(--hd-list-w);
+    width: auto;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .hd-dialog .hd-body.hd-reading .hd-result-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Hasil daftar: judul lebih tegas, cuplikan tidak terpotong di tepi */
+.hd-dialog .hd-result { flex: 0 0 auto; min-width: 0; }
+.hd-dialog .hd-result-snippet { overflow-wrap: anywhere; }
+
+/* Bar alat panel baca: navigasi di kiri, alat baca di kanan, tanpa terpotong */
+.hd-dialog .hd-detail-tools {
+  justify-content: space-between;
+  row-gap: 8px;
+}
+
+.hd-dialog .hd-detail-tools .hd-reading-tools {
+  margin-left: auto;
+  padding-right: 0;
+  border-right: 0;
+}
+
+.hd-dialog .hd-detail-actions {
+  border-bottom: 1px solid var(--border, #334155);
+  margin-bottom: 18px;
+}
+
+.hd-dialog .hd-long-warning { border-radius: 10px; }
+
+/* Keadaan kosong di tengah area hasil */
+.hd-dialog .hd-results:has(> .hd-empty-list:only-child) { justify-content: center; }
+.hd-dialog .hd-results > .hd-empty-list:only-child { padding-bottom: 12vh; }
+
+/* ── Tema terang ───────────────────────────────────────────────────── */
+.light-mode .hd-dialog .hd-close-float {
+  background: var(--bg-panel, #ffffff);
+  color: #475569;
+  border-color: var(--border, #cbd5e1);
+}
+
+.light-mode .hd-dialog .hd-close-float:hover { color: #fff; }
+
+.light-mode .hd-dialog .hd-rail::-webkit-scrollbar-thumb,
+.light-mode .hd-dialog .hd-results::-webkit-scrollbar-thumb,
+.light-mode .hd-dialog .hd-reader::-webkit-scrollbar-thumb { background-color: rgba(100, 116, 139, 0.35); }
+
+/* Riwayat pencarian tidak menempel ke garis kolom pencarian */
+.hd-dialog .hd-history { padding-top: 12px; }
+
+/* ── Kontrol siaran: bahasa warna yang sama dengan panel utama ─────────
+   Siap tayang = biru aksen (seperti "Tampilkan Ayat"); sedang tayang =
+   merah lembut + titik berdenyut (seperti tally ON AIR di bar panggung);
+   terjemahan aktif = biru lembut (seperti tally TR). Dulu hijau berikon
+   petir dan merah pekat bersinar — dua warna yang tak dipakai di tempat lain. */
+.hd-dialog .hd-detail-air {
+  border-color: var(--border, #334155);
+  background: var(--chip-bg, rgba(148, 163, 184, 0.08));
+  box-shadow: none;
+}
+
+.hd-dialog .hd-air-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  animation: none;
+}
+
+.hd-dialog .hd-air-primary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent currentColor;
+}
+
+.hd-dialog .hd-air-primary:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  filter: brightness(1.08);
+}
+
+.hd-dialog .hd-air-primary[aria-pressed="true"],
+.hd-dialog .hd-air-primary.hd-live-tally {
+  background: var(--live-soft, rgba(239, 68, 68, 0.14)) !important;
+  color: var(--live-text, #fca5a5) !important;
+  box-shadow: inset 0 0 0 1.5px var(--live-border, rgba(239, 68, 68, 0.55));
+  animation: none;
+  filter: none;
+}
+
+.hd-dialog .hd-air-primary[aria-pressed="true"]::before,
+.hd-dialog .hd-air-primary.hd-live-tally::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: hd-air-dot 1.5s ease-in-out infinite;
+}
+
+.hd-dialog .hd-air-primary[aria-pressed="true"]:hover,
+.hd-dialog .hd-air-primary.hd-live-tally:hover {
+  background: color-mix(in srgb, var(--live-soft, rgba(239, 68, 68, 0.14)) 70%, rgba(239, 68, 68, 0.2)) !important;
+}
+
+@keyframes hd-air-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.hd-dialog .hd-air-secondary { border-left-color: var(--border, #334155); }
+
+.hd-dialog .hd-air-secondary[aria-pressed="true"],
+.hd-dialog .hd-air-secondary.hd-active {
+  background: var(--accent-soft, rgba(59, 130, 246, 0.16)) !important;
+  color: var(--accent-soft-text, #bfdbfe) !important;
+  box-shadow: inset 0 0 0 1px var(--accent-soft-border, rgba(96, 165, 250, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hd-dialog .hd-air-primary[aria-pressed="true"]::before,
+  .hd-dialog .hd-air-primary.hd-live-tally::before { animation: none; }
+}

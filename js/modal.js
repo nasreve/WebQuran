@@ -149,6 +149,7 @@ function syncActiveTemplateCard(templateName) {
         if (badge) badge.style.display = 'none';
         const action = el.querySelector('.template-action-btn');
         if (action) action.innerHTML = 'Pilih &rarr;';
+        el.removeAttribute('aria-current');
     });
     const activeCard = document.getElementById('tplCard-' + activeTpl);
     if (activeCard) {
@@ -156,9 +157,26 @@ function syncActiveTemplateCard(templateName) {
         const badge = activeCard.querySelector('.badge-active');
         if (badge) badge.style.display = 'flex';
         const action = activeCard.querySelector('.template-action-btn');
-        if (action) action.innerHTML = '✓ Aktif';
+        if (action) action.innerHTML = '✓ Dipakai';
+        activeCard.setAttribute('aria-current', 'true');
     }
 }
+
+// Kartu template dulu hanya <div onclick>: tidak bisa dipilih dengan keyboard.
+// Kini bisa difokus (Tab) dan dipilih dengan Enter/Spasi.
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#templateModal .template-card-pro').forEach(card => {
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        const title = card.querySelector('.template-card-title');
+        if (title) card.setAttribute('aria-label', 'Pakai template ' + title.textContent.trim());
+        card.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            card.click();
+        });
+    });
+});
 
 function showTemplateModal() {
     const m = document.getElementById("templateModal");

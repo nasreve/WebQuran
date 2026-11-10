@@ -364,6 +364,179 @@
             min-height: 0;
             padding: 0;
         }
+        /* ============================================================
+           Polesan Layar Penuh
+           Proyektor: komposisi penuh tanpa kotak kaca (dulu kartu
+           bersudut 32 px + pendaran ungu tampak seperti jendela aplikasi).
+           OBS (?obs, latar transparan): kartu tetap dipakai demi
+           keterbacaan di atas video.
+           ============================================================ */
+        :root {
+            --label-color: #e6c86e;
+            --label-line: rgba(212, 175, 55, 0.75);
+        }
+
+        body.light {
+            --label-color: #a16207;
+            --label-line: rgba(161, 98, 7, 0.6);
+        }
+
+        body::before {
+            background:
+                radial-gradient(ellipse 70% 55% at 50% 42%, rgba(59, 130, 246, 0.10) 0%, transparent 70%),
+                radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.55) 100%);
+        }
+
+        body.light::before {
+            background:
+                radial-gradient(ellipse 70% 55% at 50% 40%, rgba(59, 130, 246, 0.06) 0%, transparent 70%),
+                radial-gradient(ellipse 120% 90% at 50% 50%, transparent 60%, rgba(148, 163, 184, 0.18) 100%);
+        }
+
+        .presentation-wrap {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            padding: 3vh 4vw;
+            gap: 2vh;
+            /* Tersembunyi sampai ayat pertama tayang (dulu kotak kosong sempat
+               tampil saat halaman dimuat). */
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.55, 0, 0.75, 0.25);
+        }
+
+        body.light .presentation-wrap { box-shadow: none; }
+
+        .presentation-wrap.is-on {
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.obs-mode .presentation-wrap {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 3vh 3.2vw 2.2vh;
+        }
+
+        /* Label surat: emas elegan dengan garis tipis, bukan pil mengkilap */
+        .info-block { margin-bottom: 0; }
+
+        .info-text,
+        body.light .info-text {
+            background: none;
+            border: 0;
+            box-shadow: none;
+            text-shadow: none;
+            padding: 0;
+            gap: 20px;
+            color: var(--label-color);
+            font-weight: 700;
+            letter-spacing: 0.32em;
+        }
+
+        .info-text::before,
+        .info-text::after {
+            content: '';
+            flex: 0 0 auto;
+            width: clamp(40px, 5vw, 96px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--label-line));
+        }
+
+        .info-text::after { background: linear-gradient(90deg, var(--label-line), transparent); }
+        .info-icon { display: none; }
+
+        .arabic-text { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.25); }
+        body.light .arabic-text { text-shadow: none; }
+
+        /* ── Motion ──
+           Tampil (±1,1 dtk): label turun, garis emas tergambar dari tengah,
+           Arab lalu terjemahan naik.
+           Ganti ayat: isi lama memudar (0,2 dtk), lalu label + teks baru masuk
+           bersamaan — dulu label berganti lebih dulu daripada ayatnya.
+           Sembunyi: memudar dan sedikit turun. */
+        @keyframes fsLabelIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        @keyframes fsLineIn {
+            from { opacity: 0; transform: scaleX(0); }
+            to { opacity: 1; transform: scaleX(1); }
+        }
+
+        @keyframes fsRise {
+            from { opacity: 0; transform: translateY(18px); filter: blur(3px); }
+            to { opacity: 1; transform: none; filter: blur(0); }
+        }
+
+        .presentation-wrap.is-entering .info-block {
+            animation: fsLabelIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+        }
+
+        .presentation-wrap.is-entering .info-text::before {
+            transform-origin: right center;
+            animation: fsLineIn 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.2s backwards;
+        }
+
+        .presentation-wrap.is-entering .info-text::after {
+            transform-origin: left center;
+            animation: fsLineIn 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.2s backwards;
+        }
+
+        .presentation-wrap.is-entering .arabic-text {
+            animation: fsRise 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.28s backwards;
+        }
+
+        .presentation-wrap.is-entering .trans-text {
+            animation: fsRise 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.38s backwards;
+        }
+
+        .info-block,
+        .content-row {
+            transition: opacity 0.2s ease-in, transform 0.22s ease-in;
+        }
+
+        .presentation-wrap.is-swapping-out .info-block,
+        .presentation-wrap.is-swapping-out .content-row {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        .presentation-wrap.is-swapping-in .info-block,
+        .presentation-wrap.is-swapping-in .content-row { transition: none; }
+
+        .presentation-wrap.is-swapping-in .info-block {
+            animation: fsLabelIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .presentation-wrap.is-swapping-in .arabic-text {
+            animation: fsRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.06s backwards;
+        }
+
+        .presentation-wrap.is-swapping-in .trans-text {
+            animation: fsRise 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.12s backwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .presentation-wrap,
+            .presentation-wrap.is-on,
+            .info-block,
+            .content-row { transition: opacity 0.2s linear; transform: none; }
+            .presentation-wrap.is-entering *,
+            .presentation-wrap.is-entering *::before,
+            .presentation-wrap.is-entering *::after,
+            .presentation-wrap.is-swapping-in * { animation: none; }
+        }
     </style>
 <script src="../js/quran-text-fit.js"></script>
 </head>
@@ -451,6 +624,93 @@
         }
 
         // ── Render content ─────────────────────────────────
+        // Kelas pada #mainWrap mengatur motion (lihat CSS "Polesan Layar Penuh"):
+        //   is-on          → tampil (tanpa kelas: tersembunyi)
+        //   is-entering    → koreografi saat baru tampil
+        //   is-swapping-*  → keluar-lalu-masuk saat ganti ayat
+        let swapTimer = null;
+        let swapSeq = 0;
+        const classTimers = {};
+
+        function pulseClass(el, cls, ms) {
+            el.classList.remove(cls);
+            void el.offsetWidth; // mulai ulang animasi
+            el.classList.add(cls);
+            clearTimeout(classTimers[cls]);
+            classTimers[cls] = setTimeout(() => el.classList.remove(cls), ms);
+        }
+
+        function setWrapVisible(wrap, on) {
+            if (on) {
+                if (wrap.classList.contains('is-on')) return false;
+                wrap.classList.add('is-on');
+                pulseClass(wrap, 'is-entering', 1500);
+                return true;
+            }
+            clearTimeout(swapTimer);
+            wrap.classList.remove('is-on', 'is-entering', 'is-swapping-in', 'is-swapping-out');
+            return false;
+        }
+
+        function buildStructure(wrap, isTrans) {
+            wrap.innerHTML = `
+                <div class="info-block" id="infoBlockEl">
+                  <div class="info-text" id="infoTextEl">
+                     <svg class="info-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                     </svg>
+                     <span id="infoLabelEl"></span>
+                  </div>
+                </div>
+                <div class="content-row">
+                    <div class="morph-wrapper ${!isTrans ? 'active' : ''}" id="arabicWrapper">
+                        <div class="morph-inner">
+                            <div class="arabic-block">
+                                <div class="arabic-text" id="arabicTextEl"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="morph-wrapper ${isTrans ? 'active' : ''}" id="transWrapper">
+                        <div class="morph-inner">
+                            <div class="trans-block">
+                                <div class="trans-text" id="transTextEl"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Tulis isi + ukuran (dipanggil langsung, atau di tengah transisi ganti ayat)
+        function applyContent(arabic, cleanTr, info, scale) {
+            const baseAr = Math.round(64 * scale);
+            const baseTr = Math.round(32 * scale);
+            const inSize = Math.round(20 * scale);
+            const arLineHeight = 2.35, trLineHeight = 1.65;
+            const isTrans = document.body.dataset.transVisible === 'true';
+
+            const arTextEl = document.getElementById('arabicTextEl');
+            const trTextEl = document.getElementById('transTextEl');
+            const infoLabelEl = document.getElementById('infoLabelEl');
+            const infoTextEl = document.getElementById('infoTextEl');
+
+            if (infoLabelEl.textContent !== info) infoLabelEl.textContent = info;
+            infoTextEl.style.fontSize = inSize + 'px';
+            if (arTextEl.innerHTML !== arabic) arTextEl.innerHTML = arabic;
+            if (trTextEl.innerHTML !== cleanTr) trTextEl.innerHTML = cleanTr;
+            arTextEl.style.lineHeight = arLineHeight;
+            trTextEl.style.lineHeight = trLineHeight;
+
+            const arWrap = document.getElementById('arabicWrapper');
+            const trWrap = document.getElementById('transWrapper');
+            if (arWrap) arWrap.classList.toggle('active', !isTrans);
+            if (trWrap) trWrap.classList.toggle('active', isTrans);
+
+            arTextEl.style.fontSize = QuranTextFit.size(arTextEl, arabic, baseAr, Math.round(30 * scale), arLineHeight, false) + 'px';
+            trTextEl.style.fontSize = QuranTextFit.size(trTextEl, cleanTr, baseTr, Math.round(22 * scale), trLineHeight, false) + 'px';
+        }
+
         function updatePresentation(arabic, translation, info, isVisible) {
             // Update state global
             currentContent = { arabic, translation, info };
@@ -460,103 +720,45 @@
             if (!wrap) return;
 
             if (currentIsVisible === false) {
-                // Sembunyikan dengan animasi keluar halus
-                wrap.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                wrap.style.opacity = '0';
-                wrap.style.transform = 'scale(0.98)';
-                return; // Stop update data jika disembunyikan
-            } else {
-                wrap.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                wrap.style.opacity = '1';
-                wrap.style.transform = 'scale(1)';
+                setWrapVisible(wrap, false); // memudar & turun (transisi CSS)
+                return; // isi tidak diubah selama tersembunyi
             }
+            if (!(arabic && translation)) return;
 
-            // Apply base font scale from operator slider
             const scale = currentFontSize / 100;
-            const baseAr = Math.round(64 * scale);
-            const baseTr = Math.round(32 * scale);
-            const inSize = Math.round(20 * scale);
-
+            const cleanTr = translation.replace(/(?<!\(\d*)\s*\d+\)/g, '');
             const isTrans = document.body.dataset.transVisible === 'true';
-            const cleanTr = translation ? translation.replace(/(?<!\(\d*)\s*\d+\)/g, '') : '';
 
-            const arSize = baseAr, trSize = baseTr;
-            const arLineHeight = 2.35, trLineHeight = 1.65;
+            if (!document.getElementById('arabicTextEl')) buildStructure(wrap, isTrans);
 
-            if (arabic && translation) {
-                let arTextEl = document.getElementById('arabicTextEl');
-                let trTextEl = document.getElementById('transTextEl');
-                let infoLabelEl = document.getElementById('infoLabelEl');
-                let infoTextEl = document.getElementById('infoTextEl');
+            const arTextEl = document.getElementById('arabicTextEl');
+            const trTextEl = document.getElementById('transTextEl');
+            const infoLabelEl = document.getElementById('infoLabelEl');
+            const contentChanged = arTextEl.innerHTML !== arabic || trTextEl.innerHTML !== cleanTr || infoLabelEl.textContent !== info;
+            const alreadyOn = wrap.classList.contains('is-on') && !wrap.classList.contains('is-entering');
 
-                // Jika DOM belum dibuat atau masih waitingMsg, buat struktur permanen
-                if (!arTextEl) {
-                    wrap.innerHTML = `
-                        <div class="info-block animate-in" id="infoBlockEl">
-                          <div class="info-text" id="infoTextEl" style="font-size: ${inSize}px;">
-                             <svg class="info-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                             </svg>
-                             <span id="infoLabelEl">${info}</span>
-                          </div>
-                        </div>
-                        <div class="content-row">
-                            <div class="morph-wrapper ${!isTrans ? 'active' : ''}" id="arabicWrapper">
-                                <div class="morph-inner">
-                                    <div class="arabic-block">
-                                        <div class="arabic-text" id="arabicTextEl" style="font-size: ${arSize}px; line-height: ${arLineHeight};">${arabic}</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="morph-wrapper ${isTrans ? 'active' : ''}" id="transWrapper">
-                                <div class="morph-inner">
-                                    <div class="trans-block">
-                                        <div class="trans-text" id="transTextEl" style="font-size: ${trSize}px; line-height: ${trLineHeight};">${cleanTr}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    arTextEl = document.getElementById('arabicTextEl');
-                    trTextEl = document.getElementById('transTextEl');
-                    infoLabelEl = document.getElementById('infoLabelEl');
-                    infoTextEl = document.getElementById('infoTextEl');
-                } else {
-                    // Update konten & picu animasi reveal hanya jika konten ayat berubah
-                    if (infoLabelEl && infoLabelEl.textContent !== info) {
-                        infoLabelEl.textContent = info;
-                    }
-                    if (infoTextEl) {
-                        infoTextEl.style.fontSize = inSize + 'px';
-                    }
-
-                    if (arTextEl.innerHTML !== arabic) {
-                        arTextEl.innerHTML = arabic;
-                        arTextEl.style.animation = 'none';
-                        void arTextEl.offsetWidth;
-                        arTextEl.style.animation = 'blurRevealIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                    }
-                    arTextEl.style.fontSize = arSize + 'px';
-                    arTextEl.style.lineHeight = arLineHeight;
-
-                    if (trTextEl.innerHTML !== cleanTr) {
-                        trTextEl.innerHTML = cleanTr;
-                        trTextEl.style.animation = 'none';
-                        void trTextEl.offsetWidth;
-                        trTextEl.style.animation = 'blurRevealIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                    }
-                    trTextEl.style.fontSize = trSize + 'px';
-                    trTextEl.style.lineHeight = trLineHeight;
-
-                    const arWrap = document.getElementById('arabicWrapper');
-                    const trWrap = document.getElementById('transWrapper');
-                    if (arWrap) arWrap.classList.toggle('active', !isTrans);
-                    if (trWrap) trWrap.classList.toggle('active', isTrans);
-                }
-                arTextEl.style.fontSize = QuranTextFit.size(arTextEl, arabic, baseAr, Math.round(30 * scale), arLineHeight, false) + 'px';
-                trTextEl.style.fontSize = QuranTextFit.size(trTextEl, cleanTr, baseTr, Math.round(22 * scale), trLineHeight, false) + 'px';
+            if (contentChanged && alreadyOn) {
+                // Ganti ayat saat tayang: isi lama keluar dulu, lalu label + ayat
+                // baru masuk bersamaan.
+                const seq = ++swapSeq;
+                wrap.classList.remove('is-swapping-in');
+                wrap.classList.add('is-swapping-out');
+                clearTimeout(swapTimer);
+                swapTimer = setTimeout(() => {
+                    if (seq !== swapSeq) return;
+                    const c = currentContent;
+                    const latestTr = (c.translation || '').replace(/(?<!\(\d*)\s*\d+\)/g, '');
+                    applyContent(c.arabic, latestTr, c.info, currentFontSize / 100);
+                    wrap.classList.remove('is-swapping-out');
+                    pulseClass(wrap, 'is-swapping-in', 900);
+                }, 210);
+                return;
             }
+
+            // Tidak sedang transisi ganti ayat: tulis langsung (ukuran font,
+            // tampil pertama, atau tampil kembali setelah BLANK).
+            if (!wrap.classList.contains('is-swapping-out')) applyContent(arabic, cleanTr, info, scale);
+            setWrapVisible(wrap, true);
         }
 
         // ── Source 1: Electron IPC (channel utama di Electron) ──

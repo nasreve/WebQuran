@@ -53,7 +53,7 @@ test('templates that adopted the shared runtime no longer duplicate polling', ()
   assert.match(runtime, /isEmbedded/, 'runtime harus tahu kapan berjalan di dalam induk');
   assert.match(runtime, /reportFit/, 'runtime harus menyediakan pelaporan teks terpotong');
 
-  for (const name of ['pip_video', 'lower_third_dual', 'lower_third', 'lower_third_dark', 'lower_third_glass','lower_third_midnight','lower_third_paper','lower_third_dual_sapphire']) {
+  for (const name of ['pip_video', 'lower_third_dual', 'lower_third', 'lower_third_dark', 'lower_third_glass','lower_third_midnight','lower_third_paper','lower_third_dual_sapphire','lower_third_mihrab','fullscreen_mihrab','dual_mihrab']) {
     const html = fs.readFileSync(require.resolve('../templates/' + name + '.html'), 'utf8');
     assert.match(html, /src="\.\.\/js\/template-runtime\.js"/, name + ' harus memuat runtime bersama');
     assert.match(html, /TemplateRuntime\.init\(/, name + ' harus memakai TemplateRuntime.init');
@@ -79,7 +79,7 @@ test('template changes crossfade instead of reloading the live frame', () => {
 });
 
 test('templates size text by measurement, never by counting characters', () => {
-  for(const name of ['default','lower_third','lower_third_dark','lower_third_dual','pip_video','lower_third_glass','lower_third_midnight','lower_third_paper','lower_third_dual_sapphire']) {
+  for(const name of ['default','lower_third','lower_third_dark','lower_third_dual','pip_video','lower_third_glass','lower_third_midnight','lower_third_paper','lower_third_dual_sapphire','lower_third_mihrab','fullscreen_mihrab','dual_mihrab']) {
     const html=fs.readFileSync(require.resolve('../templates/'+name+'.html'),'utf8');
     // Dua cara yang sah: fitter bersama (QuranTextFit.size) atau pengukuran
     // sendiri terhadap tinggi sebenarnya (scrollHeight + line-height), seperti

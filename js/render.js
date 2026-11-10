@@ -220,7 +220,7 @@ function renderMultipleResults(verses, options = {}) {
       const bookmarked = typeof isBookmarked === 'function' && isBookmarked(firstVerse.surah_id, firstVerse.ayah);
       if (bookmarked) {
         btnBookmark.classList.add('bookmark-active');
-        btnBookmark.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> <span>Bookmarked</span>';
+        btnBookmark.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> <span>Tersimpan</span>';
       } else {
         btnBookmark.classList.remove('bookmark-active');
         btnBookmark.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg> <span>Bookmark</span>';
@@ -256,17 +256,17 @@ function renderMultipleResults(verses, options = {}) {
     let isCustom = customTranslations[key] ? true : false;
 
     arabicCards += `
-      <div class="verse-item" style="margin-bottom: ${index < verses.length - 1 ? '20px' : '0'}; padding-bottom: ${index < verses.length - 1 ? '20px' : '0'}; border-bottom: ${index < verses.length - 1 ? '1px solid #334155' : 'none'};">
-        <div style="font-size: 12px; color: var(--accent); margin-bottom: 10px; font-weight: 600;">Ayat ${data.ayah}</div>
+      <div class="verse-item" style="margin-bottom: ${index < verses.length - 1 ? '20px' : '0'}; padding-bottom: ${index < verses.length - 1 ? '20px' : '0'}; border-bottom: ${index < verses.length - 1 ? '1px solid var(--border)' : 'none'};">
+        ${verses.length > 1 ? `<div class="verse-label">Ayat ${data.ayah}</div>` : ''}
         <div class="arabic-text">${data.arabic}</div>
       </div>
     `;
 
     transCards += `
-      <div class="verse-item" style="margin-bottom: ${index < verses.length - 1 ? '20px' : '0'}; padding-bottom: ${index < verses.length - 1 ? '20px' : '0'}; border-bottom: ${index < verses.length - 1 ? '1px solid #334155' : 'none'};">
-        <div style="font-size: 12px; color: ${isCustom ? '#f59e0b' : 'var(--accent)'}; margin-bottom: 10px; font-weight: 600;">
-          Ayat ${data.ayah} ${isCustom ? `<span style="background:#f59e0b; color:black; padding:2px 6px; border-radius:4px; font-size:10px; margin-left:5px;">${(typeof TRANSLATION_LABELS !== 'undefined' && TRANSLATION_LABELS[currentTranslationVersion]) || 'Versi lain'}</span>` : ''}
-        </div>
+      <div class="verse-item" style="margin-bottom: ${index < verses.length - 1 ? '20px' : '0'}; padding-bottom: ${index < verses.length - 1 ? '20px' : '0'}; border-bottom: ${index < verses.length - 1 ? '1px solid var(--border)' : 'none'};">
+        ${verses.length > 1 || isCustom ? `<div class="verse-label${isCustom ? ' is-custom' : ''}">
+          ${verses.length > 1 ? `Ayat ${data.ayah}` : ''} ${isCustom ? `<span class="verse-custom-badge">${(typeof TRANSLATION_LABELS !== 'undefined' && TRANSLATION_LABELS[currentTranslationVersion]) || 'Versi lain'}</span>` : ''}
+        </div>` : ''}
         <div class="trans-text">${finalTranslation}</div>
       </div>
     `;
@@ -275,9 +275,9 @@ function renderMultipleResults(verses, options = {}) {
   container.innerHTML = `
     <div class="result-card">
       <div class="card-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="card-label">ARABIC</span>
-          ${verses.length > 1 ? `<span class="badge-verses-count">${verses.length} AYAT</span>` : ''}
+        <div class="card-heading">
+          <span class="card-label">Arab</span>
+          <span class="card-title">${firstVerse.surah.latin} (${firstVerse.surah_id}) · ${verses.length === 1 ? `Ayat ${firstVerse.ayah}` : `Ayat ${firstVerse.ayah}–${lastVerse.ayah}`}</span>
         </div>
         <div class="header-actions">
            <button class="btn-action btn-copy" onclick="handleStageCopy(this, '${escapeJs(allArabic)}')">
@@ -285,7 +285,7 @@ function renderMultipleResults(verses, options = {}) {
                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
              </svg>
-             <span>Copy</span>
+             <span>Salin</span>
            </button>
         </div>
       </div>
@@ -296,14 +296,14 @@ function renderMultipleResults(verses, options = {}) {
 
     <div class="result-card">
       <div class="card-header">
-        <div class="stage-trans-wrap">
-          <span class="card-label">TERJEMAHAN</span>
-          <div class="stage-trans-selector" title="Ganti Versi Terjemahan (Kemenag 2019 / Kampung Sunnah / 2002)">
+        <div class="card-heading stage-trans-wrap">
+          <span class="card-label">Terjemahan</span>
+          <div class="stage-trans-selector" title="Ganti versi terjemahan (Kemenag 2019 / Kampung Sunnah / Kemenag 2002)">
             <svg class="stage-trans-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
               <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
-            <select class="stage-trans-select" onchange="changeTranslation(this.value)">
+            <select class="stage-trans-select" onchange="changeTranslation(this.value)" aria-label="Versi terjemahan">
               <option value="default" ${currentTranslationVersion === 'default' ? 'selected' : ''}>Kemenag 2019</option>
               <option value="kemenag_lama" ${currentTranslationVersion === 'kemenag_lama' ? 'selected' : ''}>Kampung Sunnah</option>
               <option value="kemenag_2002" ${currentTranslationVersion === 'kemenag_2002' ? 'selected' : ''}>Kemenag 2002</option>
@@ -312,7 +312,6 @@ function renderMultipleResults(verses, options = {}) {
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
-          ${verses.length > 1 ? `<span class="badge-verses-count">${verses.length} AYAT</span>` : ''}
         </div>
         <div class="header-actions">
            <button class="btn-action btn-copy" onclick="handleStageCopy(this, '${escapeJs(allTranslations)}')">
@@ -320,7 +319,7 @@ function renderMultipleResults(verses, options = {}) {
                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
              </svg>
-             <span>Copy</span>
+             <span>Salin</span>
            </button>
         </div>
       </div>

@@ -348,14 +348,14 @@
             <div class="sidebar-input-row"
               style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 8px; margin-bottom: 12px;">
               <div class="control-group" style="margin-bottom: 0;">
-                <label style="margin-bottom: 4px; display: block;">No. Ayat</label>
+                <label class="label-with-hint" for="ayahInput">No. Ayat</label>
                 <input type="number" id="ayahInput" placeholder="Contoh: 1" min="1" onkeypress="handleEnter(event)"
                   ondblclick="this.select()" onclick="this.select()">
               </div>
               <div class="control-group" style="margin-bottom: 0;">
-                <label style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                <label class="label-with-hint" for="ayahCountInput">
                   <span>Jumlah</span>
-                  <span style="font-size: 10px; color: var(--text-muted); font-weight: normal;">Max 10</span>
+                  <span class="label-hint">maks. 10</span>
                 </label>
                 <input type="number" id="ayahCountInput" placeholder="1" min="1" max="10" value="1"
                   onkeypress="handleEnter(event)" ondblclick="this.select()" onclick="this.select()">
@@ -391,15 +391,15 @@
 
               <!-- Secondary: Prev / Next Stepper -->
               <div class="sidebar-nav-pair">
-                <button onclick="navAyah(-1)" class="btn-sidebar-secondary" title="Ayat Sebelumnya (Arrow Left / ←)">
+                <button onclick="navAyah(-1)" class="btn-sidebar-secondary" title="Ayat sebelumnya (←)">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
-                  <span>Prev</span>
+                  <span>Sebelumnya</span>
                   <kbd class="sidebar-kbd">←</kbd>
                 </button>
-                <button onclick="navAyah(1)" class="btn-sidebar-secondary" title="Ayat Selanjutnya (Arrow Right / →)">
-                  <span>Next</span>
+                <button onclick="navAyah(1)" class="btn-sidebar-secondary" title="Ayat berikutnya (→)">
+                  <span>Berikutnya</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -547,7 +547,7 @@
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
-              <span>Prev</span>
+              <span>Sebelumnya</span>
               <kbd class="dock-kbd">←</kbd>
             </button>
 
@@ -559,7 +559,7 @@
             <!-- Next Button -->
             <button class="btn-dock-nav" id="dockBtnNext" onclick="navAyah(1)"
               title="Ayat berikutnya (→)" aria-label="Ayat berikutnya">
-              <span>Next</span>
+              <span>Berikutnya</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
@@ -638,7 +638,7 @@
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
               <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
             </svg>
-            <span>Copy Info</span>
+            <span>Salin Info</span>
           </button>
           <button class="btn-action btn-search-dock dock-secondary" id="dockBtnToggleSearch" onclick="toggleSearchDrawer()"
             title="Buka panel pencarian Latin & terjemahan (F3 / F4)" aria-label="Cari Latin & terjemahan (F3/F4)">
@@ -851,7 +851,7 @@
   <footer class="status-bar">
     <div class="status-item">
       <span class="tally-dot dot-live" style="margin-right: 2px;"></span>
-      <span style="font-weight: 600;">Ready</span>
+      <span style="font-weight: 600;">Siap</span>
       <span style="color:var(--border); margin:0 6px;">|</span>
       <span style="font-size:11px;">F11: Fullscreen</span>
       <span style="color:var(--border); margin:0 6px;">|</span>
@@ -894,7 +894,7 @@
           <div>
             <div class="help-title-row">
               <h2 id="helpModalTitle" class="modal-title" style="margin: 0;">Panduan & Referensi Operator</h2>
-              <span class="badge-v5-pill">v5.4 PRO</span>
+              <span class="badge-v5-pill">v5.4</span>
             </div>
             <p id="helpModalSubtitle" class="help-subtitle">Webquran Broadcast Console • Al-Qur'an & Hadits, Navigasi
               Cepat, & Integrasi Siaran</p>
@@ -939,8 +939,10 @@
         <button id="helpTabButton-workflow" class="help-tab-btn" data-tab="helpTab-workflow"
           onclick="switchHelpTab('helpTab-workflow')" role="tab" aria-controls="helpTab-workflow" aria-selected="false"
           tabindex="-1">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 6h11M9 12h11M9 18h11"></path>
+            <path d="M4 6h.01M4 12h.01M4 18h.01"></path>
           </svg>
           <span>Alur Kerja & Tips</span>
         </button>
@@ -1167,7 +1169,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
               <div class="browser-source-hint">
@@ -1183,7 +1185,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
               <div class="browser-source-label">
@@ -1199,7 +1201,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
               <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin-top: 6px;">
@@ -1253,7 +1255,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
               <div class="browser-source-label">
@@ -1269,7 +1271,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
             </div>
@@ -1301,7 +1303,7 @@
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
-                  <span>Copy</span>
+                  <span>Salin</span>
                 </span>
               </button>
 
@@ -1436,12 +1438,11 @@
   </div>
 
   <!-- TEMPLATE MODAL -->
-  <div id="templateModal" class="modal-overlay" onclick="closeTemplateModal(event)">
+  <div id="templateModal" class="modal-overlay" onclick="closeTemplateModal(event)" role="dialog" aria-modal="true" aria-labelledby="templateModalTitle">
     <div class="modal-content modal-template-wide" onclick="event.stopPropagation()">
-      <div class="modal-header modal-header-pro">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div
-            style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #6366f1); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(2,132,199,0.35);">
+      <div class="modal-header modal-header-pro tpl-header">
+        <div class="tpl-header-main">
+          <div class="tpl-header-icon" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -1450,24 +1451,21 @@
             </svg>
           </div>
           <div>
-            <h2 style="font-size: 17px; font-weight: 700; color: #f8fafc; margin: 0; letter-spacing: -0.2px;">
-              Pilih Template Layar Presentasi & OBS
-            </h2>
-            <p style="margin: 2px 0 0 0; font-size: 12px; color: #94a3b8;">
-              Mendukung Resolusi 1080p Full HD & 4K • Sinkronisasi Real-Time Display
-            </p>
+            <h2 class="tpl-header-title" id="templateModalTitle">Pilih Template Tayangan Ayat</h2>
+            <p class="tpl-header-sub">Dipakai di layar presentasi dan sumber browser OBS/vMix. Klik kartu untuk memakainya.</p>
           </div>
         </div>
-        <button class="modal-close" onclick="closeTemplateModal()"
-          style="font-size: 20px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.06); color: #94a3b8; transition: all 0.2s;">&times;</button>
+        <button class="modal-close tpl-close" onclick="closeTemplateModal()" aria-label="Tutup">&times;</button>
       </div>
 
       <div class="modal-body" style="padding: 24px 28px;">
-        <div class="template-grid-pro">
+        <section class="tpl-group">
+          <h3 class="tpl-group-title">Layar penuh &amp; studio<span class="tpl-group-hint">Untuk proyektor, TV, atau siaran dengan kamera</span></h3>
+          <div class="template-grid-pro">
 
           <!-- CARD 1: DEFAULT FULLSCREEN -->
-          <div class="template-card-pro active" id="tplCard-default.html" onclick="selectTemplate('default.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+          <div class="template-card-pro" id="tplCard-default.html" onclick="selectTemplate('default.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
               <div class="monitor-header">
                 <span class="monitor-tag">1080p</span>
@@ -1493,177 +1491,10 @@
               </div>
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Default Layar Penuh</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">PROJEKTOR
-                  & TV</span>
-              </div>
-              <p class="template-card-desc">
-                Teks ayat & terjemahan terpusat penuh dengan adaptasi ukuran cerdas. Ideal untuk layar proyektor masjid
-                & TV display.
-              </p>
+              <h4 class="template-card-title">Layar Penuh</h4>
+              <p class="template-card-desc">Ayat dan terjemahan di tengah layar penuh. Untuk proyektor dan TV masjid.</p>
               <div class="template-card-action">
-                <span>default.html</span>
-                <span class="template-action-btn">✓ Aktif</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 2: LOWER THIRD LIGHT -->
-          <div class="template-card-pro" id="tplCard-lower_third.html" onclick="selectTemplate('lower_third.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
-            <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">TRANSPARENT</span>
-              </div>
-              <!-- Simulated Video Camera Backdrop -->
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
-                <div
-                  style="position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 12px 12px;">
-                </div>
-                <!-- Simulated Studio Camera Badge -->
-                <div
-                  style="position: absolute; top: 8px; right: 8px; font-size: 7px; color: #64748b; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 3px; font-weight: 600;">
-                  FEED 1</div>
-                <!-- Bottom Lower Third Glass Bar -->
-                <div
-                  style="background: rgba(255, 255, 255, 0.96); border-top: 2.5px solid #d4af37; border-bottom: 2.5px solid #059669; border-radius: 6px; padding: 5px 8px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: flex-start;">
-                  <div
-                    style="font-size: 6.5px; font-weight: 800; letter-spacing: 1.4px; color: #a16207; border-bottom: 1px solid rgba(161,98,7,0.55); padding-bottom: 1px; margin-bottom: 3px;">
-                    QS. AL-FATIHAH : 1
-                  </div>
-                  <div
-                    style="font-family: 'Amiri', serif; font-size: 11px; color: #111827; text-align: center; width: 100%; font-weight: 700; line-height: 1.3; direction: rtl;">
-                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-                  </div>
-                  <div
-                    style="font-size: 7.5px; color: #334155; text-align: center; width: 100%; font-weight: 600; margin-top: 1px;">
-                    Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third (Light)</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3);">BROADCAST
-                  SIANG</span>
-              </div>
-              <p class="template-card-desc">
-                Strip transparan bawah bernuansa putih bersih & aksen emas royal. Sangat kontras dan jernih untuk live
-                streaming siang hari.
-              </p>
-              <div class="template-card-action">
-                <span>lower_third.html</span>
-                <span class="template-action-btn">Pilih &rarr;</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 3: LOWER THIRD DARK -->
-          <div class="template-card-pro" id="tplCard-lower_third_dark.html"
-            onclick="selectTemplate('lower_third_dark.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
-            <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">DARK</span>
-              </div>
-              <!-- Simulated Video Camera Backdrop -->
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #090d16 0%, #030712 100%); position: relative; overflow: hidden;">
-                <div
-                  style="position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(#38bdf8 1px, transparent 1px); background-size: 12px 12px;">
-                </div>
-                <div
-                  style="position: absolute; top: 8px; right: 8px; font-size: 7px; color: #475569; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 3px; font-weight: 600;">
-                  FEED 1</div>
-                <!-- Bottom Lower Third Dark Glass Bar -->
-                <div
-                  style="background: rgba(15, 23, 42, 0.95); border-top: 2.5px solid #d4af37; border-bottom: 2.5px solid #059669; border-radius: 6px; padding: 5px 8px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: flex-start; border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08);">
-                  <div
-                    style="font-size: 6.5px; font-weight: 700; letter-spacing: 1.4px; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.65); padding-bottom: 1px; margin-bottom: 3px;">
-                    QS. AL-FATIHAH : 1
-                  </div>
-                  <div
-                    style="font-family: 'Amiri', serif; font-size: 11px; color: #ffffff; text-align: center; width: 100%; font-weight: 700; line-height: 1.3; direction: rtl;">
-                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-                  </div>
-                  <div
-                    style="font-size: 7.5px; color: #cbd5e1; text-align: center; width: 100%; font-weight: 500; margin-top: 1px;">
-                    Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third (Dark)</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">BROADCAST
-                  MALAM</span>
-              </div>
-              <p class="template-card-desc">
-                Strip transparan bernuansa elegan gelap (midnight navy) & emas. Sangat nyaman di mata untuk panggung
-                gelap & siaran malam.
-              </p>
-              <div class="template-card-action">
-                <span>lower_third_dark.html</span>
-                <span class="template-action-btn">Pilih &rarr;</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- CARD 4: LOWER THIRD DUAL -->
-          <div class="template-card-pro" id="tplCard-lower_third_dual.html"
-            onclick="selectTemplate('lower_third_dual.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
-            <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">BILINGUAL</span>
-                <span class="monitor-tag">SPLIT</span>
-              </div>
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #111827 0%, #0b0f19 100%); position: relative; overflow: hidden;">
-                <div
-                  style="position: absolute; inset: 0; opacity: 0.12; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);">
-                </div>
-                <!-- Dual: panel putih, label editorial, dua kolom -->
-                <div
-                  style="width: 100%; background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.55); border-radius: 5px; padding: 5px 7px 6px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; flex-direction: column;">
-                  <div
-                    style="font-size: 6px; font-weight: 800; letter-spacing: 1.3px; color: #a16207; border-bottom: 1px solid rgba(161,98,7,0.55); padding-bottom: 1px; margin-bottom: 3px; align-self: flex-start;">
-                    QS. AL-FATIHAH : 1
-                  </div>
-                  <div style="display: flex; gap: 6px; align-items: flex-start;">
-                    <div style="flex: 1; font-size: 7px; color: #1e293b; line-height: 1.35; font-weight: 600;">
-                      Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
-                    </div>
-                    <div style="width: 1px; align-self: stretch; background: rgba(212,175,55,0.7);"></div>
-                    <div
-                      style="flex: 1; font-family: 'Amiri', serif; font-size: 10px; color: #111827; direction: rtl; text-align: right; line-height: 1.4;">
-                      بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third Dual</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.3);">DWI-BAHASA</span>
-              </div>
-              <p class="template-card-desc">
-                Tata letak dwi-kolom berdampingan. Teks Arab di kanan dan terjemahan di kiri untuk kemudahan membaca
-                secara simultan.
-              </p>
-              <div class="template-card-action">
-                <span>lower_third_dual.html</span>
+                <span class="template-card-meta">Proyektor / TV · Ikut tema panel</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
@@ -1671,7 +1502,7 @@
 
           <!-- CARD 5: PIP VIDEO -->
           <div class="template-card-pro" id="tplCard-pip_video.html" onclick="selectTemplate('pip_video.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
               <div class="monitor-header">
                 <span class="monitor-tag">STUDIO</span>
@@ -1703,17 +1534,69 @@
               </div>
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">PiP Video (OBS)</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">MULTI-SOURCE</span>
-              </div>
-              <p class="template-card-desc">
-                Slot frame kamera video ustadz/pembicara di sebelah kiri dengan tampilan teks ayat proporsional di
-                sebelah kanan.
-              </p>
+              <h4 class="template-card-title">PiP Video</h4>
+              <p class="template-card-desc">Ruang kamera penceramah di kiri, teks ayat di kanan.</p>
               <div class="template-card-action">
-                <span>pip_video.html</span>
+                <span class="template-card-meta">OBS · Kamera + teks · Ikut tema panel</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- CARD: LAYAR PENUH MIHRAB (keluarga Mihrab) -->
+          <div class="template-card-pro" id="tplCard-fullscreen_mihrab.html" onclick="selectTemplate('fullscreen_mihrab.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <div class="tpl-mini tpl-mini-fs">
+                <div class="tpl-mini-fs-body"><div class="tpl-mini-label"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>QS AL-ANBIYA · 107</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg><i></i></div><div class="tpl-mini-ar is-big">وَمَآ اَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ</div><div class="tpl-mini-foot"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="2"/></svg><i></i></div></div>
+                <div class="tpl-mini-lane" title="Ruang running text"></div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Layar Penuh Mihrab</h4>
+              <p class="template-card-desc">Ayat besar di atas latar tinta berpola bintang, muncul kata demi kata. Menyisakan ruang running text.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">Proyektor / TV</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <section class="tpl-group">
+          <h3 class="tpl-group-title">Lower third · satu bilah<span class="tpl-group-hint">Teks di bagian bawah layar, latar transparan untuk OBS/vMix</span></h3>
+          <div class="template-grid-pro">
+
+          <!-- CARD 2: LOWER THIRD LIGHT -->
+          <div class="template-card-pro" id="tplCard-lower_third.html" onclick="selectTemplate('lower_third.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <img class="tpl-shot" src="assets/template-previews/lower_third.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Lower Third (Light)</h4>
+              <p class="template-card-desc">Bilah putih dengan aksen emas. Kontras tinggi untuk siaran siang.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: LOWER THIRD DARK -->
+          <div class="template-card-pro" id="tplCard-lower_third_dark.html"
+            onclick="selectTemplate('lower_third_dark.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <img class="tpl-shot" src="assets/template-previews/lower_third_dark.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Lower Third (Dark)</h4>
+              <p class="template-card-desc">Bilah navy dengan aksen emas. Nyaman untuk panggung gelap dan siaran malam.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
@@ -1721,43 +1604,15 @@
 
           <!-- CARD 6: LOWER THIRD EMERALD GLASS (varian kulit + animasi) -->
           <div class="template-card-pro" id="tplCard-lower_third_glass.html" onclick="selectTemplate('lower_third_glass.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">EMERALD</span>
-              </div>
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
-                <div
-                  style="border-radius: 8px 8px 0 0; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(135deg, rgba(4, 47, 46, 0.95), rgba(6, 78, 59, 0.9)); border-top: 2.5px solid #d4af37; padding: 5px 9px; box-shadow: 0 -4px 15px rgba(0,0,0,0.45); z-index: 2; overflow: hidden;">
-                  <span
-                    style="font-size: 5.5px; letter-spacing: 1.4px; font-weight: 700; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.65); align-self: flex-start; padding-bottom: 1px;">QS
-                    AL-ANBIYA (21) AYAT 107</span>
-                  <div
-                    style="font-family: 'Amiri', serif; font-size: 10px; color: #ffffff; direction: rtl; line-height: 1.4; text-align: center;">
-                    وَمَا أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ
-                  </div>
-                  <div style="font-size: 6.5px; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                    Dan Kami tidak mengutus engkau melainkan menjadi rahmat bagi seluruh alam.
-                  </div>
-                </div>
-              </div>
+              <img class="tpl-shot" src="assets/template-previews/lower_third_glass.jpg" alt="" loading="lazy" decoding="async">
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third Emerald Glass</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);">EMERALD
-                  / TV</span>
-              </div>
-              <p class="template-card-desc">
-                Panel hijau zamrud mengambang dengan garis emas tipis dan rel emas di tepi kiri. Label sumber berupa
-                <strong>teks emas kecil bergaris bawah</strong> (tanpa pil). Ukuran dan penyesuaian teks sama dengan
-                Lower Third Light/Dark; animasinya sapuan garis label 0,6 dtk saat panel masuk.
-              </p>
+              <h4 class="template-card-title">Lower Third Emerald Glass</h4>
+              <p class="template-card-desc">Panel hijau zamrud dengan rel emas di tepi kiri.</p>
               <div class="template-card-action">
-                <span>lower_third_glass.html</span>
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
@@ -1766,39 +1621,15 @@
           <!-- CARD 7: LOWER THIRD MIDNIGHT BLUE (varian kulit + animasi) -->
           <div class="template-card-pro" id="tplCard-lower_third_midnight.html"
             onclick="selectTemplate('lower_third_midnight.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">MIDNIGHT</span>
-              </div>
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
-                <div
-                  style="border-radius: 7px 7px 0 0; border: 1px solid rgba(148,163,184,0.3); border-top: 2.5px solid #d4af37; background: linear-gradient(135deg, rgba(9,20,38,0.96), rgba(18,38,64,0.92)); padding: 6px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: 0 6px 18px rgba(0,0,0,0.45);">
-                  <span
-                    style="font-size: 6px; letter-spacing: 1.6px; font-weight: 700; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.55); padding-bottom: 1px;">QS
-                    AL-ANBIYA (21) AYAT 107</span>
-                  <span
-                    style="font-family: 'Amiri', serif; font-size: 10.5px; color: #f8fafc; direction: rtl; line-height: 1.5;">وَمَا
-                    أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ</span>
-                </div>
-              </div>
+              <img class="tpl-shot" src="assets/template-previews/lower_third_midnight.jpg" alt="" loading="lazy" decoding="async">
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third Midnight Blue</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.35);">MIDNIGHT
-                  / TV</span>
-              </div>
-              <p class="template-card-desc">
-                Panel biru malam dengan garis emas tipis dan label sumber <strong>di tengah</strong>. Ukuran dan
-                penyesuaian teks <strong>sama dengan Lower Third Light/Dark</strong>; animasinya geser-naik tenang tanpa
-                kilau, cocok untuk siaran malam.
-              </p>
+              <h4 class="template-card-title">Lower Third Midnight Blue</h4>
+              <p class="template-card-desc">Panel biru malam dengan label surat di tengah.</p>
               <div class="template-card-action">
-                <span>lower_third_midnight.html</span>
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
@@ -1807,41 +1638,55 @@
           <!-- CARD 8: LOWER THIRD PAPER LIGHT (varian kulit + animasi) -->
           <div class="template-card-pro" id="tplCard-lower_third_paper.html"
             onclick="selectTemplate('lower_third_paper.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">PAPER</span>
-              </div>
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
-                <div
-                  style="border-radius: 0; border: 1px solid rgba(31,41,55,0.14); border-left: 3px solid #0f766e; background: linear-gradient(180deg, #fcfaf6, #f5efe6); padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 6px 16px rgba(0,0,0,0.35);">
-                  <span
-                    style="font-size: 6px; letter-spacing: 1.6px; font-weight: 800; color: #0f3d3a; display: inline-flex; align-items: center; gap: 4px;">
-                    <span style="width: 4px; height: 4px; border-radius: 1px; background: #0f766e;"></span>
-                    QS AL-ANBIYA (21) AYAT 107
-                  </span>
-                  <span
-                    style="font-family: 'Amiri', serif; font-size: 10.5px; color: #1f2937; direction: rtl; line-height: 1.5; text-align: center;">وَمَا
-                    أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ</span>
-                </div>
-              </div>
+              <img class="tpl-shot" src="assets/template-previews/lower_third_paper.jpg" alt="" loading="lazy" decoding="async">
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Lower Third Paper Light</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(15, 118, 110, 0.12); color: #0f766e; border: 1px solid rgba(15, 118, 110, 0.35);">PAPER
-                  / SIANG</span>
-              </div>
-              <p class="template-card-desc">
-                Panel kertas gading dengan garis emerald di tepi kiri dan label butir emerald. Ukuran dan penyesuaian
-                teks <strong>sama dengan Lower Third Light/Dark</strong>; animasinya <em>fade + rise</em> yang lebih
-                tenang, cocok untuk siaran siang.
-              </p>
+              <h4 class="template-card-title">Lower Third Paper Light</h4>
+              <p class="template-card-desc">Panel kertas gading dengan garis emerald. Tenang untuk siaran siang.</p>
               <div class="template-card-action">
-                <span>lower_third_paper.html</span>
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- CARD: LOWER THIRD MIHRAB (keluarga Mihrab) -->
+          <div class="template-card-pro" id="tplCard-lower_third_mihrab.html" onclick="selectTemplate('lower_third_mihrab.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <img class="tpl-shot" src="assets/template-previews/lower_third_mihrab.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Lower Third Mihrab</h4>
+              <p class="template-card-desc">Bilah tinta &amp; emas selebar layar, ayat muncul kata demi kata. Menyisakan ruang running text.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">OBS / vMix · Transparan</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+          </div>
+        </section>
+
+        <section class="tpl-group">
+          <h3 class="tpl-group-title">Lower third · dua kolom<span class="tpl-group-hint">Arab dan terjemahan tampil berdampingan</span></h3>
+          <div class="template-grid-pro">
+
+          <!-- CARD 4: LOWER THIRD DUAL -->
+          <div class="template-card-pro" id="tplCard-lower_third_dual.html"
+            onclick="selectTemplate('lower_third_dual.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <img class="tpl-shot" src="assets/template-previews/lower_third_dual.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Lower Third Dual</h4>
+              <p class="template-card-desc">Arab di kanan, terjemahan di kiri, tampil bersamaan dalam satu bilah.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">OBS / vMix · Dua kolom</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
@@ -1850,54 +1695,43 @@
           <!-- CARD 9: DUAL SPLIT SAPPHIRE (kolom ganda, latar terbelah) -->
           <div class="template-card-pro" id="tplCard-lower_third_dual_sapphire.html"
             onclick="selectTemplate('lower_third_dual_sapphire.html')">
-            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
             <div class="screen-monitor">
-              <div class="monitor-header">
-                <span class="monitor-tag">OBS / VMIX</span>
-                <span class="monitor-tag">DUAL SPLIT</span>
-              </div>
-              <div
-                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
-                <div
-                  style="border-radius: 8px 8px 0 0; border: 1px solid rgba(212,175,55,0.55); overflow: hidden; display: flex; box-shadow: 0 6px 18px rgba(0,0,0,0.45);">
-                  <div
-                    style="flex: 1; background: #f8fafc; padding: 6px 7px; font-size: 6px; color: #1e293b; line-height: 1.5;">
-                    Dan Kami tidak mengutus engkau melainkan menjadi rahmat bagi seluruh alam.
-                  </div>
-                  <div style="width: 2px; background: #d4af37;"></div>
-                  <div
-                    style="flex: 1; background: linear-gradient(135deg, #0b2545, #13315c); padding: 6px 7px; font-family: 'Amiri', serif; font-size: 9px; color: #f8fafc; direction: rtl; line-height: 1.6;">
-                    وَمَا أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ
-                  </div>
-                </div>
-              </div>
+              <img class="tpl-shot" src="assets/template-previews/lower_third_dual_sapphire.jpg" alt="" loading="lazy" decoding="async">
             </div>
             <div class="template-card-body">
-              <div class="template-card-title-row">
-                <h4 class="template-card-title">Dual Split Sapphire</h4>
-                <span class="template-type-chip"
-                  style="background: rgba(37, 99, 235, 0.15); color: #93c5fd; border: 1px solid rgba(37, 99, 235, 0.35);">DUAL
-                  / TV</span>
-              </div>
-              <p class="template-card-desc">
-                Kolom ganda dengan <strong>latar terbelah</strong>: terjemahan di kertas terang (kiri), teks Arab di
-                nilam (kanan), dipisah garis emas. Arab dan terjemahan tampil <strong>bersamaan</strong>; animasinya
-                tirai terbuka dari tengah, lalu kedua kolom masuk dari sisinya.
-              </p>
+              <h4 class="template-card-title">Dual Split Sapphire</h4>
+              <p class="template-card-desc">Dua kolom: terjemahan di sisi terang, Arab di sisi nilam.</p>
               <div class="template-card-action">
-                <span>lower_third_dual_sapphire.html</span>
+                <span class="template-card-meta">OBS / vMix · Dua kolom</span>
                 <span class="template-action-btn">Pilih &rarr;</span>
               </div>
             </div>
           </div>
 
-        </div>
+
+          <!-- CARD: DUAL MIHRAB (keluarga Mihrab) -->
+          <div class="template-card-pro" id="tplCard-dual_mihrab.html" onclick="selectTemplate('dual_mihrab.html')">
+            <div class="template-card-badge badge-active">✓ Dipakai</div>
+            <div class="screen-monitor">
+              <img class="tpl-shot" src="assets/template-previews/dual_mihrab.jpg" alt="" loading="lazy" decoding="async">
+            </div>
+            <div class="template-card-body">
+              <h4 class="template-card-title">Dual Mihrab</h4>
+              <p class="template-card-desc">Terjemahan di kiri, Arab di kanan, dipisah garis emas berbintang. Menyisakan ruang running text.</p>
+              <div class="template-card-action">
+                <span class="template-card-meta">OBS / vMix · Dua kolom</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+          </div>
+        </section>
 
         <!-- Catatan cakupan tema: agar tombol tema tidak terkesan "tidak berfungsi" -->
         <div class="template-theme-note">
-          <strong>Catatan tema:</strong> tombol tema panel mengubah <em>Default Layar Penuh</em> dan
-          <em>PiP Video</em>. Ketujuh template <em>Lower Third</em> memakai desain tetap (warna sesuai nama kartunya).
-          Ukuran teks di status bar berlaku untuk <strong>semua</strong> template.
+          Tombol tema terang/gelap hanya mengubah <em>Layar Penuh</em> dan <em>PiP Video</em>;
+          template lower third memakai warnanya sendiri. Ukuran teks di status bar berlaku untuk semua template.
         </div>
       </div>
     </div>

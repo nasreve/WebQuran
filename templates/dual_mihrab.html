@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webquran Template: Dual Mihrab</title>
+    <!-- Font dibundel lokal: tetap benar tanpa internet -->
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../css/mihrab.css">
+    <style>
+        /* Panel dua kolom di atas jalur running text, penuh kiri–kanan */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: var(--mh-lane);
+        }
+
+        #mainWrap {
+            position: relative;
+            width: 100vw;
+            height: 28vh; /* dikelola DualFit: 28vh → 40vh */
+            padding: 1.5vh 0 1.8vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            isolation: isolate;
+            background: linear-gradient(180deg, rgba(13, 30, 45, 0.96) 0%, rgba(6, 16, 26, 0.97) 100%);
+            box-shadow: 0 -12px 40px -18px rgba(0, 0, 0, 0.6);
+            clip-path: inset(0 50% 0 50%);
+            opacity: 0;
+            transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.2s, opacity 0.2s linear 0.65s, height 0.35s ease;
+        }
+
+        #mainWrap.is-on {
+            clip-path: inset(0 0 0 0);
+            opacity: 1;
+            transition: clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.12s linear, height 0.35s ease;
+        }
+
+        #mainWrap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--mh-gold) 14%, var(--mh-gold-bright) 50%, var(--mh-gold) 86%, transparent);
+            box-shadow: 0 0 18px rgba(243, 217, 143, 0.35);
+        }
+
+        #mainWrap::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: var(--mh-pattern) center / 72px 72px;
+            opacity: 0.07;
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+        }
+
+        .header-row {
+            flex: 0 0 auto;
+            margin-bottom: 1vh;
+        }
+
+        .content-row {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            padding: 0 4.5vw;
+        }
+
+        .column {
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: safe center;
+        }
+
+        #latinColumn { padding-right: 2.4vw; }
+        #arabicColumn { padding-left: 2.4vw; }
+
+        .scroll-wrapper { width: 100%; }
+
+        #arabicColumn .arabic-text { text-align: right; }
+        #latinColumn .trans-text { text-align: left; }
+
+        /* Pemisah: garis emas vertikal dengan bintang di tengah */
+        .mh-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6vh;
+            padding: 0.6vh 0;
+            font-size: 20px;
+        }
+
+        .mh-vline {
+            flex: 1 1 auto;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, var(--mh-gold-soft));
+        }
+
+        .mh-vline.is-bottom { background: linear-gradient(180deg, var(--mh-gold-soft), transparent); }
+
+        /* Gulir otomatis aktif (ayat sangat panjang): pudar halus di bawah */
+        #mainWrap.is-scrolling .column {
+            -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+        }
+
+        /* ── Motion ── (label & kata Arab: lihat css/mihrab.css) */
+        @keyframes mhVLineIn {
+            from { opacity: 0; transform: scaleY(0); }
+            to { opacity: 1; transform: scaleY(1); }
+        }
+
+        @keyframes mhFromLeft {
+            from { opacity: 0; transform: translateX(-28px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        #mainWrap.is-entering::before {
+            transform-origin: center;
+            animation: mhRuleIn 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.1s backwards;
+        }
+
+        #mainWrap.is-entering .mh-vline { transform-origin: bottom center; animation: mhVLineIn 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.4s backwards; }
+        #mainWrap.is-entering .mh-vline.is-bottom { transform-origin: top center; }
+        #mainWrap.is-entering .mh-divider .mh-star { animation-delay: 0.25s; }
+
+        /* DualFit menggulir dengan menggeser .trans-text sendiri, jadi animasi
+           masuk dipasang di kolomnya agar keduanya tidak bertabrakan. */
+        #mainWrap .trans-text { animation: none !important; }
+        #mainWrap.is-entering #latinColumn { animation: mhFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.6s backwards; }
+        #mainWrap.is-swapping-in #latinColumn { animation: mhFromLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards; }
+
+        .header-row,
+        .content-row {
+            transition: opacity 0.22s ease-in, transform 0.24s ease-in;
+        }
+
+        #mainWrap:not(.is-on) .header-row,
+        #mainWrap:not(.is-on) .content-row,
+        #mainWrap.is-swapping-out #latinColumn,
+        #mainWrap.is-swapping-out #arabicColumn {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        #latinColumn,
+        #arabicColumn { transition: opacity 0.2s ease-in, transform 0.22s ease-in; }
+
+        #mainWrap.is-swapping-out .mh-label-text { opacity: 0; transition: opacity 0.2s ease-in; }
+
+        #mainWrap.is-entering .header-row,
+        #mainWrap.is-entering .content-row,
+        #mainWrap.is-swapping-in #latinColumn,
+        #mainWrap.is-swapping-in #arabicColumn { transition: none; }
+    </style>
+    <script src="../js/quran-text-fit.js"></script>
+    <script src="../js/dual-fit.js"></script>
+</head>
+
+<body>
+    <div id="mainWrap" aria-live="polite">
+        <div class="header-row">
+            <div class="mh-label" id="infoTextEl">
+                <span class="mh-rule"></span>
+                <span class="mh-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                <span class="mh-label-text" id="infoLabelEl"></span>
+                <span class="mh-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                <span class="mh-rule is-right"></span>
+            </div>
+        </div>
+
+        <div class="content-row">
+            <!-- Terjemahan (kiri) -->
+            <div class="column" id="latinColumn">
+                <div class="scroll-wrapper" id="latinScroll">
+                    <div class="trans-text" id="transTextEl" lang="id"></div>
+                </div>
+            </div>
+
+            <div class="mh-divider" aria-hidden="true">
+                <span class="mh-vline"></span>
+                <span class="mh-star"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                <span class="mh-vline is-bottom"></span>
+            </div>
+
+            <!-- Arab (kanan) -->
+            <div class="column" id="arabicColumn">
+                <div class="scroll-wrapper" id="arabicScroll">
+                    <div class="arabic-text" id="arabicTextEl" lang="ar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/mihrab.js"></script>
+    <!-- Runtime bersama: mode OBS, pendengar pesan, dan polling cadangan -->
+    <script src="../js/template-runtime.js"></script>
+    <script>
+        const wrap = document.getElementById('mainWrap');
+        const arEl = document.getElementById('arabicTextEl');
+        const trEl = document.getElementById('transTextEl');
+        const labelEl = document.getElementById('infoLabelEl');
+        const labelRow = document.getElementById('infoTextEl');
+        const stage = Mihrab.stage(wrap);
+
+        let scale = 1;
+        let current = { arabic: '', translation: '', info: '' };
+        let renderedArabic = null;
+
+        // Tulis isi lalu biarkan DualFit mengukur kedua kolom (dan menumbuhkan
+        // panel / mengaktifkan gulir bila perlu).
+        function render() {
+            labelEl.textContent = current.info;
+            labelRow.style.fontSize = Math.round(14 * scale) + 'px';
+            if (renderedArabic !== current.arabic) {
+                arEl.innerHTML = Mihrab.wordsHtml(current.arabic);
+                renderedArabic = current.arabic;
+            }
+            trEl.innerHTML = Mihrab.cleanTranslation(current.translation);
+            arEl.style.lineHeight = 2.0;
+            trEl.style.lineHeight = 1.5;
+            DualFit.apply({
+                panel: wrap,
+                scale: scale,
+                arabicMax: 46,
+                latinMax: 26,
+                // Ayat panjang bergulir pada ukuran yang tetap terbaca, bukan
+                // mengecil sampai 22/13 px (dulu: tampil kecil & tak pernah bergulir).
+                arabicMin: 30,
+                latinMin: 20,
+                arabic: { el: arEl, col: document.getElementById('arabicColumn'), wrap: document.getElementById('arabicScroll'), lineHeight: 2.0 },
+                latin: { el: trEl, col: document.getElementById('latinColumn'), wrap: document.getElementById('latinScroll'), lineHeight: 1.5 }
+            });
+            // Ayat yang tetap meluap akan bergulir (bukan terpotong).
+            TemplateRuntime.reportFit(false);
+        }
+
+        TemplateRuntime.init({
+            onContent(data) {
+                if (data.fontSize) scale = Math.max(0.5, Math.min(2, Number(data.fontSize) / 100 || 1));
+                if (data.isVisible === false || !data.arabic) {
+                    stage.hide();
+                    if (window.DualFit) DualFit.reset(wrap);
+                    return;
+                }
+                const next = { arabic: data.arabic, translation: data.translation || '', info: data.info || '' };
+                const changed = next.arabic !== current.arabic || next.translation !== current.translation || next.info !== current.info;
+                current = next;
+                stage.show(render, changed);
+            },
+            onScrollPause(isPaused) {
+                if (window.DualFit) DualFit.setPaused(!!isPaused);
+            },
+            onFonts(arabicFont, latinFont) {
+                if (Mihrab.applyFonts(arabicFont, latinFont)) document.fonts.ready.then(refit);
+            },
+            onFontSize(size) {
+                scale = Math.max(0.5, Math.min(2, Number(size) / 100 || 1));
+                refit();
+            },
+        });
+
+        Mihrab.initFonts();
+        // Ukur ulang saat font selesai dimuat / jendela berubah ukuran — tetapi
+        // jangan di tengah pergantian ayat: render() akan menulis ayat baru
+        // sebelum ayat lama selesai keluar (label berganti terlalu cepat).
+        function refit() {
+            if (stage.isOn() && !wrap.classList.contains('is-swapping-out')) render();
+        }
+        document.fonts.addEventListener('loadingdone', refit);
+        addEventListener('resize', refit);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webquran Template: Layar Penuh Mihrab</title>
+    <!-- Font dibundel lokal: tetap benar tanpa internet -->
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../css/mihrab.css">
+    <style>
+        /* Proyektor: latar tinta pekat + pola bintang memudar ke tepi + vinyet.
+           OBS (?obs): latar transparan, area tayang menjadi panel. */
+        body:not(.obs-mode) {
+            background:
+                radial-gradient(ellipse 75% 60% at 50% 42%, #10273a 0%, var(--mh-ink-2) 55%, var(--mh-ink-3) 100%);
+        }
+
+        body:not(.obs-mode)::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: var(--mh-pattern) center / 88px 88px;
+            opacity: 0.05;
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 75%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 0%, transparent 75%);
+        }
+
+        /* Area tayang: penuh kiri–kanan, berhenti di atas jalur running text */
+        #mainWrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: var(--mh-lane);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2.4vh;
+            padding: 5vh 7vw 3vh;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.55, 0, 0.75, 0.25);
+        }
+
+        #mainWrap.is-on {
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.obs-mode #mainWrap {
+            background: linear-gradient(180deg, rgba(13, 30, 45, 0.95), rgba(5, 13, 21, 0.96));
+            border-top: 1px solid rgba(217, 180, 90, 0.35);
+            border-bottom: 1px solid rgba(217, 180, 90, 0.35);
+        }
+
+        .info-block { flex: 0 0 auto; }
+        .info-block .mh-label { gap: 1.1em; }
+        .info-block .mh-rule { width: clamp(64px, 9vw, 200px); }
+
+        .content-row {
+            flex: 0 1 auto;
+            min-height: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .arabic-text { width: 100%; }
+
+        .trans-text {
+            max-width: 1560px;
+            margin: 0 auto;
+        }
+
+        /* Ornamen penutup di bawah ayat */
+        .mh-foot {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 0.8em;
+            font-size: 18px;
+            color: var(--mh-gold);
+        }
+
+        .mh-foot .mh-rule { width: clamp(40px, 5vw, 96px); }
+        .mh-foot .mh-star { width: 0.9em; height: 0.9em; opacity: 0.85; }
+
+        /* ── Motion ── (label & kata Arab: lihat css/mihrab.css) */
+        #mainWrap.is-entering .mh-foot .mh-rule { animation-delay: 0.85s; }
+        #mainWrap.is-entering .mh-foot .mh-star { animation-delay: 0.75s; }
+
+        .info-block,
+        .content-row,
+        .mh-foot {
+            transition: opacity 0.22s ease-in, transform 0.24s ease-in;
+        }
+
+        #mainWrap:not(.is-on) .info-block,
+        #mainWrap:not(.is-on) .content-row,
+        #mainWrap:not(.is-on) .mh-foot,
+        #mainWrap.is-swapping-out .content-row {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+
+        #mainWrap.is-swapping-out .mh-label-text { opacity: 0; transition: opacity 0.2s ease-in; }
+
+        #mainWrap.is-entering .info-block,
+        #mainWrap.is-entering .content-row,
+        #mainWrap.is-entering .mh-foot,
+        #mainWrap.is-swapping-in .content-row { transition: none; }
+    </style>
+    <script src="../js/quran-text-fit.js"></script>
+</head>
+
+<body>
+    <div id="mainWrap" aria-live="polite">
+        <div class="info-block">
+            <div class="mh-label" id="infoTextEl">
+                <span class="mh-rule"></span>
+                <span class="mh-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                <span class="mh-label-text" id="infoLabelEl"></span>
+                <span class="mh-star" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+                <span class="mh-rule is-right"></span>
+            </div>
+        </div>
+        <div class="content-row">
+            <div class="morph-wrapper active" id="arabicWrapper">
+                <div class="morph-inner">
+                    <div class="arabic-text" id="arabicTextEl"></div>
+                </div>
+            </div>
+            <div class="morph-wrapper" id="transWrapper">
+                <div class="morph-inner">
+                    <div class="trans-text" id="transTextEl"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mh-foot" aria-hidden="true">
+            <span class="mh-rule"></span>
+            <span class="mh-star"><svg viewBox="0 0 24 24"><path d="M12 1.6l2.5 4.1 4.8-1-1 4.8 4.1 2.5-4.1 2.5 1 4.8-4.8-1-2.5 4.1-2.5-4.1-4.8 1 1-4.8L1.6 12l4.1-2.5-1-4.8 4.8 1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg></span>
+            <span class="mh-rule is-right"></span>
+        </div>
+    </div>
+
+    <script src="../js/mihrab.js"></script>
+    <!-- Runtime bersama: mode OBS, pendengar pesan, dan polling cadangan -->
+    <script src="../js/template-runtime.js"></script>
+    <script>
+        const wrap = document.getElementById('mainWrap');
+        const arEl = document.getElementById('arabicTextEl');
+        const trEl = document.getElementById('transTextEl');
+        const labelEl = document.getElementById('infoLabelEl');
+        const labelRow = document.getElementById('infoTextEl');
+        const infoBlock = wrap.querySelector('.info-block');
+        const foot = wrap.querySelector('.mh-foot');
+        const stage = Mihrab.stage(wrap);
+
+        const AR_LINE_HEIGHT = 2.1;
+        const TR_LINE_HEIGHT = 1.5;
+        let scale = 1;
+        let current = { arabic: '', translation: '', info: '' };
+        let renderedArabic = null;
+
+        function setTransVisible(visible) {
+            document.body.dataset.transVisible = visible ? 'true' : 'false';
+            document.getElementById('arabicWrapper').classList.toggle('active', !visible);
+            document.getElementById('transWrapper').classList.toggle('active', visible);
+        }
+
+        // Ruang teks yang sebenarnya: tinggi area tayang dikurangi label,
+        // ornamen bawah, jarak, dan bantalan.
+        function textBudget() {
+            const style = getComputedStyle(wrap);
+            const px = v => parseFloat(v) || 0;
+            return wrap.clientHeight - px(style.paddingTop) - px(style.paddingBottom)
+                - infoBlock.offsetHeight - foot.offsetHeight - px(style.rowGap) * 2 - 16;
+        }
+
+        function render() {
+            labelEl.textContent = current.info;
+            labelRow.style.fontSize = Math.round(19 * scale) + 'px';
+            foot.style.fontSize = Math.round(18 * scale) + 'px';
+            if (renderedArabic !== current.arabic) {
+                arEl.innerHTML = Mihrab.wordsHtml(current.arabic);
+                renderedArabic = current.arabic;
+            }
+            trEl.innerHTML = Mihrab.cleanTranslation(current.translation);
+            arEl.style.lineHeight = AR_LINE_HEIGHT;
+            trEl.style.lineHeight = TR_LINE_HEIGHT;
+            arEl.style.fontSize = QuranTextFit.size(arEl, arEl.innerHTML, Math.round(84 * scale), Math.round(40 * scale), AR_LINE_HEIGHT, false, textBudget) + 'px';
+            trEl.style.fontSize = QuranTextFit.size(trEl, trEl.innerHTML, Math.round(46 * scale), Math.round(26 * scale), TR_LINE_HEIGHT, false, textBudget) + 'px';
+            TemplateRuntime.reportFit(wrap.scrollHeight > wrap.clientHeight + 2);
+        }
+
+        TemplateRuntime.init({
+            onContent(data) {
+                if (data.fontSize) scale = Math.max(0.5, Math.min(2, Number(data.fontSize) / 100 || 1));
+                if (data.isTransVisible !== undefined) setTransVisible(!!data.isTransVisible);
+                if (data.isVisible === false || !data.arabic) { stage.hide(); return; }
+                const next = { arabic: data.arabic, translation: data.translation || '', info: data.info || '' };
+                const changed = next.arabic !== current.arabic || next.translation !== current.translation || next.info !== current.info;
+                current = next;
+                stage.show(render, changed);
+            },
+            onTransVisible(visible) { setTransVisible(visible); },
+            onFonts(arabicFont, latinFont) {
+                if (Mihrab.applyFonts(arabicFont, latinFont)) document.fonts.ready.then(refit);
+            },
+            onFontSize(size) {
+                scale = Math.max(0.5, Math.min(2, Number(size) / 100 || 1));
+                refit();
+            },
+        });
+
+        Mihrab.initFonts();
+        // Ukur ulang saat font selesai dimuat / jendela berubah ukuran — tetapi
+        // jangan di tengah pergantian ayat: render() akan menulis ayat baru
+        // sebelum ayat lama selesai keluar (label berganti terlalu cepat).
+        function refit() {
+            if (stage.isOn() && !wrap.classList.contains('is-swapping-out')) render();
+        }
+        document.fonts.addEventListener('loadingdone', refit);
+        addEventListener('resize', refit);
+    </script>
+</body>
+
+</html>

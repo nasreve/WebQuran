@@ -53,7 +53,7 @@
         // Pratinjau Program Feed di panel memakai cara ini supaya tampilannya
         // sudah benar sejak pemuatan pertama, tanpa bergantung pada postMessage
         // yang bisa datang sebelum iframe siap.
-        const ALLOWED_TEMPLATE_FILES = ['default.html', 'lower_third.html', 'lower_third_dark.html', 'lower_third_dual.html', 'pip_video.html', 'lower_third_glass.html', 'lower_third_midnight.html', 'lower_third_paper.html', 'lower_third_dual_sapphire.html'];
+        const ALLOWED_TEMPLATE_FILES = ['default.html', 'lower_third.html', 'lower_third_dark.html', 'lower_third_dual.html', 'pip_video.html', 'lower_third_glass.html', 'lower_third_midnight.html', 'lower_third_paper.html', 'lower_third_dual_sapphire.html', 'lower_third_mihrab.html', 'fullscreen_mihrab.html', 'dual_mihrab.html'];
         const requestedTemplate = new URLSearchParams(window.location.search).get('template');
         let currentTemplate = ALLOWED_TEMPLATE_FILES.includes(requestedTemplate)
             ? 'templates/' + requestedTemplate
