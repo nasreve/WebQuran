@@ -195,7 +195,7 @@ function loadSettings() {
             }
             appSettings = {
                 values: clean,
-                hadithTemplate: ['lower-third', 'lower-third-white', 'full-screen'].includes(parsed.hadithTemplate)
+                hadithTemplate: ['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(parsed.hadithTemplate)
                     ? parsed.hadithTemplate
                     : null,
                 lanAccess: parsed.lanAccess === true,
@@ -238,7 +238,7 @@ function scheduleSettingsSave() {
 // localStorage panel sudah rutin memicu penyimpanan. Sisa perubahan tetap
 // ditulis saat aplikasi ditutup (lihat app.on('before-quit')).
 function rememberHadithTemplate(template) {
-    if (!['lower-third', 'lower-third-white', 'full-screen'].includes(template)) return;
+    if (!['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(template)) return;
     appSettings.hadithTemplate = template;
 }
 
@@ -570,7 +570,7 @@ function startLocalServer(port) {
                         });
                         if (!translation) throw new Error('Terjemahan hadits kosong setelah informasi arsip dibersihkan.');
                         const template = data.template ?? currentHadithPresentation.template;
-                        if (!['lower-third', 'lower-third-white', 'full-screen'].includes(template)) throw new Error('Template hadits tidak valid.');
+                        if (!['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(template)) throw new Error('Template hadits tidak valid.');
                         const arabicImages = data.arabicImages ?? [];
                         if (!Array.isArray(arabicImages) || arabicImages.length > 20 || arabicImages.some(src => typeof src !== 'string' || !/^data\/hadith\/assets\/[\w-]+\/[\w.-]+\.(gif|png|jpe?g)$/i.test(src) || src.includes('..'))) throw new Error('Aset Arab tidak valid.');
                         if (!arabic.trim() && !arabicImages.length) throw new Error('Teks atau gambar Arab wajib tersedia.');
@@ -627,7 +627,7 @@ function startLocalServer(port) {
                         const action = data.action;
                         if (action !== 'template' && (!currentHadithPresentation.translation || (!currentHadithPresentation.arabic.trim() && !currentHadithPresentation.arabicImages.length))) throw new Error('Belum ada hadits aktif.');
                         if (action === 'template') {
-                            if (!['lower-third', 'lower-third-white', 'full-screen'].includes(data.template)) throw new Error('Template hadits tidak valid.');
+                            if (!['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(data.template)) throw new Error('Template hadits tidak valid.');
                             currentHadithPresentation.template = data.template;
                             rememberHadithTemplate(data.template);
                         } else if (action === 'arabic' || action === 'translation') {
@@ -690,7 +690,7 @@ function startLocalServer(port) {
                     try {
                         const data = JSON.parse(body || '{}');
                         if (typeof data.fits !== 'boolean') throw new Error('Status muat harus boolean.');
-                        if (!['lower-third', 'lower-third-white', 'full-screen'].includes(data.template)) throw new Error('Template hadits tidak valid.');
+                        if (!['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(data.template)) throw new Error('Template hadits tidak valid.');
                         if (!['arabic', 'translation'].includes(data.mode)) throw new Error('Mode tampilan tidak valid.');
                         currentHadithFit = {
                             fits: data.fits,

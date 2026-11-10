@@ -374,14 +374,100 @@
             }
         }
 
+        /* ── Motion Emerald Glass ──
+           MASUK (±1 dtk): rel emas di kiri tumbuh & menyala lebih dulu (panel
+           baru terbuka selebar rel), lalu panel kaca menyapu masuk ke kanan;
+           label meluncur dari kiri, teks ayat muncul rise + blur.
+           KELUAR (±0,6 dtk): teks merunduk, panel tersapu kembali ke rel kiri,
+           rel menyusut, lalu hilang. */
+        @keyframes glassIn {
+            0% {
+                opacity: 0;
+                clip-path: inset(0 calc(100% - 10px) 0 0 round 16px 16px 0 0);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            34% {
+                opacity: 1;
+                clip-path: inset(0 calc(100% - 10px) 0 0 round 16px 16px 0 0);
+            }
+
+            100% {
+                opacity: 1;
+                clip-path: inset(0 0 0 0 round 16px 16px 0 0);
+            }
+        }
+
+        @keyframes glassOut {
+            0% {
+                opacity: 1;
+                clip-path: inset(0 0 0 0 round 16px 16px 0 0);
+            }
+
+            62% {
+                opacity: 1;
+                clip-path: inset(0 calc(100% - 10px) 0 0 round 16px 16px 0 0);
+            }
+
+            100% {
+                opacity: 0;
+                clip-path: inset(0 calc(100% - 10px) 0 0 round 16px 16px 0 0);
+            }
+        }
+
+        @keyframes glassRailIn {
+            0% { transform: scaleY(0); box-shadow: 0 0 0 rgba(240, 199, 94, 0); }
+            60% { transform: scaleY(1); box-shadow: 0 0 28px rgba(240, 199, 94, 0.95); }
+            100% { transform: scaleY(1); box-shadow: 0 0 14px rgba(212, 175, 55, 0.55); }
+        }
+
+        @keyframes glassRailOut {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(0); }
+        }
+
+        @keyframes badgeIn {
+            from { opacity: 0; transform: translateX(-28px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         .panel-enter {
-            animation: panelEnter 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: glassIn 0.95s cubic-bezier(0.65, 0, 0.35, 1) forwards;
             pointer-events: auto;
         }
 
+        .panel-enter::before {
+            transform-origin: center;
+            animation: glassRailIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.05s backwards;
+        }
+
+        .panel-enter .info-badge {
+            animation: badgeIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+        }
+
+        .panel-enter .morph-wrapper.active .arabic-text,
+        .panel-enter .morph-wrapper.active .trans-text {
+            animation: textReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.58s backwards;
+        }
+
+        /* Saat keluar, label jangan memutar ulang animasi slideUp bawaan
+           (.animate-in) — tanpa ini label sempat hilang lalu muncul lagi. */
+        .panel-exit .info-badge {
+            animation: none;
+        }
+
         .panel-exit {
-            animation: panelExit 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            /* "both": selama jeda panel tetap di keyframe 0% (terlihat). */
+            animation: glassOut 0.55s cubic-bezier(0.55, 0, 0.75, 0.25) 0.08s both;
             pointer-events: none;
+        }
+
+        .panel-exit::before {
+            transform-origin: center;
+            animation: glassRailOut 0.22s ease-in 0.42s both;
         }
     </style>
 <script src="../js/quran-text-fit.js"></script>
@@ -433,12 +519,22 @@
             morphWrappers.forEach(mw => mw.classList.remove('active'));
 
             // Setelah animasi exit selesai, reset state panel ke kondisi awal yang bersih
-            function onExitEnd() {
+            // animationend juga naik dari elemen anak & pseudo-elemen; tunggu
+            // khusus glassOut milik panel ini agar gerakan keluar tidak terpotong.
+            // Cadangan: bila animationend tak pernah datang (animasi dibatalkan),
+            // jangan biarkan template terkunci di isAnimating = true.
+            const exitFallback = setTimeout(finishExit, 1100);
+            function finishExit() {
+                clearTimeout(exitFallback);
                 wrap.removeEventListener('animationend', onExitEnd);
                 wrap.classList.remove('panel-exit');
                 isAnimating = false;
             }
-            wrap.addEventListener('animationend', onExitEnd, { once: true });
+            function onExitEnd(e) {
+                if (e.target !== wrap || e.pseudoElement || e.animationName !== 'glassOut') return;
+                finishExit();
+            }
+            wrap.addEventListener('animationend', onExitEnd);
         }
 
         // Helper: Animasi pergantian teks ayat tanpa glitch/flickering

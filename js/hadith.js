@@ -33,6 +33,7 @@
       <select id="hd-template" class="hd-select" disabled>
         <option value="lower-third">Lower Third Gelap (vMix / OBS)</option>
         <option value="lower-third-white">Lower Third Putih (vMix / OBS)</option>
+        <option value="lower-third-full">Lower Third Penuh (lebar layar, rapat bawah)</option>
         <option value="full-screen">Full Screen (Proyektor)</option>
       </select>
       <button class="hd-action hd-projector-btn" id="hd-projector" type="button" title="Buka jendela layar proyektor / second screen">Buka Layar Proyektor</button>
@@ -198,7 +199,7 @@
   // ── Peringatan kutipan terpotong ─────────────────────────────
   // Halaman presentasi mengukur teks yang benar-benar dirender, lalu mengirim
   // hasilnya ke server. Di sini hasil itu dicocokkan dengan kutipan yang aktif.
-  const TEMPLATE_LABELS = { 'lower-third': 'Lower Third Gelap', 'lower-third-white': 'Lower Third Putih', 'full-screen': 'Full Screen' };
+  const TEMPLATE_LABELS = { 'lower-third': 'Lower Third Gelap', 'lower-third-white': 'Lower Third Putih', 'lower-third-full': 'Lower Third Penuh', 'full-screen': 'Full Screen' };
   function renderFitBadge(state) {
     const badge = $('fit');
     if (!badge) return;
@@ -240,7 +241,7 @@
       const response = await fetch('/api/hadith', { cache: 'no-store' });
       if (!response.ok) throw new Error('Pengaturan layar hadits belum tersedia.');
       const state = await response.json();
-      selectedTemplate = ['lower-third', 'lower-third-white', 'full-screen'].includes(state.template) ? state.template : 'lower-third';
+      selectedTemplate = ['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(state.template) ? state.template : 'lower-third';
       $('template').value = selectedTemplate;
       $('template').disabled = false;
       updateHeaderHadithTally(state.visible);
@@ -259,7 +260,7 @@
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.error || 'Template gagal diperbarui.');
       selectedTemplate = result.state.template;
-      const templateLabels = { 'lower-third': 'Lower Third Gelap', 'lower-third-white': 'Lower Third Putih', 'full-screen': 'Full Screen' };
+      const templateLabels = { 'lower-third': 'Lower Third Gelap', 'lower-third-white': 'Lower Third Putih', 'lower-third-full': 'Lower Third Penuh', 'full-screen': 'Full Screen' };
       feedback('Template hadits: ' + templateLabels[selectedTemplate] + '.');
       refreshFitReport(2);
     } catch (error) { feedback('Gagal mengganti template: ' + error.message); }

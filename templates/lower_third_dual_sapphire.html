@@ -57,11 +57,17 @@
             padding: 18px 0 14px;
             overflow: hidden;
 
-            /* ── Animasi baru: tirai terbuka dari tengah ──
-               Panel dibuka dengan clip-path horizontal, bukan geser/blur. */
-            clip-path: inset(0 50% 0 50% round 14px 14px 0 0);
+            /* ── Motion: tirai terbuka dari garis tengah ──
+               MASUK (±1,2 dtk): celah 4 px di tengah tampil lebih dulu dan garis
+               emas pemisah tumbuh + menyala di situ, lalu tirai terbuka ke dua
+               sisi, label turun, dan kolom Arab/Latin masuk dari sisinya.
+               KELUAR (±0,8 dtk): kolom & garis pergi lebih dulu, baru tirai
+               menutup kembali ke garis tengah, lalu memudar.
+               Transisi di bawah ini = arah KELUAR (state tanpa .visible);
+               arah MASUK ada di .dual-panel.visible. */
+            clip-path: inset(0 calc(50% - 2px) 0 calc(50% - 2px) round 14px 14px 0 0);
             opacity: 0;
-            transition: clip-path 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, box-shadow 1s ease;
+            transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.2s, opacity 0.25s ease 0.6s, box-shadow 1s ease;
             pointer-events: none;
             position: relative;
         }
@@ -80,6 +86,7 @@
         .dual-panel.visible {
             clip-path: inset(0 0 0 0 round 14px 14px 0 0);
             opacity: 1;
+            transition: clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.32s, opacity 0.15s ease, box-shadow 1s ease;
             pointer-events: auto;
             box-shadow: 0 25px 50px -12px rgba(3, 10, 22, 0.5),
                 0 0 46px -18px var(--glow-color);
@@ -130,7 +137,7 @@
         .dual-panel.visible .header-row {
             opacity: 1;
             transform: translateY(0);
-            transition-delay: 0.18s;
+            transition-delay: 0.62s;
         }
 
         #arabicColumn {
@@ -142,7 +149,7 @@
         .dual-panel.visible #arabicColumn {
             opacity: 1;
             transform: translateX(0);
-            transition-delay: 0.22s;
+            transition-delay: 0.5s;
         }
 
         #latinColumn {
@@ -154,7 +161,7 @@
         .dual-panel.visible #latinColumn {
             opacity: 1;
             transform: translateX(0);
-            transition-delay: 0.3s;
+            transition-delay: 0.58s;
         }
 
         .header-row {
@@ -248,7 +255,15 @@
         .dual-panel.visible .divider {
             opacity: 1;
             transform: scaleY(1);
-            transition-delay: 0.3s;
+            transition-delay: 0.05s;
+            /* Nyala emas sesaat saat garis pemisah tumbuh, lalu kembali normal. */
+            animation: seamFlare 1.3s ease-out 0.05s;
+        }
+
+        @keyframes seamFlare {
+            0% { box-shadow: 0 0 0 rgba(240, 199, 94, 0); }
+            30% { box-shadow: 0 0 26px 2px rgba(255, 220, 120, 0.95); }
+            100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.35); }
         }
 
         .arabic-text {

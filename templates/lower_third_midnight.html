@@ -336,37 +336,103 @@
 
         /* ── Animasi Midnight Blue: slide-up tenang, tanpa kilau ──
            Konten tetap memakai textReveal (blur → tajam) seperti template lain. */
+        /* ── Motion Midnight Blue ──
+           MASUK (±1,2 dtk): panel naik tenang, garis emas di atas menyala dari
+           tengah ke kedua sisi, sorot biru di pojok kanan perlahan terang,
+           label turun ke tempatnya, lalu teks ayat muncul rise + blur.
+           KELUAR (±0,55 dtk): teks merunduk, panel tenggelam & memudar. */
         @keyframes midnightIn {
-            from {
+            0% {
                 opacity: 0;
-                transform: translateY(26px);
+                transform: translateY(34px);
             }
 
-            to {
+            45% {
+                opacity: 1;
+            }
+
+            100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
         @keyframes midnightOut {
-            from {
+            0% {
                 opacity: 1;
                 transform: translateY(0);
             }
 
-            to {
+            100% {
                 opacity: 0;
-                transform: translateY(18px);
+                transform: translateY(30px);
             }
         }
 
+        /* Nyala garis emas dari tengah, lalu meredup ke garis tepi asli. */
+        .lower-third-panel::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0 / 3px 3px 0 0;
+            background: linear-gradient(90deg, rgba(253, 230, 138, 0), #fde68a 30%, #fff7d6 50%, #fde68a 70%, rgba(253, 230, 138, 0));
+            box-shadow: 0 0 14px rgba(253, 224, 120, 0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes midnightLine {
+            0% { opacity: 0; transform: scaleX(0); }
+            15% { opacity: 1; }
+            65% { opacity: 1; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(1); }
+        }
+
+        @keyframes midnightGlow {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes badgeDrop {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .panel-enter {
-            animation: midnightIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: midnightIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: auto;
         }
 
+        .panel-enter::after {
+            transform-origin: center;
+            animation: midnightLine 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.2s;
+        }
+
+        .panel-enter::before {
+            animation: midnightGlow 1.2s ease-out 0.3s backwards;
+        }
+
+        .panel-enter .info-badge {
+            animation: badgeDrop 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.36s backwards;
+        }
+
+        .panel-enter .morph-wrapper.active .arabic-text,
+        .panel-enter .morph-wrapper.active .trans-text {
+            animation: textReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.46s backwards;
+        }
+
+        /* Saat keluar, label jangan memutar ulang animasi slideUp bawaan
+           (.animate-in) — tanpa ini label sempat hilang lalu muncul lagi. */
+        .panel-exit .info-badge {
+            animation: none;
+        }
+
         .panel-exit {
-            animation: midnightOut 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            /* "both": selama jeda panel tetap di keyframe 0% (terlihat). */
+            animation: midnightOut 0.46s cubic-bezier(0.55, 0, 0.75, 0.25) 0.08s both;
             pointer-events: none;
         }
 
@@ -457,12 +523,22 @@
             morphWrappers.forEach(mw => mw.classList.remove('active'));
 
             // Setelah animasi exit selesai, reset state panel ke kondisi awal yang bersih
-            function onExitEnd() {
+            // animationend juga naik dari elemen anak & pseudo-elemen; tunggu
+            // khusus midnightOut milik panel ini agar gerakan keluar tidak terpotong.
+            // Cadangan: bila animationend tak pernah datang (animasi dibatalkan),
+            // jangan biarkan template terkunci di isAnimating = true.
+            const exitFallback = setTimeout(finishExit, 1100);
+            function finishExit() {
+                clearTimeout(exitFallback);
                 wrap.removeEventListener('animationend', onExitEnd);
                 wrap.classList.remove('panel-exit');
                 isAnimating = false;
             }
-            wrap.addEventListener('animationend', onExitEnd, { once: true });
+            function onExitEnd(e) {
+                if (e.target !== wrap || e.pseudoElement || e.animationName !== 'midnightOut') return;
+                finishExit();
+            }
+            wrap.addEventListener('animationend', onExitEnd);
         }
 
         // Helper: Animasi pergantian teks ayat tanpa glitch/flickering

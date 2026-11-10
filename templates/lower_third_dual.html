@@ -46,30 +46,72 @@
             width: 100%;
             height: 28vh; /* dikelola DualFit: 28vh → 40vh */
             /* Fixed max height to save screen space */
-            background: var(--panel-bg);
+            /* Latar & bingkai kosong saat tersembunyi, agar pada fase pita 3 px
+               hanya garis emas yang terlihat (bukan jalur putih selebar layar).
+               Diisi di .visible. */
+            background-color: transparent;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--panel-border);
+            border: 1px solid transparent;
             border-radius: 0;
+            /* Struktur 3 lapis harus sama dengan .visible agar bisa ditransisikan
+               (bila beda, browser melompat ke nilai akhir: garis putih tipis
+               muncul sebelum panel menggulung). */
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                0 0 60px -15px rgba(6, 78, 59, 0),
+                inset 0 1px 0 rgba(255, 255, 255, 0);
             display: flex;
             flex-direction: column;
             padding: 20px 4vw;
 
-            /* Entry/Exit Animation */
-            transform: translateY(80px) scale(0.95);
+            /* ── Motion: gulungan dari garis emas ──
+               MASUK (±1,5 dtk): hanya pita 3 px di tepi atas yang tampil; garis
+               emas menggaris dari kiri ke kanan di pita itu, lalu panel menggulung
+               turun dari garis tsb. Label masuk dari kiri, kolom Arab dari kanan,
+               terjemahan dari kiri, dan garis pemisah tengah menyala terakhir.
+               KELUAR (±1,1 dtk): kolom & label keluar ke sisinya, panel tergulung
+               naik ke garis atas, garis menarik diri ke kanan, lalu hilang.
+               Transisi di aturan ini = arah KELUAR; arah MASUK ada di .visible.
+               Batas clip saat tampil diberi minus agar bayangan/glow panel tidak
+               ikut terpotong. */
+            clip-path: inset(0 0 calc(100% - 3px) 0);
             opacity: 0;
-            filter: blur(12px);
-            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease, filter 1s ease, box-shadow 1.5s ease;
+            transition: clip-path 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.22s, opacity 0.2s ease 0.95s, box-shadow 1.5s ease,
+                background-color 0.08s linear 0.7s, border-color 0.08s linear 0.7s;
             pointer-events: none;
             position: relative;
         }
 
+        /* Garis emas di tepi atas: penuntun gulungan. */
+        .dual-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #b8860b, #f0c75e 50%, #b8860b);
+            box-shadow: 0 0 12px rgba(240, 199, 94, 0.75);
+            transform: scaleX(0);
+            transform-origin: right center;
+            transition: transform 0.3s cubic-bezier(0.7, 0, 0.84, 0) 0.68s;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .dual-panel.visible::before {
+            transform: scaleX(1);
+            transform-origin: left center;
+            transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1) 0.05s;
+        }
+
         .dual-panel.visible {
-            transform: translateY(0) scale(1);
+            clip-path: inset(-80px -80px -80px -80px);
             opacity: 1;
-            filter: blur(0);
+            background-color: var(--panel-bg);
+            border-color: var(--panel-border);
+            transition: clip-path 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s, opacity 0.12s ease, box-shadow 1.5s ease 0.5s,
+                background-color 0.12s linear 0.5s, border-color 0.12s linear 0.5s;
             pointer-events: auto;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15),
                 0 0 60px -15px var(--glow-color),
@@ -112,30 +154,44 @@
             }
         }
 
-        /* Staggered Content Animation */
+        /* Konten bertahap: label dari kiri, Arab dari kanan, terjemahan dari
+           kiri. Transisi dasar = arah KELUAR (cepat, tanpa jeda). */
         .header-row,
         .column {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.55, 0, 0.75, 0.25);
+        }
+
+        .header-row {
+            transform: translateX(-24px);
+        }
+
+        #arabicColumn {
+            transform: translateX(32px);
+        }
+
+        #latinColumn {
+            transform: translateX(-32px);
+        }
+
+        .dual-panel.visible .header-row,
+        .dual-panel.visible #arabicColumn,
+        .dual-panel.visible #latinColumn {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dual-panel.visible .header-row {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.3s;
+            transition-delay: 0.72s;
         }
 
         .dual-panel.visible #arabicColumn {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.4s;
+            transition-delay: 0.78s;
         }
 
         .dual-panel.visible #latinColumn {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.55s;
+            transition-delay: 0.88s;
         }
 
         .header-row {
@@ -209,14 +265,22 @@
             align-self: center;
             opacity: 0;
             transform: scaleY(0);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.25s ease, transform 0.3s ease-in;
             transform-origin: center;
         }
 
         .dual-panel.visible .divider {
             opacity: 1;
             transform: scaleY(1);
-            transition-delay: 0.65s;
+            transition: opacity 0.4s ease 0.95s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.95s;
+            /* Nyala emas sesaat saat garis pemisah tumbuh, lalu kembali normal. */
+            animation: dualSeamFlare 1.2s ease-out 0.95s backwards;
+        }
+
+        @keyframes dualSeamFlare {
+            0% { box-shadow: 0 0 0 rgba(212, 175, 55, 0); }
+            35% { box-shadow: 0 0 22px 2px rgba(240, 199, 94, 0.9); }
+            100% { box-shadow: 0 0 0 rgba(212, 175, 55, 0); }
         }
 
         .arabic-text {

@@ -6,7 +6,7 @@
   const preview = new URLSearchParams(location.search).get('preview');
   const previewMode = ['arabic', 'translation', 'long', 'image'].includes(preview) ? preview : null;
   const requestedPreviewTemplate = new URLSearchParams(location.search).get('template');
-  const previewTemplate = ['lower-third', 'lower-third-white', 'full-screen'].includes(requestedPreviewTemplate) ? requestedPreviewTemplate : 'lower-third';
+  const previewTemplate = ['lower-third', 'lower-third-white', 'lower-third-full', 'full-screen'].includes(requestedPreviewTemplate) ? requestedPreviewTemplate : 'lower-third';
 
   const card = document.getElementById('hadith-card');
   const content = document.getElementById('hadith-content');
@@ -66,7 +66,7 @@
     if (!state || !state.visible) return 'hidden';
     const mode = state.displayMode === 'translation' ? 'translation' : 'arabic';
     return JSON.stringify([
-      ['lower-third-white', 'full-screen'].includes(state.template) ? state.template : 'lower-third',
+      ['lower-third-white', 'lower-third-full', 'full-screen'].includes(state.template) ? state.template : 'lower-third',
       mode,
       mode === 'translation' ? state.translation || '' : state.arabic || '',
       mode === 'arabic' ? state.arabicImages || [] : [],
@@ -81,7 +81,7 @@
     if (previewMode || !state || !hasContent) return;
     const payload = {
       fits: !!fits,
-      template: ['lower-third-white', 'full-screen'].includes(state.template) ? state.template : 'lower-third',
+      template: ['lower-third-white', 'lower-third-full', 'full-screen'].includes(state.template) ? state.template : 'lower-third',
       mode: state.displayMode === 'translation' ? 'translation' : 'arabic',
       lastUpdate: state.lastUpdate || null,
     };
@@ -163,6 +163,7 @@
     if (content) content.scrollTop = 0;
     document.body.classList.toggle('hp-fullscreen', state?.template === 'full-screen');
     document.body.classList.toggle('hp-lower-third-white', state?.template === 'lower-third-white');
+    document.body.classList.toggle('hp-lower-third-full', state?.template === 'lower-third-full');
     if (!previewMode) document.title = state?.template === 'full-screen' ? 'Hadits — Full Screen' : 'Hadits — Lower Third';
     arabic.hidden = translation.hidden = images.hidden = reference.hidden = true;
     arabic.textContent = translation.textContent = reference.textContent = '';
@@ -221,11 +222,13 @@
 
     if (!reduceMotion && currentlyVisible && !nextVisible) {
       card.classList.add('hp-leaving');
+      // Lower Third Penuh punya gerakan keluar lebih panjang (lihat CSS hpFullOut).
+      const exitMs = document.body.classList.contains('hp-lower-third-full') ? 460 : 180;
       transitionTimer = setTimeout(() => {
         if (sequence !== transitionSequence) return;
         commitRender(state);
         card.classList.remove('hp-leaving');
-      }, 180);
+      }, exitMs);
       return { visible: false, fits: true, transitioning: true };
     }
 

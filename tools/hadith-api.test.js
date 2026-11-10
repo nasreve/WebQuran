@@ -21,6 +21,8 @@ test('hadith HTTP API validates atomically and keeps Quran state independent', a
     assert.equal(initial.template, 'lower-third');
     assert.equal((await control({ action: 'template', template: 'lower-third-white' })).status, 200);
     assert.equal((await get()).template, 'lower-third-white');
+    assert.equal((await control({ action: 'template', template: 'lower-third-full' })).status, 200);
+    assert.equal((await get()).template, 'lower-third-full');
     assert.equal((await control({ action: 'template', template: 'full-screen' })).status, 200);
     const configured = await get();
     assert.equal(configured.template, 'full-screen'); assert.equal(configured.visible, false);
