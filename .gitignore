@@ -1,0 +1,24 @@
+# Artefak build
+dist/
+build/icon-in-exe.png
+
+# Pengaturan lokal (dibuat saat aplikasi dijalankan)
+settings.json
+settings.json.tmp
+
+# Dependensi
+node_modules/
+
+# Data hasil ekstraksi (dibangun ulang dengan tools/build_hadith_data.py)
+tools/hadits-audit/extracted/
+tools/hadits-kitab-audit/**/extracted/
+
+# Berkas sementara pengembangan
+scratch/
+*.bak
+
+# File >100MB (batas GitHub)
+data/hadith/kitab-9-imam.json
+
+# Log
+*.log

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webquran Template: Lower Third Dual (Side-by-Side)</title>
+    <!-- Font dibundel lokal: tetap benar tanpa internet -->
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <style>
+        /* Satu palet untuk kedua tema; kelas "light" hanya mematikan bayangan
+           teks Arab (lihat body.light .arabic-text). */
+        :root {
+            --bg: transparent;
+            --arabic-color: #111827; /* hitam: kontras tertinggi di panel putih */
+            --trans-color: #334155; /* Slate Gray */
+            --info-color: #b45309; /* Gold / Amber */
+            --accent: linear-gradient(135deg, #d4af37, #b8860b); /* Metallic Gold */
+            --accent-shadow: rgba(212, 175, 55, 0.4);
+            --panel-bg: rgba(255, 255, 255, 0.95); /* White glass */
+            --panel-border: rgba(212, 175, 55, 0.5); /* Gold border */
+            --glow-color: rgba(6, 78, 59, 0.25); /* Green outer glow */
+            --arabic-font: 'Amiri', 'Traditional Arabic', serif;
+            --latin-font: 'Montserrat', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: var(--latin-font);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 0 clamp(56px, 7.5vh, 96px) 0;
+            /* Full-width graphic with a reserved running-text lane below. */
+        }
+
+        .dual-panel {
+            width: 100%;
+            height: 28vh; /* dikelola DualFit: 28vh → 40vh */
+            /* Fixed max height to save screen space */
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 0;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 4vw;
+
+            /* Entry/Exit Animation */
+            transform: translateY(80px) scale(0.95);
+            opacity: 0;
+            filter: blur(12px);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease, filter 1s ease, box-shadow 1.5s ease;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .dual-panel.visible {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            filter: blur(0);
+            pointer-events: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15),
+                0 0 60px -15px var(--glow-color),
+                /* Outer glow */
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        /* Sapuan halus pada garis label (pengganti kilau besar yang dulu
+           melintasi panel): garis emas tumbuh dari kiri ke kanan, 0,6 dtk. */
+        .info-badge {
+            position: relative;
+        }
+
+        .info-badge::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, currentColor, rgba(255, 255, 255, 0));
+            transform: scaleX(1);
+            transform-origin: left center;
+            opacity: 0.9;
+        }
+
+        .dual-panel.visible .info-badge::after {
+            animation: labelLine 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes labelLine {
+            from {
+                transform: scaleX(0);
+                opacity: 0.25;
+            }
+
+            to {
+                transform: scaleX(1);
+                opacity: 0.9;
+            }
+        }
+
+        /* Staggered Content Animation */
+        .header-row,
+        .column {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .dual-panel.visible .header-row {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
+        }
+
+        .dual-panel.visible #arabicColumn {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.4s;
+        }
+
+        .dual-panel.visible #latinColumn {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.55s;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: flex-start;
+            padding-left: 3.2vw;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .info-badge {
+            /* Label editorial: teks emas tua kecil dengan garis bawah tipis,
+               bukan pil. Panel Dual berwarna terang, jadi emasnya dibuat lebih tua
+               agar tetap terbaca. */
+            background: none;
+            color: #a16207;
+            padding: 0 0 3px;
+            border-radius: 0;
+            border-bottom: 1px solid rgba(161, 98, 7, 0.55);
+            font-size: clamp(11px, 1.15vw, 14px);
+            font-weight: 800;
+            letter-spacing: 2.4px;
+            text-transform: uppercase;
+            box-shadow: none;
+        }
+
+        .content-row {
+            display: flex;
+            flex: 1;
+            gap: 40px;
+            overflow: hidden;
+            /* Hide anything that goes out of bounds */
+        }
+
+        /* 
+           Gunakan Webkit Mask Image agar teks memudar secara halus 
+           di bagian paling bawah saat di-scroll
+        */
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+            /* Tanpa gulir tidak perlu fade: teks yang muat harus tajam penuh.
+               Fade hanya dinyalakan saat gulir aktif (lihat .is-scrolling). */
+            -webkit-mask-image: none;
+            mask-image: none;
+        }
+
+        /* Padding kolom: teks Arab sebelumnya menempel ke tepi kanan layar. */
+        #latinColumn {
+            padding-left: 3.2vw;
+        }
+
+        #arabicColumn {
+            padding-right: 3.2vw;
+        }
+
+        .scroll-wrapper {
+            width: 100%;
+            padding-bottom: 30px;
+            /* Ruang lebih di bawah sebelum habis */
+        }
+
+        .divider {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--panel-border), transparent);
+            border-radius: 2px;
+            height: 70%;
+            align-self: center;
+            opacity: 0;
+            transform: scaleY(0);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: center;
+        }
+
+        .dual-panel.visible .divider {
+            opacity: 1;
+            transform: scaleY(1);
+            transition-delay: 0.65s;
+        }
+
+        .arabic-text {
+            font-family: var(--arabic-font);
+            font-weight: 600;
+            font-size: clamp(28px, 4vw, 50px);
+            color: var(--arabic-color);
+            text-align: right;
+            direction: rtl;
+            line-height: 2.2;
+            word-wrap: break-word;
+        }
+
+        .trans-text {
+            font-family: var(--latin-font);
+            font-size: clamp(16px, 2vw, 24px);
+            color: var(--trans-color);
+            line-height: 1.6;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .waiting {
+            text-align: center;
+            color: var(--info-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            align-self: center;
+            margin-top: 20px;
+        }
+
+        /* Loading / Initial state */
+        #mainWrap:not(.has-content) .content-row,
+        #mainWrap:not(.has-content) .info-badge {
+            display: none;
+        }
+
+        #mainWrap.has-content .waiting {
+            display: none;
+        }
+
+        /* Saat gulir aktif, teks memudar lebih awal agar jelas masih berlanjut */
+        .dual-panel.is-scrolling .column {
+            -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+        }    </style>
+</head>
+
+<body>
+
+    <div class="dual-panel" id="mainWrap">
+        <div class="waiting">📡 Menunggu Ayat...</div>
+
+        <div class="header-row">
+            <div class="info-badge" id="infoBadgeEl">QS. AL-FATIHAH: 1</div>
+        </div>
+
+        <div class="content-row">
+            <!-- Kolom Latin (Kiri) -->
+            <div class="column" id="latinColumn">
+                <div class="scroll-wrapper" id="latinScroll">
+                    <div class="trans-text" id="transTextEl"></div>
+                </div>
+            </div>
+
+            <!-- Pemisah Tengah -->
+            <div class="divider"></div>
+
+            <!-- Kolom Arab (Kanan) -->
+            <div class="column" id="arabicColumn">
+                <div class="scroll-wrapper" id="arabicScroll">
+                    <div class="arabic-text" id="arabicTextEl"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pengukur teks bersama: mengecilkan ayat panjang agar tidak terpotong -->
+    <script src="../js/quran-text-fit.js"></script>
+    <script src="../js/dual-fit.js"></script>
+    <!-- Runtime bersama: mode OBS, pendengar pesan, dan polling cadangan -->
+    <script src="../js/template-runtime.js"></script>
+    <script>
+        // Mode OBS (?obs) ditangani runtime bersama.
+
+        let isPanelVisible = false;
+
+        function updateContent(arabic, translation, info, fontSize, theme, isVisible) {
+            const wrap = document.getElementById('mainWrap');
+
+            // 1. Tema: template ini memakai satu palet (putih keemasan). Tema
+            // terang hanya menghapus bayangan teks Arab agar panel tetap bersih;
+            // tidak ada palet gelap terpisah.
+            document.body.classList.toggle('light', theme === 'light');
+
+            // 2. Visibility — kilau besar (flare) sudah dihapus; panel cukup
+            // disembunyikan dan ditampilkan lewat transisi CSS.
+            if (isVisible === false) {
+                if (isPanelVisible) {
+                    wrap.classList.remove('visible');
+                    document.getElementById('arabicScroll').dataset.scrolling = 'false';
+                    document.getElementById('latinScroll').dataset.scrolling = 'false';
+                    isPanelVisible = false;
+                }
+                return;
+            }
+
+            // 3. Render Konten
+            if (arabic && translation) {
+                wrap.classList.add('has-content');
+
+                // Font Size Scaling (relative to base)
+                const currentFontSize = fontSize || 100;
+                const scale = currentFontSize / 100;
+
+                const badgeEl = document.getElementById('infoBadgeEl');
+                const arTextEl = document.getElementById('arabicTextEl');
+                const trTextEl = document.getElementById('transTextEl');
+
+                // Hilangkan tanda tajwid yang tidak perlu jika ada
+                const cleanArabic = arabic.replace(/[\u06D6-\u06DC\u06E9\u06DF]/g, '');
+
+                badgeEl.innerText = info;
+                badgeEl.style.fontSize = Math.round(13 * scale) + 'px'; /* label editorial */
+
+                // Ayat panjang: ukur terhadap tinggi kolom sebenarnya, boleh menumbuhkan
+                // panel sampai 40vh, dan gulir hanya sebagai jalan terakhir (bisa dijeda).
+                arTextEl.innerText = cleanArabic;
+                trTextEl.innerText = translation;
+                if (window.DualFit) {
+                    DualFit.apply({
+                        panel: wrap,
+                        scale: scale,
+                        arabic: { el: arTextEl, col: document.getElementById('arabicColumn'),
+                                  wrap: document.getElementById('arabicScroll'), lineHeight: 2.2 },
+                        latin: { el: trTextEl, col: document.getElementById('latinColumn'),
+                                 wrap: document.getElementById('latinScroll'), lineHeight: 1.65 }
+                    });
+                }
+
+                // Laporkan bila teks masih meluber keluar panel walau sudah mengecil,
+                // supaya panel operator bisa menampilkan peringatan.
+                try {
+                    const wrapRect = wrap.getBoundingClientRect();
+                    const arRect = arTextEl.getBoundingClientRect();
+                    const trRect = trTextEl.getBoundingClientRect();
+                    const clipped = arRect.bottom > wrapRect.bottom + 2 || trRect.bottom > wrapRect.bottom + 2;
+                    document.body.dataset.clipped = clipped ? 'true' : 'false';
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'QURAN_FIT', clipped }, '*');
+                    }
+                } catch (e) { /* pengukuran tidak wajib */ }
+
+                // Tampilkan panel (transisi CSS: konten masuk berurutan)
+                if (!isPanelVisible) {
+                    wrap.classList.add('visible');
+                    isPanelVisible = true;
+                }
+            }
+        }
+
+        // Runtime bersama: pendengar pesan + polling cadangan + deteksi OBS.
+        TemplateRuntime.init({
+            onScrollPause(isPaused) {
+                if (window.DualFit) DualFit.setPaused(!!isPaused);
+            },
+            onContent(data) {
+                updateContent(data.arabic, data.translation, data.info, data.fontSize, data.theme, data.isVisible);
+            },
+            onFonts(arabicFont, latinFont) {
+                applyFonts(arabicFont, latinFont);
+            },
+        });
+
+        // ── Font Helpers ───────────────────────────────────
+        const ARABIC_FONT_MAP = {
+            'amiri': "'Amiri', 'Traditional Arabic', serif",
+            'amiri-quran': "'Amiri Quran', 'Traditional Arabic', serif",
+            'sakkal-majalla': "'Sakkal Majalla', 'Traditional Arabic', serif",
+            'myriad-arabic': "'Myriad Arabic', 'Segoe UI', sans-serif",
+            'noto-naskh': "'Noto Naskh Arabic', 'Traditional Arabic', serif",
+            'scheherazade': "'Scheherazade New', 'Traditional Arabic', serif",
+            'lateef': "'Lateef', 'Traditional Arabic', serif",
+            'uthmanic': "'Noto Kufi Arabic', 'Traditional Arabic', serif",
+        };
+        const LATIN_FONT_MAP = {
+            'system': "'Segoe UI', system-ui, sans-serif",
+            'roboto': "'Roboto', sans-serif",
+            'outfit': "'Outfit', sans-serif",
+            'raleway': "'Raleway', sans-serif",
+            'playfair': "'Playfair Display', serif",
+            'cinzel': "'Cinzel', serif",
+            'inter': "'Inter', sans-serif",
+            'montserrat': "'Montserrat', sans-serif",
+            'lora': "'Lora', Georgia, serif",
+            'nunito': "'Nunito', sans-serif",
+            'poppins': "'Poppins', sans-serif",
+        };
+        const ARABIC_GOOGLE_FONTS = {
+            'amiri-quran': 'https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap',
+            'noto-naskh': 'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap',
+            'scheherazade': 'https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap',
+            'lateef': 'https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&display=swap',
+            'uthmanic': 'https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap',
+        };
+        const LATIN_GOOGLE_FONTS = {
+            'roboto': 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap',
+            'outfit': 'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap',
+            'raleway': 'https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap',
+            'playfair': 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap',
+            'cinzel': 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+            'inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap',
+            'montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap',
+            'lora': 'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+            'nunito': 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap',
+            'poppins': 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap',
+        };
+        const loadedFontLinks = new Set();
+        let lastArabicFont = '', lastLatinFont = '';
+
+        function injectFont(url) {
+            if (!url || loadedFontLinks.has(url)) return;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+            loadedFontLinks.add(url);
+        }
+
+        function applyFonts(arabicKey, latinKey) {
+            if (arabicKey && arabicKey !== lastArabicFont) {
+                injectFont(ARABIC_GOOGLE_FONTS[arabicKey]);
+                const family = ARABIC_FONT_MAP[arabicKey] || ARABIC_FONT_MAP['amiri'];
+                document.documentElement.style.setProperty('--arabic-font', family);
+                lastArabicFont = arabicKey;
+            }
+            if (latinKey && latinKey !== lastLatinFont) {
+                injectFont(LATIN_GOOGLE_FONTS[latinKey]);
+                const family = LATIN_FONT_MAP[latinKey] || LATIN_FONT_MAP['montserrat'];
+                document.documentElement.style.setProperty('--latin-font', family);
+                lastLatinFont = latinKey;
+            }
+        }
+
+        // Apply fonts from localStorage on load
+        (function () {
+            const ar = localStorage.getItem('quran_arabic_font');
+            const lt = localStorage.getItem('quran_latin_font');
+            if (ar || lt) applyFonts(ar || 'amiri', lt || 'montserrat');
+        })();
+    </script>
+</body>
+
+</html>

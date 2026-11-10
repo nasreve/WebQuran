@@ -1,0 +1,66 @@
+{
+    "name": "webquran",
+    "version": "5.4.0",
+    "description": "Webquran v5.4 - Aplikasi Al-Quran & Hadits untuk Presentasi & Live Streaming",
+    "main": "main.js",
+    "author": "Ahmad Nas",
+    "license": "MIT",
+    "scripts": {
+        "test": "node --test tools/search.test.js tools/hadith.test.js tools/hadith-api.test.js tools/dual-screen.test.js tools/presentation-fit.test.js tools/hadith-fit.test.js tools/server-security.test.js tools/state-authority.test.js tools/verse-api.test.js tools/reading-pak.test.js tools/template-runtime.test.js tools/quran-data.test.js tools/template-swap.test.js tools/pvw-pgm.test.js tools/dual-fit.test.js tools/hadith-dedupe.test.js tools/hadith-data.test.js tools/hadith-fields.test.js tools/hadith-morphology.test.js tools/hadith-fuzzy.test.js tools/hadith-index.test.js",
+        "build:hadith-data": "python tools/build_hadith_data.py",
+        "build:hadith-dedup": "node tools/build_hadith_dedup.js",
+        "build:hadith-trim": "node tools/trim_hadith_fields.js",
+        "build:hadith-drop-images": "node tools/drop_image_hadith.js",
+        "build:hadith-index": "node tools/build_hadith_index.js",
+        "fonts": "node tools/fetch-fonts.js",
+        "pack:reading": "node tools/pack-reading.js",
+        "build:quran": "node tools/build-quran-data.js",
+        "start": "electron .",
+        "build": "electron-builder --win portable",
+        "build:dir": "electron-builder --win --dir"
+    },
+    "devDependencies": {
+        "electron": "^34.0.0",
+        "electron-builder": "^25.1.8"
+    },
+    "build": {
+        "appId": "id.webquran.v5",
+        "productName": "Webquran v5",
+        "win": {
+            "icon": "build/icon.ico",
+            "target": [
+                {
+                    "target": "portable",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        },
+        "portable": {
+            "artifactName": "Webquran-v${version}-Portable.${ext}"
+        },
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "**/*",
+            "!node_modules/.cache",
+            "!dist",
+            "!build",
+            "!tools",
+            "!scratch",
+            "!hadits",
+            "!**/*.bak",
+            "!**/*.md",
+            "!settings.json",
+            "!settings.json.tmp",
+            "!data/hadith/reading",
+            "!data/*.json",
+            "!data/surah-list.json",
+            "!data/vmix_feed.json",
+            "data/custom_full_quran.json",
+            "data/kemenag2002.json"
+        ]
+    }
+}

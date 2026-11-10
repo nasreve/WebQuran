@@ -1,0 +1,220 @@
+:root {
+  --hp-scale: 1;
+  --hp-ink: #fffdf6;
+  --hp-panel: rgba(7, 18, 23, .95);
+  --hp-emerald: #2fae89;
+  --hp-gold: #b89a5a;
+  --hp-muted: #aab4bd;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0);
+}
+[hidden] { display: none !important; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; color: var(--hp-ink); }
+/* Preview background is never enabled on the plain broadcast URL. */
+body.hp-preview {
+  background: radial-gradient(ellipse at 70% 20%, #23354d, transparent 65%), #0c1524;
+}
+.hp-stage { position: relative; width: 100%; height: 100%; }
+.hp-lower-third {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7.5vh;
+  height: auto;
+  max-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(207, 225, 224, .16);
+  border-radius: 0;
+  background: var(--hp-panel);
+  box-shadow: 0 calc(16px * var(--hp-scale)) calc(42px * var(--hp-scale)) rgba(0, 0, 0, .34);
+  overflow: hidden;
+  isolation: isolate;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity, transform;
+}
+.hp-lower-third::before {
+  content: "";
+  position: absolute;
+  top: calc(27px * var(--hp-scale));
+  left: 0;
+  width: calc(4px * var(--hp-scale));
+  height: calc(52px * var(--hp-scale));
+  border-radius: 0 calc(2px * var(--hp-scale)) calc(2px * var(--hp-scale)) 0;
+  background: var(--hp-emerald);
+}
+.hp-lower-third:not([hidden]) {
+  animation: hpPanelEnter .36s cubic-bezier(.16, 1, .3, 1) both;
+}
+.hp-content,
+.hp-reference {
+  transition: opacity .24s ease, transform .28s cubic-bezier(.16, 1, .3, 1);
+}
+.hp-lower-third.hp-changing .hp-content,
+.hp-lower-third.hp-changing .hp-reference {
+  opacity: 0;
+  transform: translateY(calc(6px * var(--hp-scale)));
+  transition-duration: .16s;
+  transition-timing-function: ease-in;
+}
+.hp-lower-third.hp-leaving {
+  animation: hpPanelExit .18s ease-in forwards;
+}
+@keyframes hpPanelEnter {
+  from { opacity: 0; transform: translateY(calc(14px * var(--hp-scale))); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes hpPanelExit {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(calc(8px * var(--hp-scale))); }
+}
+/* Full Screen memusatkan panel dengan transform: translateY(-50%). Animasi masuk
+   yang generik berakhir di translateY(0) dan — karena fill-mode "both" — nilainya
+   bertahan, sehingga panel bergeser turun 32vh dan baris riwayat terpotong.
+   Varian animasi di bawah mempertahankan offset -50% tersebut. */
+@keyframes hpPanelEnterFullscreen {
+  from { opacity: 0; transform: translateY(calc(-50% + 14px * var(--hp-scale))); }
+  to { opacity: 1; transform: translateY(-50%); }
+}
+@keyframes hpPanelExitFullscreen {
+  from { opacity: 1; transform: translateY(-50%); }
+  to { opacity: 0; transform: translateY(calc(-50% + 8px * var(--hp-scale))); }
+}
+.hp-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+  padding: calc(14px * var(--hp-scale)) 4vw calc(6px * var(--hp-scale));
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.hp-content::-webkit-scrollbar { display: none; }
+.hp-arabic {
+  flex-shrink: 0;
+  font-family: 'Traditional Arabic', 'Amiri', 'Noto Naskh Arabic', serif;
+  font-size: calc(48px * var(--hp-scale));
+  font-weight: 600;
+  line-height: 1.8;
+  text-align: right;
+  color: #fffdf6;
+  text-wrap: balance;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hp-translation {
+  flex-shrink: 0;
+  font-size: calc(32px * var(--hp-scale));
+  font-weight: 500;
+  line-height: 1.48;
+  text-align: left;
+  color: #e5e7eb;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hp-reference {
+  display: flex;
+  align-items: center;
+  gap: calc(16px * var(--hp-scale));
+  flex: 0 0 auto;
+  padding: 0 4vw calc(8px * var(--hp-scale));
+  color: var(--hp-muted);
+  font-size: calc(22px * var(--hp-scale));
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: calc(.15px * var(--hp-scale));
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.hp-reference::before {
+  content: "";
+  width: calc(64px * var(--hp-scale));
+  height: max(2px, calc(2px * var(--hp-scale)));
+  flex: 0 0 auto;
+  background: var(--hp-gold);
+  border-radius: 999px;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.hp-images { display: flex; align-items: center; justify-content: center; gap: calc(12px * var(--hp-scale)); }
+.hp-images img { display: block; max-width: 100%; min-width: 0; max-height: 27vh; object-fit: contain; background: white; }
+
+/* Solid white lower third for bright, high-contrast broadcast graphics. */
+.hp-lower-third-white .hp-lower-third {
+  border-color: rgba(15, 23, 42, .18);
+  background: #ffffff;
+  box-shadow: 0 calc(16px * var(--hp-scale)) calc(42px * var(--hp-scale)) rgba(0, 0, 0, .28);
+}
+.hp-lower-third-white .hp-arabic { color: #080b0f; }
+.hp-lower-third-white .hp-translation { color: #111827; }
+.hp-lower-third-white .hp-reference { color: #374151; }
+.hp-lower-third-white .hp-reference::before { background: #9a6f20; }
+
+/* Full screen uses the same content slots with a solid projector background. */
+body.hp-fullscreen { background: radial-gradient(ellipse at 50% 15%, #203854, transparent 75%), #0a1220; }
+.hp-fullscreen .hp-lower-third {
+  left: 5%;
+  right: 5%;
+  top: 50%;
+  bottom: auto;
+  height: auto;
+  transform: translateY(-50%);
+  min-height: 64vh;
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  border-top: calc(4px * var(--hp-scale)) solid var(--hp-emerald);
+  background: linear-gradient(135deg, #142238, #0e192b);
+}
+.hp-fullscreen .hp-lower-third::before { display: none; }
+.hp-fullscreen .hp-lower-third:not([hidden]) {
+  animation-name: hpPanelEnterFullscreen;
+}
+.hp-fullscreen .hp-lower-third.hp-leaving {
+  animation-name: hpPanelExitFullscreen;
+}
+.hp-fullscreen .hp-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(48px * var(--hp-scale)) calc(64px * var(--hp-scale));
+  overflow: visible;
+}
+.hp-fullscreen .hp-arabic { line-height: 1.52; }
+.hp-fullscreen .hp-reference {
+  justify-content: center;
+  padding: calc(13px * var(--hp-scale)) calc(36px * var(--hp-scale));
+  border-top: 1px solid rgba(148, 163, 184, .2);
+  background: rgba(4, 12, 25, .36);
+  color: #bfdbfe;
+  font-size: calc(28px * var(--hp-scale));
+  text-align: center;
+}
+.hp-fullscreen .hp-reference::before { display: none; }
+.hp-fullscreen .hp-images { flex-direction: column; }
+.hp-fullscreen .hp-images img { max-height: 52vh; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-lower-third:not([hidden]),
+  .hp-lower-third.hp-leaving,
+  .hp-fullscreen .hp-lower-third:not([hidden]),
+  .hp-fullscreen .hp-lower-third.hp-leaving { animation: none; }
+  .hp-content,
+  .hp-reference { transition: none; }
+}
+
+/* Kutipan yang masih meluap pada ukuran minimum: gulir otomatis + fade,
+   karena browser source OBS/vMix tidak bisa menggulir manual. */
+.hp-content.is-scrolling {
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}

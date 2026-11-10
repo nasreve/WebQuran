@@ -1,0 +1,86 @@
+{
+  "source_group": "brosur",
+  "source_id": "brosur-ahad-pagi-1995-2024",
+  "input_filename": "Brosur Ahad Pagi 1995 - 2024.chm",
+  "input_bytes": 20522239,
+  "extracted_bytes": 92936859,
+  "files_by_extension": {
+    ".htm": 1386,
+    ".gif": 83,
+    ".png": 2,
+    ".html": 56,
+    ".hhc": 1,
+    ".hhk": 1,
+    ".jpg": 2
+  },
+  "html_pages": 1442,
+  "dated_brochure_pages": 1392,
+  "toc_unique_targets": 1424,
+  "toc_missing_targets": [],
+  "other_html_pages": 50,
+  "earliest_date": "1995-02-12",
+  "latest_date": "2024-12-29",
+  "brochures_by_year": {
+    "1995": 13,
+    "1996": 39,
+    "1997": 51,
+    "1998": 38,
+    "1999": 52,
+    "2000": 53,
+    "2001": 52,
+    "2002": 50,
+    "2003": 50,
+    "2004": 49,
+    "2005": 49,
+    "2006": 51,
+    "2007": 50,
+    "2008": 37,
+    "2009": 45,
+    "2010": 51,
+    "2011": 46,
+    "2012": 50,
+    "2013": 51,
+    "2014": 52,
+    "2015": 52,
+    "2016": 52,
+    "2017": 51,
+    "2018": 51,
+    "2019": 52,
+    "2020": 49,
+    "2021": 32,
+    "2022": 42,
+    "2023": 41,
+    "2024": 41
+  },
+  "declared_or_detected_encodings": {
+    "windows-1256": 1155,
+    "utf-8-sig": 287
+  },
+  "brochures_with_arabic_text": 1377,
+  "brochures_with_under_200_text_characters": [
+    "2015/20151227.htm"
+  ],
+  "brochure_text_utf8_bytes": 26366762,
+  "html_pages_with_replacement_characters": 0,
+  "brochure_pages_containing_marker": {
+    "quran_reference_marker": 819,
+    "hadith_reference_marker": 1148,
+    "shahih_word": 468,
+    "hasan_word": 546,
+    "dhaif_word": 362,
+    "maudhu_word": 21,
+    "palsu_word": 52
+  },
+  "exact_duplicate_brochure_text_groups": [
+    [
+      "2018/20181223a_2007.htm",
+      "2018/20181230a_2007.htm"
+    ]
+  ],
+  "limitations": [
+    "Dated brochure identification uses the filename; dates and topics still require source checks.",
+    "Markers count pages mentioning words, not hadith counts or authenticated grades.",
+    "No automatic link between a grading mention and an individual hadith is asserted.",
+    "Paragraph formatting and original source files are retained separately; extracted text needs QA."
+  ]
+}

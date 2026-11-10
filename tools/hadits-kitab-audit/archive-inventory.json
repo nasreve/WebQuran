@@ -1,0 +1,239 @@
+[
+  {
+    "filename": "Himpunan Hadits Qudsi.chm",
+    "archive_type": "Chm",
+    "html_pages": 56,
+    "uncompressed_bytes": 6555679,
+    "extension_counts": {
+      "(none)": 10,
+      ".css": 2,
+      ".gif": 224,
+      ".hhc": 1,
+      ".htm": 56,
+      ".jpg": 5
+    },
+    "sample_paths": [
+      "hadits_qudsi_16.htm",
+      "daftarisi.htm",
+      "hadits_qudsi_36.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-himpunan-hadits-qudsi",
+    "source_file": "hadits/Kitab Hadits/Himpunan Hadits Qudsi.chm",
+    "archive_entry_count": 303
+  },
+  {
+    "filename": "Kitab-9-Imam.chm",
+    "archive_type": "Chm",
+    "html_pages": 16726,
+    "uncompressed_bytes": 156850182,
+    "extension_counts": {
+      "(none)": 14,
+      ".css": 2,
+      ".gif": 4,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 10,
+      ".html": 16716,
+      ".jpg": 3,
+      ".png": 1
+    },
+    "sample_paths": [
+      "had\\H7K06B1.html",
+      "had\\H7K06B3.html",
+      "had\\H7K05B2.html"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-9-imam",
+    "source_file": "hadits/Kitab Hadits/Kitab-9-Imam.chm",
+    "archive_entry_count": 16757
+  },
+  {
+    "filename": "KumpulanHadits-Digital.chm",
+    "archive_type": "Chm",
+    "html_pages": 428,
+    "uncompressed_bytes": 17593133,
+    "extension_counts": {
+      "(none)": 13,
+      ".gif": 54,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 428,
+      ".jpg": 2
+    },
+    "sample_paths": [
+      "quran\\s2_al_baqarah.htm",
+      "quran\\s4_an_nisaa.htm",
+      "quran\\s3_ali_imran.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-kumpulan-hadits-digital",
+    "source_file": "hadits/Kitab Hadits/KumpulanHadits-Digital.chm",
+    "archive_entry_count": 515
+  },
+  {
+    "filename": "shahih Bukhari.chm",
+    "archive_type": "Chm",
+    "html_pages": 3718,
+    "uncompressed_bytes": 170388115,
+    "extension_counts": {
+      "(none)": 11,
+      ".gif": 1,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 3718,
+      ".thmx": 3718,
+      ".xml": 7446
+    },
+    "sample_paths": [
+      "43.Perilaku Budi Pekerti Yang Terpuji\\22.htm",
+      "44.Peperangan\\35.htm",
+      "43.Perilaku Budi Pekerti Yang Terpuji\\97.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-shahih-bukhari",
+    "source_file": "hadits/Kitab Hadits/shahih Bukhari.chm",
+    "archive_entry_count": 18694
+  },
+  {
+    "filename": "shahih Muslim.chm",
+    "archive_type": "Chm",
+    "html_pages": 1755,
+    "uncompressed_bytes": 10096463,
+    "extension_counts": {
+      "(none)": 11,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 2,
+      ".html": 1753,
+      ".jpg": 1,
+      ".js": 1
+    },
+    "sample_paths": [
+      "67\\45.html",
+      "62\\03.html",
+      "36\\16a.html"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-shahih-muslim",
+    "source_file": "hadits/Kitab Hadits/shahih Muslim.chm",
+    "archive_entry_count": 1844
+  },
+  {
+    "filename": "shahih sunan abu daud.chm",
+    "archive_type": "Chm",
+    "html_pages": 1679,
+    "uncompressed_bytes": 12056541,
+    "extension_counts": {
+      "(none)": 11,
+      ".gif": 1,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 1304,
+      ".html": 375,
+      ".js": 1
+    },
+    "sample_paths": [
+      "Jilid I\\zakat_04.html",
+      "Jilid I\\sholat_316.html",
+      "Jilid 3\\Kitab Sunnah\\17. Tentang Takdir.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-shahih-sunan-abu-daud",
+    "source_file": "hadits/Kitab Hadits/shahih sunan abu daud.chm",
+    "archive_entry_count": 1730
+  },
+  {
+    "filename": "shahih sunan ibnu majah.chm",
+    "archive_type": "Chm",
+    "html_pages": 1385,
+    "uncompressed_bytes": 8151507,
+    "extension_counts": {
+      "(none)": 11,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 1385,
+      ".js": 1,
+      ".png": 1
+    },
+    "sample_paths": [
+      "Pendahuluan\\013.htm",
+      "36. Kitab Fitnah\\3633.htm",
+      "25. Kitab Manasik\\2584.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-shahih-sunan-ibnu-majah",
+    "source_file": "hadits/Kitab Hadits/shahih sunan ibnu majah.chm",
+    "archive_entry_count": 1442
+  },
+  {
+    "filename": "shahih sunan tirmidzi.chm",
+    "archive_type": "Chm",
+    "html_pages": 1941,
+    "uncompressed_bytes": 13414329,
+    "extension_counts": {
+      "(none)": 14,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 1,
+      ".html": 1940,
+      ".jpg": 1,
+      ".js": 1
+    },
+    "sample_paths": [
+      "44\\03.html",
+      "44\\05.html",
+      "44\\10.html"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-shahih-sunan-tirmidzi",
+    "source_file": "hadits/Kitab Hadits/shahih sunan tirmidzi.chm",
+    "archive_entry_count": 2009
+  },
+  {
+    "filename": "sunan ad-darimi.chm",
+    "archive_type": "Chm",
+    "html_pages": 26,
+    "uncompressed_bytes": 17244088,
+    "extension_counts": {
+      "(none)": 11,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 26,
+      ".thmx": 25,
+      ".xml": 52
+    },
+    "sample_paths": [
+      "01.htm",
+      "03.htm",
+      "02.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-sunan-ad-darimi",
+    "source_file": "hadits/Kitab Hadits/sunan ad-darimi.chm",
+    "archive_entry_count": 144
+  },
+  {
+    "filename": "Sunan Nasa'i.chm",
+    "archive_type": "Chm",
+    "html_pages": 53,
+    "uncompressed_bytes": 35637668,
+    "extension_counts": {
+      "(none)": 11,
+      ".hhc": 1,
+      ".hhk": 1,
+      ".htm": 53,
+      ".thmx": 45,
+      ".xml": 94
+    },
+    "sample_paths": [
+      "24.Manasik Haji.htm",
+      "22.Puasa.htm",
+      "1.Thaharah.htm"
+    ],
+    "source_group": "kitab",
+    "source_id": "kitab-sunan-nasai",
+    "source_file": "hadits/Kitab Hadits/Sunan Nasa'i.chm",
+    "archive_entry_count": 253
+  }
+]

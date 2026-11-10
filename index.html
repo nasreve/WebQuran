@@ -1,0 +1,2587 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webquran v5.4 — Operator</title>
+
+  <!-- Font dibundel lokal: aplikasi tetap benar tanpa internet -->
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/hadith.css">
+<link rel="stylesheet" href="css/hadith-modal.css">
+</head>
+
+<body>
+  <div id="loadingBar"></div>
+
+  <script>
+    // State tayangan global — dipakai lintas skrip (render, search, omnibar,
+    // presentasi, confidence monitor). Dideklarasikan paling awal supaya tidak
+    // ada "is not defined" / TDZ saat UI diperbarui lebih dulu.
+    var isPresentationVisible = true;
+    var isTranslationVisible = false;
+    var SVG_EYE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    var SVG_EYE_OFF = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    var SVG_DOC = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+  </script>
+
+  <header>
+    <div class="app-brand-wrap">
+      <button class="btn-hamburger" id="sidebarToggle" title="Toggle Sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="app-brand-badge">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path>
+            <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path>
+            <circle cx="12" cy="12" r="2"></circle>
+            <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"></path>
+            <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path>
+          </svg>
+        </div>
+        <h1 class="app-brand-title">
+          <span>Webquran</span>
+          <span class="badge-operator-tag">BROADCAST OPERATOR</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="header-tools">
+      <!-- Hadits Search Trigger Button -->
+      <button class="btn-header btn-header-hadith" id="headerBtnHadith" onclick="openHadithSearch()"
+        title="Pencarian Hadits (Tekan F7)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        <span>Hadits</span>
+        <span class="header-kbd-hint"><kbd>F7</kbd></span>
+        <span class="hadith-header-live-dot" id="hadithHeaderLiveDot" title="Hadits sedang tayang di layar"
+          hidden></span>
+      </button>
+      <button class="btn-header btn-header-omnibar" onclick="openOmnibar()"
+        title="Universal Smart Quick Jump (Tekan Ctrl+K atau /)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Quick Jump</span>
+        <span class="header-kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+      </button>
+
+      <!-- Vertical Divider -->
+      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+
+      <!-- Broadcast Screen Tally Button -->
+      <button class="btn-header-tally tally-live" id="btnVisibility" onclick="toggleVisibility()"
+        title="Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)" aria-pressed="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <span class="tally-dot dot-live"></span>
+        <span id="visText">ON AIR</span>
+      </button>
+
+      <!-- Translation Sub-Tally Button -->
+      <button class="btn-header-tally tally-trans-off" id="btnTransVisibility" onclick="toggleTransVisibility()"
+        title="Terjemahan sedang SEMBUNYI di layar presentasi. Klik untuk tampilkan">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        <span class="tally-dot dot-trans-off"></span>
+        <span id="transVisText">Terjemahan: OFF</span>
+      </button>
+
+      <!-- Vertical Divider -->
+      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+
+      <!-- Dual Screen -->
+      <button class="btn-header btn-header-dualscreen" id="dualScreenBtn" onclick="togglePresentationWindow()"
+        title="Buka Layar Presentasi Dual Screen">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <span>Dual Screen</span>
+      </button>
+
+      <!-- Live Confidence Monitor Toggle Button -->
+      <button class="btn-header active" id="headerBtnMonitor" onclick="toggleConfidenceMonitor()"
+        title="Tampilkan / Sembunyikan Live Confidence Monitor 16:9">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <span>Program Feed</span>
+      </button>
+
+      <!-- Template Selector -->
+      <button class="btn-header btn-header-template" onclick="showTemplateModal()"
+        title="Pilih Template Layout Display & OBS">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        <span>Template</span>
+      </button>
+
+      <!-- Theme Mode -->
+      <button class="btn-header-round" onclick="toggleTheme()" id="themeToggle" title="Ganti tema panel. Tema juga mengubah template Full Screen & PiP; template Lower Third punya desain tetap.">
+        <span id="themeIcon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </span>
+      </button>
+
+      <!-- Help -->
+      <button class="btn-header" onclick="showHelpModal()" title="Panduan & Bantuan Operator">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>Bantuan</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Spanduk status server: hanya tampil bila server berhenti merespons -->
+  <div id="serverBanner" class="server-banner" role="alert" aria-live="assertive" hidden>
+    <span class="server-banner-dot" aria-hidden="true"></span>
+    <strong>Server siaran tidak merespons.</strong>
+    <span id="serverBannerDetail" class="server-banner-detail">Layar proyektor/OBS bisa membeku di frame terakhir.</span>
+    <button type="button" class="server-banner-btn" onclick="checkServerNow()">Periksa Sekarang</button>
+  </div>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <!-- <button onclick="selectFolder()" class="btn btn-folder">📂 Pilih Folder Data JSON</button> -->
+        <!-- Sidebar Widget dihapus agar lebih clean -->
+      </div>
+
+      <div class="sidebar-content">
+        <button class="hd-launch" onclick="openHadithSearch()" title="Buka Pencarian Hadits (F7)">
+          <span class="hd-launch-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <path d="M12 6v10"></path>
+            </svg>
+          </span>
+          <span class="hd-launch-text">
+            <strong>Pencarian Hadits</strong>
+            <small>Kitab &amp; brosur kajian</small>
+          </span>
+          <kbd>F7</kbd>
+        </button>
+
+        <!-- SECTION: Versi Terjemahan -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-header">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>Versi Terjemahan</span>
+            </span>
+          </div>
+          <div class="sidebar-section-body">
+            <div class="custom-select-wrapper">
+              <svg class="select-leading-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <select id="translationSelect" class="app-select" onchange="changeTranslation(this.value)">
+                <option value="default">Kemenag 2019 (Default)</option>
+                <option value="kemenag_lama">Kampung Sunnah (CHM)</option>
+                <option value="kemenag_2002">Kemenag 2002 (Edisi Lama)</option>
+              </select>
+              <svg class="select-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Pemilihan Font -->
+        <div class="sidebar-section" id="sectionFont">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionFont')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+              <span>Pilih Font Presentasi</span>
+            </span>
+            <span class="section-chevron">▾</span>
+          </div>
+          <div class="sidebar-section-body">
+            <div class="control-group">
+              <label>Font Arab</label>
+              <div class="custom-select-wrapper">
+                <svg class="select-leading-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                  <line x1="9" y1="20" x2="15" y2="20"></line>
+                  <line x1="12" y1="4" x2="12" y2="20"></line>
+                </svg>
+                <select id="arabicFontSelect" class="app-select" onchange="handleFontChange('arabic', this.value)">
+                </select>
+                <svg class="select-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="control-group">
+              <label>Font Terjemahan (Latin)</label>
+              <div class="custom-select-wrapper">
+                <svg class="select-leading-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                  <line x1="9" y1="20" x2="15" y2="20"></line>
+                  <line x1="12" y1="4" x2="12" y2="20"></line>
+                </svg>
+                <select id="latinFontSelect" class="app-select" onchange="handleFontChange('latin', this.value)">
+                </select>
+                <svg class="select-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div
+              style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent); flex-shrink: 0;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>Font otomatis diterapkan realtime di layar presentasi & OBS.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Ukuran Teks (Moved to Status Bar) -->
+        <!-- Logic dipindah ke footer bawah -->
+
+        <!-- SECTION: Navigasi Ayat (default: open) -->
+        <div class="sidebar-section" id="sectionNav">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionNav')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+              <span>Navigasi Ayat</span>
+            </span>
+            <div class="section-header-right">
+              <span class="sidebar-section-hint">F2</span>
+              <span class="section-chevron">▾</span>
+            </div>
+          </div>
+          <div class="sidebar-section-body">
+            <div class="control-group">
+              <label>Cari Surat</label>
+              <div class="surah-dropdown-wrap" id="surahDropdownWrap">
+                <input type="text" id="surahInput" placeholder="Ketik nama surat..." autocomplete="off"
+                  spellcheck="false" onfocus="surahFocus(this)" onclick="surahFocus(this)"
+                  oninput="surahFilter(this.value)" onkeydown="surahKeydown(event)">
+                <div class="surah-dropdown" id="surahDropdown"></div>
+              </div>
+            </div>
+
+            <div class="sidebar-input-row"
+              style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 8px; margin-bottom: 12px;">
+              <div class="control-group" style="margin-bottom: 0;">
+                <label style="margin-bottom: 4px; display: block;">No. Ayat</label>
+                <input type="number" id="ayahInput" placeholder="Contoh: 1" min="1" onkeypress="handleEnter(event)"
+                  ondblclick="this.select()" onclick="this.select()">
+              </div>
+              <div class="control-group" style="margin-bottom: 0;">
+                <label style="margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                  <span>Jumlah</span>
+                  <span style="font-size: 10px; color: var(--text-muted); font-weight: normal;">Max 10</span>
+                </label>
+                <input type="number" id="ayahCountInput" placeholder="1" min="1" max="10" value="1"
+                  onkeypress="handleEnter(event)" ondblclick="this.select()" onclick="this.select()">
+              </div>
+            </div>
+
+            <!-- Unified Sidebar Action Group -->
+            <div class="sidebar-action-group">
+              <!-- Sprint 5 · F5: mode siaran -->
+              <div class="broadcast-mode" role="group" aria-label="Mode siaran">
+                <button type="button" class="broadcast-mode-btn" data-broadcast-mode="direct"
+                  onclick="setBroadcastMode('direct')" title="Menekan tombol utama langsung menayangkan ayat">
+                  Langsung
+                </button>
+                <button type="button" class="broadcast-mode-btn" data-broadcast-mode="pvw"
+                  onclick="setBroadcastMode('pvw')" title="Tombol utama hanya memuat ke panggung; TAKE yang menayangkan">
+                  PVW → TAKE
+                </button>
+              </div>
+              <div class="broadcast-mode-hint" id="broadcastModeHint">
+                Langsung: menekan tombol utama langsung menayangkan ayat.
+              </div>
+
+              <!-- Primary: Tampilkan / Muat -->
+              <button onclick="primaryDisplayAction()" class="btn-sidebar-primary" title="Tampilkan Ayat (Enter)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span id="primaryActionLabel">TAMPILKAN AYAT</span>
+                <kbd class="sidebar-kbd">Enter</kbd>
+              </button>
+
+              <!-- Secondary: Prev / Next Stepper -->
+              <div class="sidebar-nav-pair">
+                <button onclick="navAyah(-1)" class="btn-sidebar-secondary" title="Ayat Sebelumnya (Arrow Left / ←)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  <span>Prev</span>
+                  <kbd class="sidebar-kbd">←</kbd>
+                </button>
+                <button onclick="navAyah(1)" class="btn-sidebar-secondary" title="Ayat Selanjutnya (Arrow Right / →)">
+                  <span>Next</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                  <kbd class="sidebar-kbd">→</kbd>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Cari Latin (default: collapsed) -->
+        <div class="sidebar-section collapsed" id="sectionLatin">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionLatin')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Cari Latin</span>
+            </span>
+            <div class="section-header-right">
+              <span class="sidebar-section-hint">F3</span>
+              <span class="section-chevron">▾</span>
+            </div>
+          </div>
+          <div class="sidebar-section-body">
+            <div class="control-group">
+              <label>Ketik Latin (Tanpa Spasi OK)</label>
+              <input type="text" id="latinInput" placeholder="Contoh: Yasalunaka..." oninput="handleLatinSearch(event)">
+              <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+                Hasil pencarian muncul di panel kanan.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Cari Terjemahan (default: collapsed) -->
+        <div class="sidebar-section collapsed" id="sectionTrans">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionTrans')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Cari Terjemahan</span>
+            </span>
+            <div class="section-header-right">
+              <span class="sidebar-section-hint">F4</span>
+              <span class="section-chevron">▾</span>
+            </div>
+          </div>
+          <div class="sidebar-section-body">
+            <div class="control-group">
+              <label>Ketik Kata Indonesia</label>
+              <input type="text" id="transInput" placeholder="Contoh: rezeki, surga, sabar..."
+                oninput="handleTranslationSearch(event)">
+              <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+                Cari kata atau kalimat terjemahan. Hasil muncul di panel kanan.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: History (default: collapsed) -->
+        <div class="sidebar-section collapsed" id="sectionHistory">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionHistory')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Riwayat</span>
+            </span>
+            <div class="section-header-right">
+              <span class="history-count-badge" id="historyCountBadge" style="display:none;">0</span>
+              <span class="sidebar-section-hint">F5</span>
+              <span class="section-chevron">▾</span>
+            </div>
+          </div>
+          <div class="sidebar-section-body" style="padding: 0;">
+            <div class="history-list" id="historyList">
+              <div class="history-empty">Belum ada riwayat</div>
+            </div>
+            <div class="history-actions" id="historyActions" style="display:none;">
+              <button onclick="clearHistory()" class="btn-clear-history">Hapus Riwayat</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Bookmark (default: collapsed) -->
+        <div class="sidebar-section collapsed" id="sectionBookmark">
+          <div class="sidebar-section-header" onclick="toggleSection('sectionBookmark')">
+            <span style="display:flex; align-items:center; gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Bookmark</span>
+            </span>
+            <div class="section-header-right">
+              <span class="bookmark-count-badge" id="bookmarkCountBadge" style="display:none;">0</span>
+              <span class="sidebar-section-hint">F6</span>
+              <span class="section-chevron">▾</span>
+            </div>
+          </div>
+          <div class="sidebar-section-body" style="padding: 0;">
+            <div class="bookmark-list" id="bookmarkList">
+              <div class="bookmark-empty">Belum ada bookmark</div>
+            </div>
+            <div class="bookmark-actions" id="bookmarkActions" style="display:none;">
+              <button onclick="clearBookmarks()" class="btn-clear-bookmark">Hapus Semua Bookmark</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="surah-breadcrumb" id="surahBreadcrumb" style="display:none;">
+        <!-- Left: Surah & Ayah Identity -->
+        <div class="breadcrumb-left">
+          <div class="breadcrumb-surah-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="breadcrumb-surah" id="breadcrumbSurah">—</span>
+              <span class="breadcrumb-sep">•</span>
+              <span class="breadcrumb-ayah" id="breadcrumbAyah">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Live Control Dock -->
+        <div class="breadcrumb-center" id="liveControlDock">
+          <div class="live-dock-cluster">
+            <!-- Prev Button -->
+            <button class="btn-dock-nav" id="dockBtnPrev" onclick="navAyah(-1)"
+              title="Ayat Sebelumnya (Arrow Left / ←)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span>Prev</span>
+              <kbd class="dock-kbd">←</kbd>
+            </button>
+
+            <!-- Verse Counter Badge -->
+            <div class="live-dock-counter" id="dockAyahCounter" title="Posisi Ayat Aktif dalam Surat">
+              <span id="breadcrumbProgress">1 / 7</span>
+            </div>
+
+            <!-- Next Button -->
+            <button class="btn-dock-nav" id="dockBtnNext" onclick="navAyah(1)"
+              title="Ayat Selanjutnya (Arrow Right / →)">
+              <span>Next</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+              <kbd class="dock-kbd">→</kbd>
+            </button>
+          </div>
+
+          <!-- Divider -->
+          <div class="live-dock-sep"></div>
+
+          <!-- Sprint 5 · F5: PVW / PGM + TAKE -->
+          <div class="live-dock-cluster pvw-pgm-cluster">
+            <div class="pvw-pgm-chip" id="pvwPgmChip"
+              title="PVW = isi panggung operator (belum tentu mengudara) · PGM = yang sedang mengudara">
+              <span class="pvw-pgm-row">
+                <span class="pvw-pgm-tag pvw">PVW</span>
+                <span id="pvwValue">—</span>
+              </span>
+              <span class="pvw-pgm-row">
+                <span class="pvw-pgm-tag pgm">PGM</span>
+                <span id="pgmValue">—</span>
+              </span>
+            </div>
+            <button class="btn-dock-take" id="takeBtn" onclick="takeToAir()" disabled
+              title="Tidak ada perubahan: PGM sudah sama dengan PVW">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="5 12 10 17 19 7"></polyline>
+              </svg>
+              <span>TAKE</span>
+              <kbd class="dock-kbd">⇧⏎</kbd>
+            </button>
+            <button class="btn-dock-pause" id="scrollPauseBtn" onclick="toggleScrollPause()"
+              title="Jeda gulir otomatis (P)" aria-pressed="false">
+              <svg id="scrollPauseIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"
+                stroke="none">
+                <rect x="6" y="5" width="4" height="14" rx="1"></rect>
+                <rect x="14" y="5" width="4" height="14" rx="1"></rect>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Quick Tally Buttons Cluster -->
+          <div class="live-dock-cluster">
+            <!-- Screen Tally (ON AIR / BLANK) -->
+            <button class="btn-dock-tally tally-live" id="dockBtnVisibility" onclick="toggleVisibility()"
+              title="Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)" aria-pressed="true">
+              <span class="tally-dot dot-live"></span>
+              <span id="dockVisText">ON AIR</span>
+            </button>
+
+            <!-- Translation Mini Tally -->
+            <button class="btn-dock-tally tally-trans-off" id="dockBtnTransVisibility" onclick="toggleTransVisibility()"
+              title="Status Terjemahan. Klik untuk toggle (T)">
+              <span class="tally-dot dot-trans-off"></span>
+              <span id="dockTransVisText">TR: OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Secondary Actions -->
+        <div class="breadcrumb-right">
+          <button class="btn-action btn-bookmark" id="btnBookmarkAyah" title="Simpan ke Bookmark">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Bookmark</span>
+          </button>
+          <button class="btn-action btn-copy" id="btnCopyInfo" title="Salin Info Surat & Ayat">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            </svg>
+            <span>Copy Info</span>
+          </button>
+          <button class="btn-action btn-search-dock" id="dockBtnToggleSearch" onclick="toggleSearchDrawer()"
+            title="Buka Panel Pencarian Latin & Terjemahan (F3 / F4)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Cari (F3/F4)</span>
+          </button>
+          <button class="btn-action btn-monitor-dock active" id="dockBtnToggleMonitor"
+            onclick="toggleConfidenceMonitor()" title="Toggle Live Program Feed (Confidence Monitor)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <span>Monitor</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Stage Area (Split view: Cards Left + Search Drawer + Confidence Monitor Right) -->
+      <div class="main-stage-area" id="mainStageArea">
+        <div class="content" id="resultArea">
+          <div class="stage-empty-state">
+            <div class="stage-empty-icon" aria-hidden="true">۞</div>
+            <span class="stage-empty-kicker">PANEL TAYANGAN</span>
+            <h3>Pilih ayat untuk memulai</h3>
+            <p>Ketik nama surat dan nomor ayat di Omnibar, misalnya <code>Al-Kahfi 1-5</code>, lalu tekan
+              <kbd>Enter</kbd>.</p>
+            <button class="stage-empty-action" type="button" onclick="openOmnibar();">
+              Buka Omnibar <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Drawer / Split View Panel -->
+        <aside class="search-drawer-panel sd-hidden sd-mode-split" id="searchDrawerPanel">
+          <div class="sd-header">
+            <div class="sd-header-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>Pencarian Cepat</span>
+              <span class="sd-badge-count" id="sdBadgeCount" style="display:none;">0</span>
+            </div>
+            <div class="sd-header-controls">
+              <button class="sd-btn-tool" id="sdBtnToggleMode" onclick="toggleSearchSplitMode()"
+                title="Ganti Mode Tampilan (Split Kolom / Drawer Melayang)">
+                <svg id="sdModeIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="12" y1="3" x2="12" y2="21" />
+                </svg>
+                <span id="sdModeText">Split</span>
+              </button>
+              <button class="sd-btn-tool sd-close-btn" onclick="closeSearchDrawer()"
+                title="Tutup Panel Pencarian (Esc)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs: Terjemahan vs Latin -->
+          <div class="sd-tabs-bar">
+            <button class="sd-tab-btn active" id="sdTabTrans" onclick="switchSearchDrawerTab('translation')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>Terjemahan</span>
+              <kbd class="sd-tab-kbd">F4</kbd>
+            </button>
+            <button class="sd-tab-btn" id="sdTabLatin" onclick="switchSearchDrawerTab('latin')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                <line x1="9" y1="20" x2="15" y2="20"></line>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+              </svg>
+              <span>Transliterasi</span>
+              <kbd class="sd-tab-kbd">F3</kbd>
+            </button>
+          </div>
+
+          <!-- Search Input Box -->
+          <div class="sd-search-box">
+            <div class="sd-input-wrapper">
+              <svg class="sd-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="sdSearchInput" placeholder="Ketik minimal 3 huruf (cth: puasa, takwa)..."
+                autocomplete="off" spellcheck="false" oninput="handleDrawerSearchInput(event)">
+              <button class="sd-clear-btn" id="sdClearBtn" onclick="clearSearchDrawerInput()" style="display:none;"
+                title="Hapus teks">&times;</button>
+            </div>
+            <div class="sd-status-subtext" id="sdStatusSubtext">Ketik minimal 3 huruf untuk mencari...</div>
+          </div>
+
+          <!-- Results Scroll Area -->
+          <div class="sd-results-container" id="searchDrawerResults">
+            <div class="sd-empty-state">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <p>Belum ada pencarian.<br>Ketik kata kunci untuk menemukan ayat terkait.</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Live Confidence Monitor Panel (16:9 Program Feed) -->
+        <aside class="confidence-monitor-panel" id="confidenceMonitorPanel">
+          <div class="cm-header">
+            <div class="cm-tally-indicator" id="cmTallyIndicator">
+              <span class="cm-tally-dot dot-live" id="cmTallyDot"></span>
+              <span class="cm-tally-label" id="cmTallyLabel">PGM • ON AIR</span>
+            </div>
+            <div class="cm-template-badge" id="cmTemplateBadge" onclick="showTemplateModal()"
+              title="Klik untuk ganti template visual">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              <span id="cmTemplateName">Default 16:9</span>
+            </div>
+            <div class="cm-header-actions">
+              <button class="cm-btn-tool" onclick="togglePresentationWindow()"
+                title="Buka Layar Presentasi Eksternal (Dual Screen)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </button>
+              <button class="cm-btn-tool" onclick="toggleConfidenceMonitor(false)" title="Sembunyikan Program Feed">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- 16:9 Virtual Display Container -->
+          <div class="cm-screen-container">
+            <div class="cm-aspect-box tally-border-live" id="cmAspectBox">
+              <!-- src diisi oleh confidenceMonitor.js agar template tersimpan ikut terpasang
+                   sejak pemuatan pertama (?obs&template=...) -->
+              <iframe id="confidenceMonitorFrame" allowtransparency="true"></iframe>
+              <div class="cm-overlay-watermark">
+                <span class="cm-watermark-tag">1080p • 16:9</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cm-footer-info">
+            <div class="cm-footer-left">
+              <span class="cm-status-text">OBS & Projector Mirror Feed</span>
+              <!-- Ukuran teks tayang yang sebenarnya, supaya operator tidak perlu
+                   menebak dari slider di status bar. -->
+              <span class="cm-font-chip" id="cmFontSizeChip" title="Ukuran teks yang sedang tayang di layar">&nbsp;· Teks 100%</span>
+              <span class="cm-clip-chip" id="cmClipChip" title="Teks ayat tidak muat di template aktif" hidden>&nbsp;⚠ Teks terpotong</span>
+            </div>
+            <div class="cm-footer-right">
+              <button class="cm-btn-cut" onclick="cutToBlack()" title="Potong tampilan ke hitam seketika (Spasi)">
+                <span class="cm-cut-dot"></span>
+                <span>Cut Black</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast toast-success" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" id="toastIcon" aria-hidden="true"></div>
+    <div class="toast-copy">
+      <span class="toast-label" id="toastLabel">Berhasil</span>
+      <span class="toast-message" id="toastMessage">Teks berhasil disalin!</span>
+    </div>
+    <button type="button" class="toast-close" onclick="hideToast()" aria-label="Tutup notifikasi"
+      title="Tutup notifikasi">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+        stroke-linecap="round">
+        <path d="M18 6 6 18M6 6l12 12"></path>
+      </svg>
+    </button>
+    <span class="toast-progress" aria-hidden="true"></span>
+  </div>
+
+  <!-- STATUS BAR (Footer) -->
+  <footer class="status-bar">
+    <div class="status-item">
+      <span class="tally-dot dot-live" style="margin-right: 2px;"></span>
+      <span style="font-weight: 600;">Ready</span>
+      <span style="color:var(--border); margin:0 6px;">|</span>
+      <span style="font-size:11px;">F11: Fullscreen</span>
+      <span style="color:var(--border); margin:0 6px;">|</span>
+      <span class="vmix-indicator" id="vmixIndicator" title="vMix JSON belum tersimpan">
+        <span class="vmix-dot"></span>
+        <span class="vmix-label">vMix JSON</span>
+      </span>
+    </div>
+    <!-- Font Size Slider (Moved from Sidebar) -->
+    <div class="status-slider-container" id="statusBarSlider">
+      <span style="font-size:11px; color:var(--text-muted); cursor:pointer; user-select:none;" onclick="resetFontSize()"
+        title="Mengubah ukuran teks di layar proyektor / OBS / vMix. Klik untuk reset ke 100%.">Ukuran Tayang:</span>
+      <button class="status-btn-step" onclick="stepFontSize(-5)" title="Perkecil teks tayang">−</button>
+      <input type="range" id="fontSlider" min="50" max="200" value="100" step="5"
+        aria-label="Ukuran teks tayang di proyektor atau OBS"
+        oninput="handleFontSizeChange(this.value)">
+      <button class="status-btn-step" onclick="stepFontSize(5)" title="Perbesar teks tayang">+</button>
+      <span id="fontPercentDisplay" style="min-width:38px; text-align:right; font-weight:600; cursor:pointer;"
+        onclick="resetFontSize()" title="Klik untuk Reset ke 100%">100%</span>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL BANTUAN & PANDUAN OPERATOR (v5.4 PRO) -->
+  <!-- ========================================== -->
+  <div id="helpModal" class="modal-overlay" onclick="closeHelpModal(event)" role="dialog" aria-modal="true"
+    aria-labelledby="helpModalTitle" aria-describedby="helpModalSubtitle">
+    <div class="modal-content modal-help-pro" onclick="event.stopPropagation()">
+      <!-- Header Modal -->
+      <div class="modal-header help-header">
+        <div class="help-header-title-group">
+          <div class="help-icon-badge">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div>
+            <div class="help-title-row">
+              <h2 id="helpModalTitle" class="modal-title" style="margin: 0;">Panduan & Referensi Operator</h2>
+              <span class="badge-v5-pill">v5.4 PRO</span>
+            </div>
+            <p id="helpModalSubtitle" class="help-subtitle">Webquran Broadcast Console • Al-Qur'an & Hadits, Navigasi
+              Cepat, & Integrasi Siaran</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="closeHelpModal()" title="Tutup (Esc)"
+          aria-label="Tutup panduan">✕</button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="help-nav-tabs" role="tablist" aria-label="Bagian panduan operator">
+        <button id="helpTabButton-features" class="help-tab-btn active" data-tab="helpTab-features"
+          onclick="switchHelpTab('helpTab-features')" role="tab" aria-controls="helpTab-features" aria-selected="true"
+          tabindex="0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+            </polygon>
+          </svg>
+          <span>Fitur Utama</span>
+        </button>
+        <button id="helpTabButton-shortcuts" class="help-tab-btn" data-tab="helpTab-shortcuts"
+          onclick="switchHelpTab('helpTab-shortcuts')" role="tab" aria-controls="helpTab-shortcuts"
+          aria-selected="false" tabindex="-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"></path>
+          </svg>
+          <span>Pintasan Keyboard</span>
+        </button>
+        <button id="helpTabButton-broadcast" class="help-tab-btn" data-tab="helpTab-broadcast"
+          onclick="switchHelpTab('helpTab-broadcast')" role="tab" aria-controls="helpTab-broadcast"
+          aria-selected="false" tabindex="-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6">
+            </path>
+            <line x1="2" y1="20" x2="2.01" y2="20"></line>
+          </svg>
+          <span>Setup OBS & vMix</span>
+        </button>
+        <button id="helpTabButton-workflow" class="help-tab-btn" data-tab="helpTab-workflow"
+          onclick="switchHelpTab('helpTab-workflow')" role="tab" aria-controls="helpTab-workflow" aria-selected="false"
+          tabindex="-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span>Alur Kerja & Tips</span>
+        </button>
+        <button id="helpTabButton-diagnostics" class="help-tab-btn" data-tab="helpTab-diagnostics"
+          onclick="switchHelpTab('helpTab-diagnostics')" role="tab" aria-controls="helpTab-diagnostics"
+          aria-selected="false" tabindex="-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+          <span>Pemeriksaan</span>
+        </button>
+      </div>
+
+      <!-- Modal Body Tab Content -->
+      <div class="modal-body-help help-body-scroll">
+
+        <!-- TAB 1: FITUR UTAMA -->
+        <div id="helpTab-features" class="help-tab-pane active" role="tabpanel"
+          aria-labelledby="helpTabButton-features">
+          <div class="features-grid">
+            <div class="feature-card highlighted-card">
+              <div class="feature-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <div class="feature-head-badge">
+                  <h4>Perpustakaan Hadits Lengkap (F7)</h4>
+                  <span class="badge-new">UNGGULAN</span>
+                </div>
+                <p>Akses 9 kitab hadits mu'tabar (Shahih Bukhari, Muslim, Abu Daud, Tirmidzi, Nasai, Ibnu Majah, Malik,
+                  Ahmad, Darimi) dengan total puluhan ribu hadits beserta nomor perawi.</p>
+              </div>
+            </div>
+
+            <div class="feature-card highlighted-card">
+              <div class="feature-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <div class="feature-head-badge">
+                  <h4>Pencarian Teks Arab Cerdas Hadits</h4>
+                  <span class="badge-new">UNGGULAN</span>
+                </div>
+                <p>Pencarian teks Arab dengan normalisasi harakat cerdas. Anda dapat mengetikkan lafadz Arab gundul
+                  maupun berharakat untuk menemukan matan hadits secara akurat.</p>
+              </div>
+            </div>
+
+            <div class="feature-card highlighted-card">
+              <div class="feature-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <div class="feature-head-badge">
+                  <h4>Hadits Dual Mode: Lower Third & Fullscreen</h4>
+                  <span class="badge-new">UNGGULAN</span>
+                </div>
+                <p>Pilihan tayangan live fleksibel untuk Hadits: Mode <strong>Lower Third</strong> untuk siaran
+                  streaming/vMix/OBS atau Mode <strong>Fullscreen</strong> untuk proyektor/layar panggung pengajian.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <h4>Universal Quick Jump (Omnibar)</h4>
+                <p>Ketik langsung nama surat atau nomor surat & ayat di kotak cari atas (cth: <code>albaqarah 255</code>
+                  atau <code>2:255</code> atau <code>36 10</code>) lalu tekan <strong>Enter</strong> untuk lompat
+                  instan.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <h4>Tombol Copy Taktil STAGE</h4>
+                <p>Tombol <strong>Salin Arab</strong> dan <strong>Salin Arti</strong> dengan animasi ripple dan umpan
+                  balik toast instan, memudahkan paste teks cepat ke software grafis Anda.</p>
+              </div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              </div>
+              <div class="feature-details">
+                <h4>Tipografi Mushaf & Zoom Skala</h4>
+                <p>Rendering font Quran standar Kemenag / Madinah dengan slider ukuran teks di footer bawah untuk
+                  kenyamanan membaca di berbagai resolusi layar kontrol.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PINTASAN KEYBOARD -->
+        <div id="helpTab-shortcuts" class="help-tab-pane" role="tabpanel" aria-labelledby="helpTabButton-shortcuts"
+          hidden>
+          <div class="shortcuts-grid">
+            <div class="shortcut-group">
+              <div class="shortcut-group-title">Navigasi Siaran Utama</div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Tampilkan / Potong Layar (ON AIR ⇄ BLANK)</span>
+                <span class="shortcut-keys"><kbd>Spasi</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Ayat Selanjutnya / Sebelumnya</span>
+                <span class="shortcut-keys"><kbd>→</kbd> / <kbd>←</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Terjemahan Tampil / Sembunyi</span>
+                <span class="shortcut-keys"><kbd>T</kbd></span>
+              </div>
+            </div>
+
+            <div class="shortcut-group">
+              <div class="shortcut-group-title">Pencarian & Modal Dialog</div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Buka Universal Quick Jump (Omnibar)</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd>+<kbd>K</kbd> atau <kbd>/</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Panel Navigasi Surat</span>
+                <span class="shortcut-keys"><kbd>F2</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Pencarian Latin</span>
+                <span class="shortcut-keys"><kbd>F3</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Pencarian Terjemahan</span>
+                <span class="shortcut-keys"><kbd>F4</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Riwayat Ayat</span>
+                <span class="shortcut-keys"><kbd>F5</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Bookmark</span>
+                <span class="shortcut-keys"><kbd>F6</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Buka Perpustakaan & Cari Hadits</span>
+                <span class="shortcut-keys"><kbd>F7</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Buka Jendela Bantuan & Panduan</span>
+                <span class="shortcut-keys"><kbd>F1</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Tutup Modal / Batal / Bersihkan Seleksi</span>
+                <span class="shortcut-keys"><kbd>Esc</kbd></span>
+              </div>
+            </div>
+
+            <div class="shortcut-group">
+              <div class="shortcut-group-title">Kontrol Layar & Tampilan</div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Tampilkan / Sembunyikan Program Feed (Confidence Monitor)</span>
+                <span class="shortcut-keys"><kbd>F9</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Layar Penuh Jendela Operator</span>
+                <span class="shortcut-keys"><kbd>F11</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Perbesar / Perkecil Ukuran Teks Tayang</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd>+<kbd>↑</kbd> / <kbd>Ctrl</kbd>+<kbd>↓</kbd></span>
+              </div>
+              <div class="shortcut-item">
+                <span class="shortcut-desc">Reset Ukuran Teks ke 100%</span>
+                <span class="shortcut-keys"><kbd>Ctrl</kbd>+<kbd>1</kbd></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: SETUP OBS & vMix -->
+        <div id="helpTab-broadcast" class="help-tab-pane" role="tabpanel" aria-labelledby="helpTabButton-broadcast"
+          hidden>
+          <!-- OBS Integration -->
+          <div class="info-box">
+            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+              <span>1. OBS Studio & vMix — Browser Source Overlay</span>
+            </div>
+            <div class="info-box-note" style="margin-top: 0;">
+              Tambahkan source bertipe <strong>Browser</strong> di OBS Studio & vMix. Gunakan source terpisah untuk
+              Al-Qur'an dan Hadits:<br>
+              <div class="browser-source-label">
+                <span class="browser-source-dot quran" aria-hidden="true"></span>
+                <strong>Overlay Al-Qur'an</strong>
+                <span>Ayat dan terjemahan</span>
+              </div>
+              <button type="button" class="copy-box" onclick="copyObsUrlFromModal()" title="Salin URL OBS">
+                <span id="obsUrlDisplay" class="copy-box-text" style="color:#38bdf8;">Memuat...</span>
+                <span class="copy-box-btn"
+                  style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; display: inline-flex; align-items: center; gap: 5px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+              <div class="browser-source-hint">
+                URL di atas menampilkan <strong>kartu penuh 16:9</strong>. Untuk menumpuk ayat di atas kamera
+                (latar transparan, tombol editor disembunyikan), pakai URL overlay berikut.
+              </div>
+              <button type="button" class="copy-box" onclick="copyObsOverlayUrlFromModal()"
+                title="Salin URL overlay transparan untuk OBS/vMix">
+                <span id="obsOverlayUrlDisplay" class="copy-box-text" style="color:#34d399;">Memuat...</span>
+                <span class="copy-box-btn"
+                  style="background: rgba(16, 185, 129, 0.18); border: 1px solid #10b981; color: #34d399; display: inline-flex; align-items: center; gap: 5px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+              <div class="browser-source-label">
+                <span class="browser-source-dot hadith" aria-hidden="true"></span>
+                <strong>Overlay Hadits</strong>
+                <span>Lower third hadits</span>
+              </div>
+              <button type="button" class="copy-box copy-box-hadith" onclick="copyHadithObsUrlFromModal()"
+                title="Salin URL Browser Source Hadits">
+                <span id="hadithObsUrlDisplay" class="copy-box-text">Memuat...</span>
+                <span class="copy-box-btn">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+              <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin-top: 6px;">
+                💡 <strong>Rekomendasi Setelan OBS:</strong> Width: <code>1920</code> • Height: <code>1080</code> • FPS:
+                <code>60</code> (atau <code>30</code>). Centang <em>"Shutdown source when not visible"</em> agar hemat
+                resource kartu grafis.
+              </div>
+            </div>
+          </div>
+
+          <!-- Akses Jaringan Lokal -->
+          <div class="info-box" style="margin-top: 14px;">
+            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+              </svg>
+              <span>2. Akses dari Komputer Lain (Jaringan Lokal)</span>
+            </div>
+            <div class="info-box-note" style="margin-top: 0;">
+              Secara bawaan server hanya menerima sambungan dari komputer ini. Aktifkan pilihan berikut bila
+              <strong>vMix atau OBS berjalan di komputer lain</strong> dalam jaringan yang sama.
+            </div>
+
+            <label class="lan-toggle">
+              <input type="checkbox" id="lanAccessToggle">
+              <span>Izinkan komputer lain di jaringan lokal mengakses Webquran</span>
+            </label>
+
+            <div id="lanWarning" class="lan-warning" hidden>
+              <strong>Perhatian:</strong> selama aktif, siapa pun di jaringan yang sama dapat mengubah tayangan
+              tanpa izin. Aktifkan hanya selama siaran, lalu matikan kembali. Bila Windows Firewall bertanya,
+              pilih <strong>Allow access</strong> untuk jaringan <em>Private</em> — jangan untuk jaringan publik.
+            </div>
+
+            <div id="lanUrlsBlock" hidden>
+              <div class="browser-source-label">
+                <span class="browser-source-dot quran" aria-hidden="true"></span>
+                <strong>Ayat (jaringan lokal)</strong>
+                <span>dibuka dari komputer lain</span>
+              </div>
+              <button type="button" class="copy-box" onclick="copyLanUrl('quran')"
+                title="Salin URL ayat untuk komputer lain di jaringan">
+                <span id="lanQuranUrl" class="copy-box-text" style="color:#38bdf8;">—</span>
+                <span class="copy-box-btn"
+                  style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; display: inline-flex; align-items: center; gap: 5px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+              <div class="browser-source-label">
+                <span class="browser-source-dot hadith" aria-hidden="true"></span>
+                <strong>Hadits (jaringan lokal)</strong>
+                <span>dibuka dari komputer lain</span>
+              </div>
+              <button type="button" class="copy-box copy-box-hadith" onclick="copyLanUrl('hadith')"
+                title="Salin URL hadits untuk komputer lain di jaringan">
+                <span id="lanHadithUrl" class="copy-box-text">—</span>
+                <span class="copy-box-btn">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+            </div>
+
+            <div id="lanStatus" class="lan-status">Hanya komputer ini (localhost).</div>
+          </div>
+
+          <!-- vMix Integration -->
+          <div class="info-box" style="margin-top: 14px;">
+            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path>
+                <path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path>
+                <circle cx="12" cy="12" r="2"></circle>
+                <path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"></path>
+                <path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"></path>
+              </svg>
+              <span>3. vMix Title Editor — JSON Data Source</span>
+            </div>
+            <div class="info-box-note" style="margin-top: 0;">
+              Webquran otomatis memperbarui berkas feed JSON lokal setiap Anda memilih atau menavigasi ayat:<br>
+              <button type="button" class="copy-box" onclick="copyVmixPath()" title="Salin lokasi feed JSON vMix">
+                <span id="vmixPathDisplay" class="copy-box-text" style="color:#10b981;">[Pilih ayat dulu untuk
+                  copy]</span>
+                <span class="copy-box-btn"
+                  style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; display: inline-flex; align-items: center; gap: 5px;">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </span>
+              </button>
+
+              <div
+                style="margin-top: 10px; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.12);">
+                <strong style="color: #f1f5f9; font-size: 12px;">Langkah Pemasangan di vMix:</strong>
+                <ol
+                  style="padding-left: 18px; margin-top: 6px; margin-bottom: 0; font-size: 11.5px; line-height: 1.6; color: #cbd5e1;">
+                  <li>Buka <strong>Title Editor</strong> pada input Title vMix Anda.</li>
+                  <li>Klik <strong>Data Source</strong> → <strong>Manage</strong> → Tambahkan data source tipe
+                    <strong>"JSON"</strong>.</li>
+                  <li>Paste path file di atas ke kolom <strong>Filename / URL</strong>.</li>
+                  <li>Petakan kolom teks: <strong style="color:#38bdf8;">Arab</strong>, <strong
+                      style="color:#38bdf8;">Terjemahan</strong>, dan <strong style="color:#38bdf8;">Judul</strong> ke
+                    field teks title Anda.</li>
+                </ol>
+              </div>
+
+              <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
+                🚦 <strong>Indikator vMix di Status Bar:</strong> 🟢 Berkedip Hijau = Feed JSON berhasil ditulis • 🔴
+                Berkedip Merah = Izin folder penyimpanan terhambat.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: ALUR KERJA & TIPS -->
+        <div id="helpTab-workflow" class="help-tab-pane" role="tabpanel" aria-labelledby="helpTabButton-workflow"
+          hidden>
+          <div class="workflow-timeline">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <div class="workflow-step-content">
+                <h4>Persiapan Template & Output</h4>
+                <p>Tentukan template yang sesuai dengan format acara Anda. Untuk salat berjamaah & proyektor masjid,
+                  gunakan template <em>Default Fullscreen</em>. Untuk siaran podcast kajian atau live streaming, gunakan
+                  template <em>Lower Third Light</em> atau <em>Dark</em>.</p>
+              </div>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <div class="workflow-step-content">
+                <h4>Memuat Ayat Secara Cepat</h4>
+                <p>Gunakan Universal Omnibar (<kbd class="shortcut-kbd"
+                    style="font-size:10px; padding:1px 5px;">Ctrl+K</kbd>) untuk langsung mengetik nama surat dan nomor
+                  ayat (misal: <code>al-kahf 1</code>). Teks Arab, latin, dan terjemahan akan langsung termuat tanpa
+                  perlu mencari satu per satu.</p>
+              </div>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <div class="workflow-step-content">
+                <h4>Navigasi Mengikuti Bacaan</h4>
+                <p>Tekan tombol panah <kbd class="shortcut-kbd" style="font-size:10px; padding:1px 5px;">→</kbd> untuk
+                  melangkah ke ayat berikutnya seirama dengan bacaan qari. Webquran secara cerdas akan otomatis
+                  berpindah ke surat berikutnya jika ayat terakhir surat telah selesai dibaca.</p>
+              </div>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">4</div>
+              <div class="workflow-step-content">
+                <h4>Blackout & Tally Siaran</h4>
+                <p>Tekan <kbd class="shortcut-kbd" style="font-size:10px; padding:1px 5px;">Spasi</kbd> kapan saja untuk
+                  melakukan Cut to Black (menyembunyikan tampilan layar tanpa mematikan koneksi). Indikator Tally di
+                  header akan berubah warna menjadi abu-abu HIDE, memberi kepastian status on-air 100%.</p>
+              </div>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">5</div>
+              <div class="workflow-step-content">
+                <h4>Keandalan 100% Offline Tanpa Buffer</h4>
+                <p>Seluruh teks ayat Al-Qur'an 30 Juz dan database terjemahan tersimpan secara lokal di aplikasi laptop
+                  operator. Anda dapat mengoperasikan siaran di mana pun secara mulus tanpa bergantung pada sinyal
+                  internet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: PEMERIKSAAN SIARAN -->
+        <div id="helpTab-diagnostics" class="help-tab-pane" role="tabpanel"
+          aria-labelledby="helpTabButton-diagnostics" hidden>
+          <div class="info-box">
+            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+              </svg>
+              <span>Pemeriksaan Siaran (sebelum mulai)</span>
+            </div>
+            <div class="info-box-note" style="margin-top: 0;">
+              Periksa hal-hal yang paling sering gagal di venue baru: font, server, layar, folder feed vMix, dan data
+              hadits. Jalankan sebelum siaran dimulai, bukan saat sudah mengudara.
+            </div>
+
+            <div class="diag-actions">
+              <button type="button" class="btn-primary-help" onclick="runDiagnostics()" id="diagRunBtn">
+                Jalankan Pemeriksaan
+              </button>
+              <button type="button" class="copy-box diag-copy" onclick="copyDiagnostics()" title="Salin laporan sebagai teks">
+                <span class="copy-box-text">Salin laporan</span>
+              </button>
+            </div>
+
+            <ul class="diag-list" id="diagList" aria-live="polite">
+              <li class="diag-item diag-idle">Belum diperiksa.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Action Row -->
+      <div class="modal-footer-pro">
+        <label class="help-checkbox-wrap">
+          <input type="checkbox" id="dontShowAgain">
+          <span>Jangan tampilkan panduan ini otomatis saat aplikasi dibuka</span>
+        </label>
+        <button class="btn-primary-help" onclick="closeHelpModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Mengerti & Tutup</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TEMPLATE MODAL -->
+  <div id="templateModal" class="modal-overlay" onclick="closeTemplateModal(event)">
+    <div class="modal-content modal-template-wide" onclick="event.stopPropagation()">
+      <div class="modal-header modal-header-pro">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div
+            style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #6366f1); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(2,132,199,0.35);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </div>
+          <div>
+            <h2 style="font-size: 17px; font-weight: 700; color: #f8fafc; margin: 0; letter-spacing: -0.2px;">
+              Pilih Template Layar Presentasi & OBS
+            </h2>
+            <p style="margin: 2px 0 0 0; font-size: 12px; color: #94a3b8;">
+              Mendukung Resolusi 1080p Full HD & 4K • Sinkronisasi Real-Time Display
+            </p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeTemplateModal()"
+          style="font-size: 20px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.06); color: #94a3b8; transition: all 0.2s;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 24px 28px;">
+        <div class="template-grid-pro">
+
+          <!-- CARD 1: DEFAULT FULLSCREEN -->
+          <div class="template-card-pro active" id="tplCard-default.html" onclick="selectTemplate('default.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">1080p</span>
+                <span class="monitor-tag">FULLSCREEN</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 22px 16px 14px 16px; background: radial-gradient(circle at center, #131d33 0%, #070b14 100%); position: relative;">
+                <!-- Golden Pill Badge -->
+                <div
+                  style="background: linear-gradient(135deg, #d4af37, #b8860b); color: #fff; font-size: 8px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 6px; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.4);">
+                  QS. AL-BAQARAH : 255
+                </div>
+                <!-- Arabic snippet -->
+                <div
+                  style="font-family: 'Amiri', serif; font-size: 15px; color: #ffffff; text-align: center; line-height: 1.4; text-shadow: 0 2px 10px rgba(0,0,0,0.9); margin-bottom: 4px; direction: rtl;">
+                  اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ
+                </div>
+                <!-- Latin snippet -->
+                <div
+                  style="font-size: 8px; color: #94a3b8; text-align: center; max-width: 88%; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  Allah, tidak ada tuhan selain Dia. Yang Mahahidup...
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Default Layar Penuh</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">PROJEKTOR
+                  & TV</span>
+              </div>
+              <p class="template-card-desc">
+                Teks ayat & terjemahan terpusat penuh dengan adaptasi ukuran cerdas. Ideal untuk layar proyektor masjid
+                & TV display.
+              </p>
+              <div class="template-card-action">
+                <span>default.html</span>
+                <span class="template-action-btn">✓ Aktif</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: LOWER THIRD LIGHT -->
+          <div class="template-card-pro" id="tplCard-lower_third.html" onclick="selectTemplate('lower_third.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">TRANSPARENT</span>
+              </div>
+              <!-- Simulated Video Camera Backdrop -->
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
+                <div
+                  style="position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 12px 12px;">
+                </div>
+                <!-- Simulated Studio Camera Badge -->
+                <div
+                  style="position: absolute; top: 8px; right: 8px; font-size: 7px; color: #64748b; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 3px; font-weight: 600;">
+                  FEED 1</div>
+                <!-- Bottom Lower Third Glass Bar -->
+                <div
+                  style="background: rgba(255, 255, 255, 0.96); border-top: 2.5px solid #d4af37; border-bottom: 2.5px solid #059669; border-radius: 6px; padding: 5px 8px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: flex-start;">
+                  <div
+                    style="font-size: 6.5px; font-weight: 800; letter-spacing: 1.4px; color: #a16207; border-bottom: 1px solid rgba(161,98,7,0.55); padding-bottom: 1px; margin-bottom: 3px;">
+                    QS. AL-FATIHAH : 1
+                  </div>
+                  <div
+                    style="font-family: 'Amiri', serif; font-size: 11px; color: #111827; text-align: center; width: 100%; font-weight: 700; line-height: 1.3; direction: rtl;">
+                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                  </div>
+                  <div
+                    style="font-size: 7.5px; color: #334155; text-align: center; width: 100%; font-weight: 600; margin-top: 1px;">
+                    Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third (Light)</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3);">BROADCAST
+                  SIANG</span>
+              </div>
+              <p class="template-card-desc">
+                Strip transparan bawah bernuansa putih bersih & aksen emas royal. Sangat kontras dan jernih untuk live
+                streaming siang hari.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 3: LOWER THIRD DARK -->
+          <div class="template-card-pro" id="tplCard-lower_third_dark.html"
+            onclick="selectTemplate('lower_third_dark.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">DARK</span>
+              </div>
+              <!-- Simulated Video Camera Backdrop -->
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #090d16 0%, #030712 100%); position: relative; overflow: hidden;">
+                <div
+                  style="position: absolute; inset: 0; opacity: 0.15; background-image: radial-gradient(#38bdf8 1px, transparent 1px); background-size: 12px 12px;">
+                </div>
+                <div
+                  style="position: absolute; top: 8px; right: 8px; font-size: 7px; color: #475569; background: rgba(0,0,0,0.5); padding: 1px 5px; border-radius: 3px; font-weight: 600;">
+                  FEED 1</div>
+                <!-- Bottom Lower Third Dark Glass Bar -->
+                <div
+                  style="background: rgba(15, 23, 42, 0.95); border-top: 2.5px solid #d4af37; border-bottom: 2.5px solid #059669; border-radius: 6px; padding: 5px 8px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: flex-start; border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08);">
+                  <div
+                    style="font-size: 6.5px; font-weight: 700; letter-spacing: 1.4px; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.65); padding-bottom: 1px; margin-bottom: 3px;">
+                    QS. AL-FATIHAH : 1
+                  </div>
+                  <div
+                    style="font-family: 'Amiri', serif; font-size: 11px; color: #ffffff; text-align: center; width: 100%; font-weight: 700; line-height: 1.3; direction: rtl;">
+                    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                  </div>
+                  <div
+                    style="font-size: 7.5px; color: #cbd5e1; text-align: center; width: 100%; font-weight: 500; margin-top: 1px;">
+                    Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third (Dark)</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">BROADCAST
+                  MALAM</span>
+              </div>
+              <p class="template-card-desc">
+                Strip transparan bernuansa elegan gelap (midnight navy) & emas. Sangat nyaman di mata untuk panggung
+                gelap & siaran malam.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_dark.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 4: LOWER THIRD DUAL -->
+          <div class="template-card-pro" id="tplCard-lower_third_dual.html"
+            onclick="selectTemplate('lower_third_dual.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">BILINGUAL</span>
+                <span class="monitor-tag">SPLIT</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 8px 0; background: linear-gradient(135deg, #111827 0%, #0b0f19 100%); position: relative; overflow: hidden;">
+                <div
+                  style="position: absolute; inset: 0; opacity: 0.12; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);">
+                </div>
+                <!-- Dual: panel putih, label editorial, dua kolom -->
+                <div
+                  style="width: 100%; background: #ffffff; border: 1px solid rgba(212, 175, 55, 0.55); border-radius: 5px; padding: 5px 7px 6px; z-index: 2; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: flex; flex-direction: column;">
+                  <div
+                    style="font-size: 6px; font-weight: 800; letter-spacing: 1.3px; color: #a16207; border-bottom: 1px solid rgba(161,98,7,0.55); padding-bottom: 1px; margin-bottom: 3px; align-self: flex-start;">
+                    QS. AL-FATIHAH : 1
+                  </div>
+                  <div style="display: flex; gap: 6px; align-items: flex-start;">
+                    <div style="flex: 1; font-size: 7px; color: #1e293b; line-height: 1.35; font-weight: 600;">
+                      Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
+                    </div>
+                    <div style="width: 1px; align-self: stretch; background: rgba(212,175,55,0.7);"></div>
+                    <div
+                      style="flex: 1; font-family: 'Amiri', serif; font-size: 10px; color: #111827; direction: rtl; text-align: right; line-height: 1.4;">
+                      بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third Dual</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.3);">DWI-BAHASA</span>
+              </div>
+              <p class="template-card-desc">
+                Tata letak dwi-kolom berdampingan. Teks Arab di kanan dan terjemahan di kiri untuk kemudahan membaca
+                secara simultan.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_dual.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 5: PIP VIDEO -->
+          <div class="template-card-pro" id="tplCard-pip_video.html" onclick="selectTemplate('pip_video.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">STUDIO</span>
+                <span class="monitor-tag">PiP</span>
+              </div>
+              <div style="flex: 1; display: flex; background: #070b14; position: relative;">
+                <!-- Left: Simulated Camera Slot -->
+                <div
+                  style="flex: 1.2; background: #0f172a; border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                  <span
+                    style="position: absolute; top: 6px; right: 6px; font-size: 6.5px; font-weight: 700; color: #ef4444; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 1px 4px; border-radius: 3px;">🔴
+                    LIVE</span>
+                  <div style="font-size: 22px; opacity: 0.35;">📹</div>
+                  <span style="font-size: 8px; color: #64748b; font-weight: 600; margin-top: 4px;">CAMERA SLOT</span>
+                </div>
+                <!-- Right: Verse Panel -->
+                <div
+                  style="flex: 1; background: #0b1120; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div
+                    style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 6.5px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-bottom: 4px;">
+                    QS. 1:1
+                  </div>
+                  <div
+                    style="font-family: 'Amiri', serif; font-size: 9.5px; color: #ffffff; text-align: center; line-height: 1.25; direction: rtl; margin-bottom: 3px;">
+                    بِسْمِ اللَّهِ الرَّحْمَٰنِ...
+                  </div>
+                  <div style="width: 75%; height: 3px; background: rgba(255,255,255,0.2); border-radius: 2px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">PiP Video (OBS)</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">MULTI-SOURCE</span>
+              </div>
+              <p class="template-card-desc">
+                Slot frame kamera video ustadz/pembicara di sebelah kiri dengan tampilan teks ayat proporsional di
+                sebelah kanan.
+              </p>
+              <div class="template-card-action">
+                <span>pip_video.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 6: LOWER THIRD EMERALD GLASS (varian kulit + animasi) -->
+          <div class="template-card-pro" id="tplCard-lower_third_glass.html" onclick="selectTemplate('lower_third_glass.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">EMERALD</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
+                <div
+                  style="border-radius: 8px 8px 0 0; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(135deg, rgba(4, 47, 46, 0.95), rgba(6, 78, 59, 0.9)); border-top: 2.5px solid #d4af37; padding: 5px 9px; box-shadow: 0 -4px 15px rgba(0,0,0,0.45); z-index: 2; overflow: hidden;">
+                  <span
+                    style="font-size: 5.5px; letter-spacing: 1.4px; font-weight: 700; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.65); align-self: flex-start; padding-bottom: 1px;">QS
+                    AL-ANBIYA (21) AYAT 107</span>
+                  <div
+                    style="font-family: 'Amiri', serif; font-size: 10px; color: #ffffff; direction: rtl; line-height: 1.4; text-align: center;">
+                    وَمَا أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ
+                  </div>
+                  <div style="font-size: 6.5px; color: #cbd5e1; line-height: 1.35; text-align: center;">
+                    Dan Kami tidak mengutus engkau melainkan menjadi rahmat bagi seluruh alam.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third Emerald Glass</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);">EMERALD
+                  / TV</span>
+              </div>
+              <p class="template-card-desc">
+                Panel hijau zamrud mengambang dengan garis emas tipis dan rel emas di tepi kiri. Label sumber berupa
+                <strong>teks emas kecil bergaris bawah</strong> (tanpa pil). Ukuran dan penyesuaian teks sama dengan
+                Lower Third Light/Dark; animasinya sapuan garis label 0,6 dtk saat panel masuk.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_glass.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 7: LOWER THIRD MIDNIGHT BLUE (varian kulit + animasi) -->
+          <div class="template-card-pro" id="tplCard-lower_third_midnight.html"
+            onclick="selectTemplate('lower_third_midnight.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">MIDNIGHT</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
+                <div
+                  style="border-radius: 7px 7px 0 0; border: 1px solid rgba(148,163,184,0.3); border-top: 2.5px solid #d4af37; background: linear-gradient(135deg, rgba(9,20,38,0.96), rgba(18,38,64,0.92)); padding: 6px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: 0 6px 18px rgba(0,0,0,0.45);">
+                  <span
+                    style="font-size: 6px; letter-spacing: 1.6px; font-weight: 700; color: #f0c75e; border-bottom: 1px solid rgba(212,175,55,0.55); padding-bottom: 1px;">QS
+                    AL-ANBIYA (21) AYAT 107</span>
+                  <span
+                    style="font-family: 'Amiri', serif; font-size: 10.5px; color: #f8fafc; direction: rtl; line-height: 1.5;">وَمَا
+                    أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ</span>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third Midnight Blue</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.35);">MIDNIGHT
+                  / TV</span>
+              </div>
+              <p class="template-card-desc">
+                Panel biru malam dengan garis emas tipis dan label sumber <strong>di tengah</strong>. Ukuran dan
+                penyesuaian teks <strong>sama dengan Lower Third Light/Dark</strong>; animasinya geser-naik tenang tanpa
+                kilau, cocok untuk siaran malam.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_midnight.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 8: LOWER THIRD PAPER LIGHT (varian kulit + animasi) -->
+          <div class="template-card-pro" id="tplCard-lower_third_paper.html"
+            onclick="selectTemplate('lower_third_paper.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">PAPER</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
+                <div
+                  style="border-radius: 0; border: 1px solid rgba(31,41,55,0.14); border-left: 3px solid #0f766e; background: linear-gradient(180deg, #fcfaf6, #f5efe6); padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 6px 16px rgba(0,0,0,0.35);">
+                  <span
+                    style="font-size: 6px; letter-spacing: 1.6px; font-weight: 800; color: #0f3d3a; display: inline-flex; align-items: center; gap: 4px;">
+                    <span style="width: 4px; height: 4px; border-radius: 1px; background: #0f766e;"></span>
+                    QS AL-ANBIYA (21) AYAT 107
+                  </span>
+                  <span
+                    style="font-family: 'Amiri', serif; font-size: 10.5px; color: #1f2937; direction: rtl; line-height: 1.5; text-align: center;">وَمَا
+                    أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ</span>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Lower Third Paper Light</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(15, 118, 110, 0.12); color: #0f766e; border: 1px solid rgba(15, 118, 110, 0.35);">PAPER
+                  / SIANG</span>
+              </div>
+              <p class="template-card-desc">
+                Panel kertas gading dengan garis emerald di tepi kiri dan label butir emerald. Ukuran dan penyesuaian
+                teks <strong>sama dengan Lower Third Light/Dark</strong>; animasinya <em>fade + rise</em> yang lebih
+                tenang, cocok untuk siaran siang.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_paper.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 9: DUAL SPLIT SAPPHIRE (kolom ganda, latar terbelah) -->
+          <div class="template-card-pro" id="tplCard-lower_third_dual_sapphire.html"
+            onclick="selectTemplate('lower_third_dual_sapphire.html')">
+            <div class="template-card-badge badge-active">✓ Aktif</div>
+            <div class="screen-monitor">
+              <div class="monitor-header">
+                <span class="monitor-tag">OBS / VMIX</span>
+                <span class="monitor-tag">DUAL SPLIT</span>
+              </div>
+              <div
+                style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); position: relative; overflow: hidden;">
+                <div
+                  style="border-radius: 8px 8px 0 0; border: 1px solid rgba(212,175,55,0.55); overflow: hidden; display: flex; box-shadow: 0 6px 18px rgba(0,0,0,0.45);">
+                  <div
+                    style="flex: 1; background: #f8fafc; padding: 6px 7px; font-size: 6px; color: #1e293b; line-height: 1.5;">
+                    Dan Kami tidak mengutus engkau melainkan menjadi rahmat bagi seluruh alam.
+                  </div>
+                  <div style="width: 2px; background: #d4af37;"></div>
+                  <div
+                    style="flex: 1; background: linear-gradient(135deg, #0b2545, #13315c); padding: 6px 7px; font-family: 'Amiri', serif; font-size: 9px; color: #f8fafc; direction: rtl; line-height: 1.6;">
+                    وَمَا أَرْسَلْنٰكَ اِلَّا رَحْمَةً لِّلْعٰلَمِيْنَ
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="template-card-body">
+              <div class="template-card-title-row">
+                <h4 class="template-card-title">Dual Split Sapphire</h4>
+                <span class="template-type-chip"
+                  style="background: rgba(37, 99, 235, 0.15); color: #93c5fd; border: 1px solid rgba(37, 99, 235, 0.35);">DUAL
+                  / TV</span>
+              </div>
+              <p class="template-card-desc">
+                Kolom ganda dengan <strong>latar terbelah</strong>: terjemahan di kertas terang (kiri), teks Arab di
+                nilam (kanan), dipisah garis emas. Arab dan terjemahan tampil <strong>bersamaan</strong>; animasinya
+                tirai terbuka dari tengah, lalu kedua kolom masuk dari sisinya.
+              </p>
+              <div class="template-card-action">
+                <span>lower_third_dual_sapphire.html</span>
+                <span class="template-action-btn">Pilih &rarr;</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Catatan cakupan tema: agar tombol tema tidak terkesan "tidak berfungsi" -->
+        <div class="template-theme-note">
+          <strong>Catatan tema:</strong> tombol tema panel mengubah <em>Default Layar Penuh</em> dan
+          <em>PiP Video</em>. Ketujuh template <em>Lower Third</em> memakai desain tetap (warna sesuai nama kartunya).
+          Ukuran teks di status bar berlaku untuk <strong>semua</strong> template.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Omnibar / Universal Smart Quick Jump Modal (Spotlight Style) -->
+  <div class="omnibar-overlay" id="omnibarModal" onclick="if(event.target === this) closeOmnibar()">
+    <div class="omnibar-dialog" role="dialog" aria-modal="true">
+      <div class="omnibar-input-container">
+        <div class="omnibar-search-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <input type="text" id="omnibarInput" class="omnibar-input"
+          placeholder="Lompat ke ayat (misal: 2:183, yasin 1-5, rad 1, kahfi, atau ketik kata kunci)..."
+          autocomplete="off" spellcheck="false" oninput="handleOmnibarInput(event)"
+          onkeydown="handleOmnibarKeydown(event)" />
+        <button class="omnibar-close-btn" onclick="closeOmnibar()" title="Tutup (Esc)">
+          <kbd>ESC</kbd>
+        </button>
+      </div>
+
+      <div class="omnibar-body">
+        <div class="omnibar-list" id="omnibarList"></div>
+        <div class="omnibar-preview" id="omnibarPreview" style="display: none;"></div>
+      </div>
+
+      <div class="omnibar-footer">
+        <div class="omnibar-footer-hints">
+          <span><kbd>↑</kbd><kbd>↓</kbd> Navigasi</span>
+          <span><kbd>↵</kbd> Tampilkan Ayat</span>
+          <span><kbd>Ctrl</kbd>+<kbd>↵</kbd> Jump & SHOW</span>
+          <span><kbd>Esc</kbd> Tutup</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Modules (urutan penting dependencies dulu) -->
+  <script src="js/settings.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/quran-data.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/bookmark.js"></script>
+  <script src="js/search-engine.js"></script>
+  <script src="js/fileSystem.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/fullscreen.js"></script>
+  <script src="js/presentation.js"></script>
+  <script src="js/font.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/confidenceMonitor.js"></script>
+  <script src="js/omnibar.js"></script>
+
+  <!-- Electron OBS URL integration -->
+  <script>
+    // Tampilkan OBS URL dari Electron HTTP server
+    if (window.electronAPI && window.electronAPI.isElectron) {
+      window.electronAPI.getServerInfo().then(info => {
+        if (info && info.obsUrl) {
+          const box = document.getElementById('obsUrlBox');
+          const txt = document.getElementById('obsUrlText');
+          if (box && txt) {
+            txt.textContent = info.obsUrl;
+            box.style.display = 'block';
+            box.dataset.url = info.obsUrl;
+          }
+        }
+      });
+      // Juga update jika ada event push dari main
+      window.electronAPI.onServerInfo(info => {
+        if (info && info.obsUrl) {
+          const box = document.getElementById('obsUrlBox');
+          const txt = document.getElementById('obsUrlText');
+          if (box && txt) {
+            txt.textContent = info.obsUrl;
+            box.style.display = 'block';
+            box.dataset.url = info.obsUrl;
+          }
+        }
+      });
+    }
+
+    // ── Electron / OBS Integration ─────────────────────────
+    let obsUrl = '';
+    let obsOverlayUrl = '';
+    let hadithObsUrl = '';
+
+    function syncBrowserSourceUrls(info) {
+      if (!info) return;
+      const activePort = info.port;
+      obsUrl = info.obsUrl || (activePort ? `http://localhost:${activePort}/presentation.html` : obsUrl);
+      obsOverlayUrl = info.obsOverlayUrl || (activePort ? `http://localhost:${activePort}/presentation.html?obs` : obsOverlayUrl);
+      hadithObsUrl = info.hadithObsUrl || (activePort ? `http://localhost:${activePort}/hadith-presentation.html` : hadithObsUrl);
+
+      const quranDisplay = document.getElementById('obsUrlDisplay');
+      const overlayDisplay = document.getElementById('obsOverlayUrlDisplay');
+      const hadithDisplay = document.getElementById('hadithObsUrlDisplay');
+      if (quranDisplay && obsUrl) quranDisplay.textContent = obsUrl;
+      if (overlayDisplay && obsOverlayUrl) overlayDisplay.textContent = obsOverlayUrl;
+      if (hadithDisplay && hadithObsUrl) hadithDisplay.textContent = hadithObsUrl;
+      updateLanInfo(info);
+    }
+
+    if (window.electronAPI && window.electronAPI.isElectron) {
+      window.electronAPI.getServerInfo().then(syncBrowserSourceUrls);
+      window.electronAPI.onServerInfo(syncBrowserSourceUrls);
+    } else if (location.protocol === 'http:' || location.protocol === 'https:') {
+      obsUrl = new URL('presentation.html', location.href).href;
+      obsOverlayUrl = new URL('presentation.html?obs', location.href).href;
+      hadithObsUrl = new URL('hadith-presentation.html', location.href).href;
+      // Tunggu skrip selesai: updateLanInfo() memakai variabel yang
+      // dideklarasikan di bawah blok ini (dulu memicu TDZ di mode http).
+      document.addEventListener('DOMContentLoaded', () => {
+        syncBrowserSourceUrls({ obsUrl, obsOverlayUrl, hadithObsUrl });
+      });
+    }
+
+    function copyBrowserSourceUrl(url, label) {
+      if (!url) return;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast(`URL Browser Source ${label} disalin!`);
+      }).catch(() => {
+        prompt(`Copy URL Browser Source ${label}:`, url);
+      });
+    }
+
+    function copyObsUrlFromModal() {
+      copyBrowserSourceUrl(obsUrl, "Al-Qur'an");
+    }
+
+    function copyObsOverlayUrlFromModal() {
+      copyBrowserSourceUrl(obsOverlayUrl, "Al-Qur'an (overlay transparan)");
+    }
+
+    function copyHadithObsUrlFromModal() {
+      copyBrowserSourceUrl(hadithObsUrl, 'Hadits');
+    }
+
+    // ── Akses jaringan lokal ────────────────────────────────
+    // Server hanya mendengarkan localhost secara bawaan. Operator bisa
+    // mengaktifkannya agar vMix/OBS di komputer lain memakai halaman yang sama.
+    let lanInfo = { enabled: false, urls: [] };
+
+    function renderLanSection() {
+      const toggle = document.getElementById('lanAccessToggle');
+      if (!toggle) return;
+      const warning = document.getElementById('lanWarning');
+      const block = document.getElementById('lanUrlsBlock');
+      const status = document.getElementById('lanStatus');
+      const quranEl = document.getElementById('lanQuranUrl');
+      const hadithEl = document.getElementById('lanHadithUrl');
+
+      toggle.checked = !!lanInfo.enabled;
+      if (warning) warning.hidden = !lanInfo.enabled;
+
+      const base = lanInfo.urls && lanInfo.urls.length ? lanInfo.urls[0].url : '';
+      if (quranEl) quranEl.textContent = base ? base + '/presentation.html?obs' : '—';
+      if (hadithEl) hadithEl.textContent = base ? base + '/hadith-presentation.html' : '—';
+      if (block) block.hidden = !lanInfo.enabled || !base;
+
+      if (status) {
+        if (!lanInfo.enabled) status.textContent = 'Hanya komputer ini (localhost).';
+        else if (!base) status.textContent = 'Aktif, tetapi tidak ada alamat IPv4 yang terdeteksi.';
+        else status.textContent = 'Aktif · ' + lanInfo.urls.map(u => u.address).join(', ');
+      }
+    }
+
+    function updateLanInfo(info) {
+      if (!info) return;
+      lanInfo = { enabled: !!info.lanAccess, urls: Array.isArray(info.lanUrls) ? info.lanUrls : [] };
+      renderLanSection();
+    }
+
+    async function toggleLanAccess(enabled) {
+      const status = document.getElementById('lanStatus');
+      if (!window.electronAPI || typeof window.electronAPI.setLanAccess !== 'function') {
+        if (status) status.textContent = 'Hanya tersedia pada aplikasi desktop.';
+        renderLanSection();
+        return;
+      }
+      if (status) status.textContent = 'Menerapkan…';
+      try {
+        const result = await window.electronAPI.setLanAccess(enabled);
+        if (!result || !result.ok) {
+          if (typeof showToast === 'function') showToast('Gagal mengubah akses jaringan: ' + ((result && result.error) || 'tidak diketahui'), 'error');
+        } else {
+          if (typeof showToast === 'function') showToast(result.lanAccess ? 'Akses jaringan lokal aktif.' : 'Akses jaringan lokal dimatikan.', 'success');
+        }
+        if (result) lanInfo = { enabled: !!result.lanAccess, urls: result.lanUrls || [] };
+      } catch (err) {
+        if (typeof showToast === 'function') showToast('Gagal mengubah akses jaringan: ' + err.message, 'error');
+      }
+      renderLanSection();
+    }
+
+    function copyLanUrl(kind) {
+      const base = lanInfo.urls && lanInfo.urls.length ? lanInfo.urls[0].url : '';
+      if (!base) return;
+      const url = kind === 'hadith' ? base + '/hadith-presentation.html' : base + '/presentation.html?obs';
+      copyBrowserSourceUrl(url, kind === 'hadith' ? 'Hadits (LAN)' : "Al-Qur'an (LAN)");
+    }
+
+    // ── Pemeriksaan Siaran (pre-flight) ─────────────────────
+    let diagLines = [];
+
+    function diagRowClass(state) {
+      return state === 'ok' ? 'diag-ok' : state === 'warn' ? 'diag-warn' : state === 'fail' ? 'diag-fail' : 'diag-idle';
+    }
+
+    function renderDiagnostics(rows) {
+      const list = document.getElementById('diagList');
+      if (!list) return;
+      list.innerHTML = rows.map(row => `
+        <li class="diag-item ${diagRowClass(row.state)}">
+          <span class="diag-dot" aria-hidden="true"></span>
+          <span class="diag-label">${row.label}</span>
+          <span class="diag-detail">${row.detail || ''}</span>
+        </li>`).join('');
+    }
+
+    async function runDiagnostics() {
+      const list = document.getElementById('diagList');
+      const btn = document.getElementById('diagRunBtn');
+      if (!list) return;
+      if (btn) { btn.disabled = true; btn.textContent = 'Memeriksa…'; }
+      list.innerHTML = '<li class="diag-item diag-idle">Memeriksa…</li>';
+
+      const rows = [];
+      const push = (label, state, detail) => rows.push({ label, state, detail: String(detail || '') });
+
+      // 1. Server lokal
+      try {
+        const res = await fetch('/api/ping', { cache: 'no-store' });
+        push('Server lokal', res.ok ? 'ok' : 'fail', res.ok ? 'Merespons di port ' + (location.port || '?') : 'HTTP ' + res.status);
+      } catch (e) {
+        push('Server lokal', 'fail', 'Tidak merespons');
+      }
+
+      // 2. Font Arab lokal (offline)
+      try {
+        let faces = [];
+        if (document.fonts && document.fonts.load) faces = await document.fonts.load('16px "Amiri"', 'بِسْمِ اللَّهِ');
+        push('Font Arab (offline)', faces.length ? 'ok' : 'warn', faces.length ? 'Amiri siap dipakai' : 'Amiri belum termuat');
+      } catch (e) {
+        push('Font Arab (offline)', 'warn', 'Tidak dapat diperiksa');
+      }
+
+      // 3. Info dari main process
+      let info = null;
+      try {
+        if (window.electronAPI && window.electronAPI.runDiagnostics) info = await window.electronAPI.runDiagnostics();
+      } catch (e) { info = null; }
+
+      if (!info) {
+        push('Pemeriksaan sistem', 'warn', 'Hanya tersedia pada aplikasi desktop');
+      } else {
+        const displays = info.displays || [];
+        push('Layar terdeteksi', displays.length >= 2 ? 'ok' : 'warn',
+          displays.length >= 2
+            ? displays.length + ' layar (' + displays.map(x => x.width + '×' + x.height).join(', ') + ')'
+            : '1 layar — jendela proyektor akan menimpa panel operator');
+        push('Folder feed vMix', info.feed.ok ? 'ok' : 'fail', info.feed.ok ? info.feed.dir : info.feed.error);
+        push('Data hadits', info.hadith.ok ? 'ok' : 'fail', info.hadith.ok ? info.hadith.sources + ' rujukan' : info.hadith.error);
+        push('Berkas font terpasang', info.fonts.ok ? 'ok' : 'fail', info.fonts.ok ? info.fonts.files + ' berkas' : info.fonts.error);
+        push('Data Al-Qur\'an', info.quran.ok ? 'ok' : 'fail', info.quran.ok ? 'quran-data.js tersedia' : 'tidak ditemukan');
+        push('Akses jaringan', info.lanAccess ? 'ok' : 'idle',
+          info.lanAccess ? 'Aktif · ' + ((info.lanUrls || []).map(u => u.address).join(', ') || 'tidak ada alamat') : 'Hanya komputer ini');
+        push('Versi & pengaturan', 'idle', info.appVersion + ' · ' + info.settingsPath);
+      }
+
+      renderDiagnostics(rows);
+      diagLines = rows.map(r => (r.state === 'ok' ? '[OK] ' : r.state === 'warn' ? '[!]  ' : r.state === 'fail' ? '[X]  ' : '[-]  ') + r.label + ': ' + r.detail);
+      if (btn) { btn.disabled = false; btn.textContent = 'Periksa Ulang'; }
+    }
+
+    async function copyDiagnostics() {
+      if (!diagLines.length) {
+        if (typeof showToast === 'function') showToast('Jalankan pemeriksaan dulu.', 'error');
+        return;
+      }
+      const text = 'Webquran — Laporan Pemeriksaan\n' + new Date().toLocaleString('id-ID') + '\n\n' + diagLines.join('\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        if (typeof showToast === 'function') showToast('Laporan pemeriksaan disalin.', 'success');
+      } catch (e) {
+        if (typeof showToast === 'function') showToast('Gagal menyalin laporan.', 'error');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('lanAccessToggle');
+      if (toggle) toggle.addEventListener('change', event => toggleLanAccess(event.target.checked));
+      renderLanSection();
+    });
+
+    // ── Heartbeat server ───────────────────────────────────
+    // Panel memeriksa /api/ping setiap beberapa detik. Bila dua kali berturut
+    // gagal, spanduk peringatan muncul — sebelumnya layar bisa membeku di frame
+    // terakhir tanpa satu pun tanda di panel.
+    const SERVER_HEARTBEAT_MS = 3000;
+    let serverDown = false;
+    let serverMissCount = 0;
+    let heartbeatTimer = null;
+
+    function setServerBanner(visible, detail) {
+      const banner = document.getElementById('serverBanner');
+      const detailEl = document.getElementById('serverBannerDetail');
+      if (!banner) return;
+      if (detailEl && detail) detailEl.textContent = detail;
+      banner.hidden = !visible;
+    }
+
+    async function checkServerNow() {
+      try {
+        const controller = new AbortController();
+        const abortTimer = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch('/api/ping', { cache: 'no-store', signal: controller.signal });
+        clearTimeout(abortTimer);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        await res.json();
+        serverMissCount = 0;
+        if (serverDown) {
+          serverDown = false;
+          setServerBanner(false);
+          if (typeof showToast === 'function') showToast('Server siaran pulih.', 'success');
+        }
+        return true;
+      } catch (e) {
+        serverMissCount++;
+        if (serverMissCount >= 2 && !serverDown) {
+          serverDown = true;
+          setServerBanner(true, 'Layar proyektor/OBS bisa membeku di frame terakhir. Menunggu server pulih…');
+        }
+        return false;
+      }
+    }
+
+    function startServerHeartbeat() {
+      if (heartbeatTimer) clearInterval(heartbeatTimer);
+      checkServerNow();
+      heartbeatTimer = setInterval(checkServerNow, SERVER_HEARTBEAT_MS);
+    }
+
+    document.addEventListener('DOMContentLoaded', startServerHeartbeat);
+
+    // Laporan dari template lewat pratinjau Program Feed: tanda "teks terpotong".
+    window.addEventListener('message', (event) => {
+      if (!event.data || event.data.type !== 'QURAN_FIT') return;
+      const chip = document.getElementById('cmClipChip');
+      if (chip) chip.hidden = !event.data.clipped;
+    });
+    // ── Visibility Tally System ──────────────────────────────────
+    // State & ikon status dideklarasikan lebih awal (lihat <script> di atas body)
+    // agar skrip lain tidak gagal karena TDZ saat memanggil pembaruan UI.
+
+    function updateVisibilityUI() {
+      const btn = document.getElementById('btnVisibility');
+      const dockBtn = document.getElementById('dockBtnVisibility');
+
+      if (btn) {
+        // Label = STATUS (bukan perintah), supaya tidak terbaca terbalik.
+        // "ON AIR" mustahil disalahartikan sebagai "tekan untuk tampil".
+        if (isPresentationVisible) {
+          btn.className = 'btn-header-tally tally-live';
+          btn.innerHTML = `${SVG_EYE} <span class="tally-dot dot-live"></span> <span id="visText">ON AIR</span>`;
+          btn.title = 'Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)';
+        } else {
+          btn.className = 'btn-header-tally tally-blank';
+          btn.innerHTML = `${SVG_EYE_OFF} <span class="tally-dot dot-blank"></span> <span id="visText">BLANK</span>`;
+          btn.title = 'Layar KOSONG (tidak menayangkan ayat). Klik untuk menayangkan kembali (Spasi)';
+        }
+        btn.setAttribute('aria-pressed', String(isPresentationVisible));
+      }
+
+      if (dockBtn) {
+        if (isPresentationVisible) {
+          dockBtn.className = 'btn-dock-tally tally-live';
+          dockBtn.innerHTML = `<span class="tally-dot dot-live"></span> <span id="dockVisText">ON AIR</span>`;
+          dockBtn.title = 'Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)';
+        } else {
+          dockBtn.className = 'btn-dock-tally tally-blank';
+          dockBtn.innerHTML = `<span class="tally-dot dot-blank"></span> <span id="dockVisText">BLANK</span>`;
+          dockBtn.title = 'Layar KOSONG. Klik untuk menayangkan kembali (Spasi)';
+        }
+        dockBtn.setAttribute('aria-pressed', String(isPresentationVisible));
+      }
+
+      // Tombol Cut Black tidak ada gunanya saat layar sudah hitam.
+      const cutBtn = document.querySelector('.cm-btn-cut');
+      if (cutBtn) {
+        cutBtn.disabled = !isPresentationVisible;
+        cutBtn.title = isPresentationVisible
+          ? 'Potong tampilan ke hitam seketika (Spasi)'
+          : 'Layar sudah hitam — tidak ada yang bisa dipotong';
+      }
+
+      // Sync Confidence Monitor Program Feed
+      if (typeof updateConfidenceMonitorTally === 'function') {
+        updateConfidenceMonitorTally(isPresentationVisible);
+      }
+      if (typeof syncConfidenceMonitor === 'function') {
+        syncConfidenceMonitor({ isVisible: isPresentationVisible });
+      }
+    }
+
+    function updateTransVisibilityUI() {
+      const btn = document.getElementById('btnTransVisibility');
+      const dockBtn = document.getElementById('dockBtnTransVisibility');
+
+      if (btn) {
+        if (isTranslationVisible) {
+          btn.className = 'btn-header-tally tally-trans-on';
+          btn.innerHTML = `${SVG_DOC} <span class="tally-dot dot-trans-on"></span> <span id="transVisText">Terjemahan: ON</span>`;
+          btn.title = 'Terjemahan sedang TAMPIL di layar presentasi. Klik untuk sembunyikan.';
+        } else {
+          btn.className = 'btn-header-tally tally-trans-off';
+          btn.innerHTML = `${SVG_DOC} <span class="tally-dot dot-trans-off"></span> <span id="transVisText">Terjemahan: OFF</span>`;
+          btn.title = 'Terjemahan sedang SEMBUNYI di layar presentasi. Klik untuk tampilkan.';
+        }
+      }
+
+      if (dockBtn) {
+        if (isTranslationVisible) {
+          dockBtn.className = 'btn-dock-tally tally-trans-on';
+          dockBtn.innerHTML = `<span class="tally-dot dot-trans-on"></span> <span id="dockTransVisText">TR: ON</span>`;
+          dockBtn.title = 'Terjemahan sedang TAMPIL. Klik untuk sembunyikan (T)';
+        } else {
+          dockBtn.className = 'btn-dock-tally tally-trans-off';
+          dockBtn.innerHTML = `<span class="tally-dot dot-trans-off"></span> <span id="dockTransVisText">TR: OFF</span>`;
+          dockBtn.title = 'Terjemahan sedang SEMBUNYI. Klik untuk tampilkan (T)';
+        }
+        dockBtn.setAttribute('aria-pressed', String(isTranslationVisible));
+      }
+
+      // Sync Confidence Monitor Translation Visibility
+      if (typeof syncConfidenceMonitor === 'function') {
+        syncConfidenceMonitor({ isTransVisible: isTranslationVisible });
+      }
+    }
+
+    window.addEventListener('presentation-content-activated', event => {
+      if (event.detail?.content === 'hadith') {
+        isPresentationVisible = false;
+        isTranslationVisible = false;
+        updateVisibilityUI();
+        updateTransVisibilityUI();
+      } else if (event.detail?.content === 'quran') {
+        isPresentationVisible = true;
+        updateVisibilityUI();
+      }
+    });
+
+    // Cut to Black = memotong, bukan menyalakan. Kalau layar sudah hitam,
+    // tidak melakukan apa pun (dulu tombol ini memakai toggle sehingga
+    // justru MENYALAKAN kembali layar yang sedang hitam).
+    function cutToBlack() {
+      if (!isPresentationVisible) return;
+      toggleVisibility();
+    }
+
+    // ── State siaran otoritatif ─────────────────────────────
+    // Panel tidak lagi mengubah tally lebih dulu lalu berharap perintahnya
+    // diterima. Perubahan dikirim, lalu tampilan disalin dari keadaan yang
+    // benar-benar dipakai server. Bila server menolak, tally TIDAK berubah.
+    function adoptBroadcastState(state) {
+      if (!state) return;
+      if (typeof state.isVisible === 'boolean') isPresentationVisible = state.isVisible;
+      if (typeof state.isTransVisible === 'boolean') isTranslationVisible = state.isTransVisible;
+      updateVisibilityUI();
+      if (typeof updateTransVisibilityUI === 'function') updateTransVisibilityUI();
+      if (state.fontSize) {
+        const slider = document.getElementById('fontSlider');
+        const display = document.getElementById('fontPercentDisplay');
+        const chip = document.getElementById('cmFontSizeChip');
+        if (slider) slider.value = String(state.fontSize);
+        if (display) display.innerText = state.fontSize + '%';
+        if (chip) chip.textContent = ' · Teks ' + state.fontSize + '%';
+      }
+    }
+
+    async function applyBroadcastState(patch) {
+      try {
+        if (window.electronAPI && typeof window.electronAPI.applyState === 'function') {
+          const result = await window.electronAPI.applyState(patch);
+          if (result && result.ok) {
+            adoptBroadcastState(result.state);
+            return result.state;
+          }
+          if (typeof showToast === 'function') showToast((result && result.error) || 'Server menolak perubahan.', 'error');
+          return null;
+        }
+        const res = await fetch('/api/verse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        });
+        if (!res.ok) {
+          if (typeof showToast === 'function') showToast('Server menolak perubahan.', 'error');
+          return null;
+        }
+        const state = await res.json();
+        // Balasan endpoint kini berbentuk { success, state }; terima kedua bentuk.
+        const normalized = state && state.state ? state.state : state;
+        adoptBroadcastState(normalized);
+        return normalized;
+      } catch (e) {
+        if (typeof showToast === 'function') showToast('Server tidak merespons.', 'error');
+        return null;
+      }
+    }
+
+    async function toggleVisibility() {
+      const area = document.getElementById('resultArea');
+      const hasStage = !!(area && area.dataset.arabic);
+      const target = !isPresentationVisible;
+
+      // Menyalakan layar tanpa ayat hanya menghasilkan tally "ON AIR" palsu.
+      if (target && !hasStage) {
+        if (typeof showToast === 'function') showToast('Pilih ayat dulu, lalu tekan Tampilkan Ayat.', 'error');
+        return;
+      }
+
+      if (target) {
+        window.ProjectorScreen?.selectIfOpen('quran');
+        // Tayangkan isi panggung saat ini. Tanpa ini, setelah operator menekan
+        // "Muat" lalu Show, yang muncul kembali adalah ayat lama yang masih
+        // tersimpan di server — bukan ayat yang sedang ia siapkan.
+        if (hasStage && typeof pushToPresentation === 'function') {
+          pushToPresentation(area.dataset.arabic, area.dataset.trans, area.dataset.info);
+        }
+      }
+
+      // Terjemah ikut turun saat layar dipotong (satu patch, satu keadaan).
+      const patch = { isVisible: target };
+      if (!target && isTranslationVisible) patch.isTransVisible = false;
+
+      const state = await applyBroadcastState(patch);
+      if (!state) return;
+
+      // postMessage untuk OBS/pop-up jika ada wrapper yg mendengarkan
+      if (typeof window.presentationWindow !== 'undefined' && window.presentationWindow && !window.presentationWindow.closed) {
+        try {
+          window.presentationWindow.postMessage({ type: 'VISIBILITY_UPDATE', isVisible: state.isVisible }, '*');
+        } catch (e) { }
+      }
+    }
+
+    async function toggleTransVisibility() {
+      const state = await applyBroadcastState({ isTransVisible: !isTranslationVisible });
+      if (!state) return;
+
+      // Channel 2: postMessage ke browser popup (fallback non-Electron)
+      if (typeof window.presentationWindow !== 'undefined' && window.presentationWindow && !window.presentationWindow.closed) {
+        try {
+          window.presentationWindow.postMessage({ type: 'TRANS_VISIBILITY_UPDATE', isTransVisible: state.isTransVisible }, '*');
+        } catch (e) { }
+      }
+
+      // Channel 3: localStorage untuk OBS polling mode
+      try { localStorage.setItem('quran_trans_visible', state.isTransVisible); } catch (e) { }
+    }
+
+    // ── Font Size Control (Status Bar) ─────────────────────
+    // Ini "Ukuran TAYANG": mengubah teks di proyektor / OBS / vMix.
+    // Berbeda dengan "Ukuran baca" di panel hadits yang hanya memperbesar
+    // tampilan di layar operator.
+    function handleFontSizeChange(val) {
+      const size = parseInt(val);
+      const display = document.getElementById('fontPercentDisplay');
+      if (display) display.innerText = size + '%';
+      const chip = document.getElementById('cmFontSizeChip');
+      if (chip) chip.textContent = ' · Teks ' + size + '%';
+
+      // Channel 1: Electron IPC
+      if (window.electronAPI && window.electronAPI.updateFontSize) {
+        window.electronAPI.updateFontSize(size);
+      }
+
+      // Channel 2: localStorage (untuk browser popup mode & OBS)
+      try { localStorage.setItem('quran_fontsize', size); } catch (e) { }
+
+      // Channel 3: postMessage ke browser popup
+      if (typeof presentationWindow !== 'undefined' && presentationWindow && !presentationWindow.closed) {
+        try {
+          presentationWindow.postMessage({ type: 'FONT_SIZE_UPDATE', fontSize: size }, '*');
+        } catch (e) { }
+      }
+    }
+
+    // Pulihkan ukuran tayang terakhir (dulu selalu kembali ke 100% setiap start).
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('fontSlider');
+      if (!slider) return;
+      let size = parseInt(slider.value, 10) || 100;
+      try {
+        const saved = parseInt(localStorage.getItem('quran_fontsize'), 10);
+        if (Number.isFinite(saved) && saved >= 50 && saved <= 200) size = saved;
+      } catch (e) { /* abaikan */ }
+      slider.value = String(size);
+      handleFontSizeChange(size);
+    });
+
+    function resetFontSize() {
+      const slider = document.getElementById('fontSlider');
+      if (slider) {
+        slider.value = 100;
+        handleFontSizeChange(100);
+      }
+    }
+
+    function stepFontSize(delta) {
+      const slider = document.getElementById('fontSlider');
+      if (slider) {
+        let val = Math.max(50, Math.min(200, parseInt(slider.value) + delta));
+        slider.value = val;
+        handleFontSizeChange(val);
+      }
+    }
+
+    // ── vMix Save Indicator ────────────────────────────────
+    let vmixResetTimer = null;
+    let lastVmixPath = ""; // path feed terakhir, dipakai tombol salin
+    let vmixEverSaved = false; // feed sudah pernah berisi ayat?
+
+    // Dulu fungsi ini menulis ke #vmixLed dan #vmixStatusText yang tidak pernah
+    // ada di halaman, sehingga indikator tidak pernah menyala dan tombol salin
+    // selalu mengira belum ada berkas. Sekarang memakai elemen yang benar.
+    function setVmixIndicator(state, path) {
+      const indicator = document.getElementById('vmixIndicator');
+      if (!indicator) return;
+      const dot = indicator.querySelector('.vmix-dot');
+      const label = indicator.querySelector('.vmix-label');
+      clearTimeout(vmixResetTimer);
+
+      if (state === 'ok') vmixEverSaved = true;
+      // Abu = belum ada feed, hijau = feed sudah berisi, merah = gagal menulis.
+      const restClass = vmixEverSaved ? 'vmix-saved' : 'vmix-idle';
+      if (dot) dot.className = 'vmix-dot ' + (state === 'ok' ? 'vmix-blink-ok' : state === 'error' ? 'vmix-blink-err' : restClass);
+      if (label) label.textContent = state === 'ok' ? 'vMix tersimpan' : state === 'error' ? 'vMix gagal' : 'vMix JSON';
+
+      if (path) {
+        lastVmixPath = path;
+        indicator.title = 'File feed vMix: ' + path;
+        const pathDisplay = document.getElementById('vmixPathDisplay');
+        if (pathDisplay) pathDisplay.textContent = path;
+      }
+
+      if (state !== 'idle') {
+        vmixResetTimer = setTimeout(() => setVmixIndicator('idle'), state === 'ok' ? 2200 : 4000);
+      }
+    }
+
+    function copyVmixPath() {
+      if (!lastVmixPath) {
+        // Coba ambil dari teks yang sudah ditampilkan (fallback)
+        const display = document.getElementById('vmixPathDisplay');
+        const text = display && display.textContent ? display.textContent.trim() : '';
+        if (text && text.includes(':') && !text.startsWith('[')) {
+          lastVmixPath = text;
+        } else {
+          showToast('Belum ada file feed vMix. Pilih ayat dulu.', '');
+          return;
+        }
+      }
+      navigator.clipboard.writeText(lastVmixPath).then(() => {
+        showToast('Path vMix JSON disalin: ' + lastVmixPath, 'success');
+      }).catch(() => {
+        showToast('Gagal menyalin path', 'error');
+      });
+    }
+
+    if (window.electronAPI && window.electronAPI.isElectron) {
+      window.electronAPI.onVmixSaveOk((data) => {
+        setVmixIndicator('ok', data && data.path);
+      });
+
+      window.electronAPI.onVmixSaveError((data) => {
+        const indicator = document.getElementById('vmixIndicator');
+        if (indicator && data && data.error) indicator.title = 'Feed vMix gagal ditulis: ' + data.error;
+        setVmixIndicator('error');
+      });
+    }
+  </script>
+  <script src="js/hadith-engine.js"></script>
+  <script src="js/hadith.js"></script>
+</body>
+
+</html>

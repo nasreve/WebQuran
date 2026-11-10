@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webquran Template: PIP Video</title>
+    <!-- Font dibundel lokal: tetap benar tanpa internet -->
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <style>
+        :root {
+            --bg: transparent;
+            --arabic-color: #ffffff;
+            --trans-color: #cbd5e1; /* Slate 300 */
+            --info-color: #94a3b8; /* Slate 400 */
+            --accent: #3b82f6; /* Blue */
+            --card-bg: rgba(15, 23, 42, 0.75); /* Slate 900 with transparency */
+            --card-border: rgba(255, 255, 255, 0.1);
+            --arabic-font: 'Amiri', 'Traditional Arabic', serif;
+            --latin-font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body.light {
+            --arabic-color: #0f172a;
+            --trans-color: #334155;
+            --info-color: #64748b;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: transparent;
+            font-family: var(--latin-font);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            /* Panel ayat menempel ke KANAN (60%). Sisi kiri sengaja dibiarkan
+               transparan: di OBS/vMix, kamera penceramah diletakkan sebagai
+               source DI BELAKANG browser source ini, sehingga tampil di sisi kiri
+               tanpa perlu embed video di dalam halaman. */
+            align-items: stretch;
+            justify-content: flex-end;
+            overflow: hidden;
+            padding: 24px; /* Memberi ruang untuk bayangan panel */
+        }
+
+        /* Varian: panel di kiri, kamera di kanan (pakai ?side=left) */
+        body[data-side="left"] {
+            justify-content: flex-start;
+        }
+
+        .quran-panel {
+            /* 60% lebar layar di sisi kanan; 40% sisanya transparan untuk kamera */
+            width: 60%;
+            height: 100%;
+            flex: 0 0 auto;
+            /* Tersembunyi sampai operator menayangkan ayat (showPanel menambahkan
+               .panel-enter yang berakhir di opacity 1). Tanpa ini, kartu kosong
+               "Menunggu Ayat" sempat tayang di OBS saat aplikasi baru dibuka. */
+            opacity: 0;
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), 
+                        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        body.light .quran-panel {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1),
+                        0 20px 40px -20px rgba(59, 130, 246, 0.15);
+        }
+
+        .quran-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .info-badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent);
+            padding: 7px 20px;
+            border-radius: 50px;
+            font-size: clamp(13px, 1.1vw, 17px);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+        }
+
+        /* Nama surat dan nomor ayat dipisah agar mudah dipindai sekilas */
+        .info-badge .badge-book {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .info-badge .badge-divider {
+            width: 1px;
+            height: 0.95em;
+            background: currentColor;
+            opacity: 0.35;
+        }
+
+        .info-badge .badge-ayah {
+            font-weight: 700;
+            font-size: 0.94em;
+            letter-spacing: 0.4px;
+            opacity: 0.95;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body.light .info-badge {
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.2);
+            color: #2563eb;
+        }
+
+        .quran-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        .arabic-text {
+            font-family: var(--arabic-font);
+            font-size: clamp(36px, 6vw, 70px);
+            line-height: 2.05;
+            color: var(--arabic-color);
+            /* Disamakan dengan template lain: teks Arab di tengah, bukan rata kanan,
+               supaya seimbang dengan terjemahan di panel yang lebih sempit. */
+            text-align: center;
+            direction: rtl;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        body.light .arabic-text {
+            text-shadow: none;
+        }
+
+        .trans-text {
+            font-family: var(--latin-font);
+            font-size: clamp(18px, 3vw, 30px);
+            color: var(--trans-color);
+            line-height: 1.72;
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+            text-wrap: pretty;
+            width: 100%;
+        }
+
+        .waiting {
+            text-align: center;
+            color: var(--info-color);
+            opacity: 0.6;
+        }
+
+        /* Blur Reveal Animations */
+        @keyframes blurRevealIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+                filter: blur(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .animate-in {
+            animation: blurRevealIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0; 
+        }
+
+        @keyframes blurFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.98);
+                filter: blur(8px);
+            }
+        }
+        
+        .animate-out {
+            animation: blurFadeOut 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .quran-header.animate-in { animation-delay: 0s; }
+        .arabic-text.animate-in { animation-delay: 0.1s; }
+        .trans-text.animate-in { animation-delay: 0.15s; }
+
+        .morph-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+            opacity: 0;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .morph-wrapper.active {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .morph-inner {
+            min-height: 0;
+            padding: 24px 0 6px; /* Ruang atas cukup untuk harakat/waqaf, tanpa celah berlebih */
+            width: 100%;
+        }
+
+        /* ── Panel-level show/hide animation ── */
+        #mainWrap {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            pointer-events: none;
+        }
+
+        @keyframes panelEnter {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes panelExit {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+        }
+
+        .panel-enter {
+            animation: panelEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto;
+        }
+
+        .panel-exit {
+            animation: panelExit 0.4s ease-in forwards;
+            pointer-events: none;
+        }
+        /* Floating controls — hidden in OBS mode */
+        .controls {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+            opacity: 0.15;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .controls:hover { opacity: 1; transform: translateY(-5px); }
+        body.obs-mode .controls { display: none; }
+        .ctrl-btn {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: var(--latin-font);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .ctrl-btn:hover {
+            background: rgba(59, 130, 246, 0.85);
+            color: white;
+            border-color: rgba(96, 165, 250, 0.8);
+            transform: translateY(-2px);
+        }
+        body.light .ctrl-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #475569;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        body.light .ctrl-btn:hover {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+    </style>
+    <script src="../js/quran-text-fit.js"></script>
+</head>
+
+<body>
+    <div class="quran-panel" id="mainWrap">
+        <div class="waiting">
+            <h2>📡 Menunggu Ayat...</h2>
+        </div>
+    </div>
+    <!-- Floating Controls (hover kanan bawah) -->
+    <div class="controls">
+        <button class="ctrl-btn" onclick="changeFontSize(-10)" title="Perkecil Font">A−</button>
+        <span class="ctrl-btn font-size-indicator" id="fontSizeIndicator" title="Klik untuk Reset"
+            onclick="changeFontSize(0)" style="cursor:pointer; min-width:50px; text-align:center;">100%</span>
+        <button class="ctrl-btn" onclick="changeFontSize(10)" title="Perbesar Font">A+</button>
+        <span style="width:1px; background:rgba(148,163,184,0.3); margin:0 2px;"></span>
+        <button class="ctrl-btn" onclick="toggleTheme()" id="themeBtn">🌓 Tema</button>
+        <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
+
+    <script src="../js/template-runtime.js"></script>
+    <script>
+        // Mode OBS (?obs) dan sisi panel (?side=left) ditangani runtime bersama.
+
+        const isElectron = !!(window.electronAPI && window.electronAPI.isElectron);
+        let currentFontSize = 100;
+        let isPanelVisible = false; // Panel mulai tersembunyi
+        let isDark = true;
+
+        function setTheme(dark) {
+            isDark = dark;
+            document.body.classList.toggle('light', !isDark);
+            const btn = document.getElementById('themeBtn');
+            if (btn) btn.innerHTML = isDark ? '🌓 Tema (Dark)' : '🌓 Tema (Light)';
+        }
+
+        function toggleTheme() {
+            setTheme(!isDark);
+            const themeName = isDark ? 'dark' : 'light';
+            if (isElectron && window.electronAPI.updateTheme) {
+                window.electronAPI.updateTheme(themeName);
+            }
+            try { localStorage.setItem('quran_theme', themeName); } catch (e) { }
+        }
+
+        function changeFontSize(delta) {
+            if (delta === 0) currentFontSize = 100;
+            else currentFontSize = Math.max(50, Math.min(200, currentFontSize + delta));
+            
+            const ind = document.getElementById('fontSizeIndicator');
+            if (ind) ind.textContent = currentFontSize + '%';
+            
+            if (isElectron && window.electronAPI.updateFontSize) {
+                window.electronAPI.updateFontSize(currentFontSize);
+            }
+            try { localStorage.setItem('quran_fontsize', String(currentFontSize)); } catch (e) { }
+            
+            // Re-render styles dynamically
+            const scale = currentFontSize / 100;
+            const arabicEl = document.getElementById('arabicTextEl');
+            if (arabicEl) arabicEl.style.fontSize = Math.round(48 * scale) + 'px';
+            const transEl = document.getElementById('transTextEl');
+            if (transEl) transEl.style.fontSize = Math.round(24 * scale) + 'px';
+            const badgeEl = document.querySelector('.info-badge');
+            if (badgeEl) badgeEl.style.fontSize = Math.round(14 * scale) + 'px';
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.error(e));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function showPanel(wrap) {
+            wrap.classList.remove('panel-exit');
+            void wrap.offsetWidth; // Force reflow agar animasi restart
+            wrap.classList.add('panel-enter');
+            isPanelVisible = true;
+        }
+
+        function hidePanel(wrap) {
+            wrap.classList.remove('panel-enter');
+            void wrap.offsetWidth;
+            wrap.classList.add('panel-exit');
+            isPanelVisible = false;
+        }
+
+        // "QS Al-Baqarah (2) Ayat 1-5" -> { book: "QS Al-Baqarah", ayah: "Ayat 1-5" }
+        // Bila formatnya lain, teks asli tetap ditampilkan apa adanya.
+        function splitVerseLabel(info) {
+            const esc = value => String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const text = String(info == null ? '' : info).trim();
+            if (!text) return { book: '', ayah: '' };
+            const match = text.match(/^QS\s+(.+?)\s*(?:\(\d+\))?\s+Ayat\s+([0-9\u2013\u2014-]+)$/i);
+            if (!match) return { book: esc(text), ayah: '' };
+            return { book: esc('QS ' + match[1]), ayah: esc('Ayat ' + match[2]) };
+        }
+
+        function updateContent(arabic, translation, info, fontSize, theme, isVisible) {
+            // Theme
+            if (theme) {
+                setTheme(theme !== 'light');
+            }
+
+            const wrap = document.getElementById('mainWrap');
+
+            // ── Sembunyi: animasikan seluruh panel ke samping kanan ──
+            if (isVisible === false) {
+                if (isPanelVisible) hidePanel(wrap);
+                return;
+            }
+
+            // ── Font Size ──
+            currentFontSize = fontSize || 100;
+            const scale = currentFontSize / 100;
+            const arSize = Math.round(48 * scale);
+            const trSize = Math.round(24 * scale);
+
+            // ── Cek state awal dari body dataset atau API (jika ada) ──
+            const isTrans = document.body.dataset.transVisible === 'true';
+
+            // ── Render konten ──
+            if (arabic && translation) {
+                // Label dipecah: nama surat dan nomor ayat, supaya terbaca sekilas.
+                const badge = splitVerseLabel(info);
+                const header = badge.book
+                    ? `<div class="quran-header animate-in">
+                        <div class="info-badge">
+                            <span class="badge-book">${badge.book}</span>${badge.ayah
+                            ? `<span class="badge-divider" aria-hidden="true"></span><span class="badge-ayah">${badge.ayah}</span>`
+                            : ''}
+                        </div>
+                    </div>`
+                    : '';
+                wrap.innerHTML = `${header}
+                    <div class="quran-content">
+                        <div class="morph-wrapper ${!isTrans ? 'active' : ''}" id="arabicWrapper">
+                            <div class="morph-inner">
+                                <div class="arabic-text animate-in" id="arabicTextEl" style="font-size: ${arSize}px;">${arabic}</div>
+                            </div>
+                        </div>
+                        <div class="morph-wrapper ${isTrans ? 'active' : ''}" id="transWrapper">
+                            <div class="morph-inner">
+                                <div class="trans-text animate-in" id="transTextEl" style="font-size: ${trSize}px;">${translation}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Panel hanya menempati 60% lebar layar, jadi teks panjang lebih cepat
+                // terpotong. Ukuran font diukur ulang agar kalimat tetap utuh.
+                const arEl = document.getElementById('arabicTextEl');
+                const trEl = document.getElementById('transTextEl');
+                if (window.QuranTextFit) {
+                    if (arEl) {
+                        arEl.style.fontSize = QuranTextFit.size(arEl, arabic, arSize, Math.round(20 * scale), 2.05, false) + 'px';
+                    }
+                    if (trEl) {
+                        trEl.style.fontSize = QuranTextFit.size(trEl, translation, trSize, Math.round(14 * scale), 1.72, false) + 'px';
+                    }
+                }
+                // Laporkan bila panel masih meluber walau teks sudah mengecil.
+                try {
+                    const wrapRect = wrap.getBoundingClientRect();
+                    const clipped = [arEl, trEl].some(el => el && el.getBoundingClientRect().bottom > wrapRect.bottom + 2);
+                    document.body.dataset.clipped = clipped ? 'true' : 'false';
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'QURAN_FIT', clipped }, '*');
+                    }
+                } catch (e) { /* pengukuran tidak wajib */ }
+            }
+
+            // ── Tampil: animasikan panel masuk (hanya jika baru visible) ──
+            if (!isPanelVisible) {
+                showPanel(wrap);
+            }
+        }
+
+        // Runtime bersama: pendengar pesan + polling cadangan + deteksi OBS.
+        // Dulu blok ini disalin di tiap template (lihat js/template-runtime.js).
+        TemplateRuntime.init({
+            onContent(data) {
+                updateContent(data.arabic, data.translation, data.info, data.fontSize, data.theme, data.isVisible);
+            },
+            onTransVisible(isVisible) {
+                toggleTransVisibility(isVisible);
+            },
+            onFonts(arabicFont, latinFont) {
+                applyFonts(arabicFont, latinFont);
+            },
+        });
+
+        // Toggle Translation Visibility function
+        function toggleTransVisibility(isVisible) {
+            document.body.dataset.transVisible = isVisible ? 'true' : 'false';
+            const transWrapper = document.getElementById('transWrapper');
+            const arabicWrapper = document.getElementById('arabicWrapper');
+
+            if (transWrapper && arabicWrapper) {
+                if (isVisible) {
+                    arabicWrapper.classList.remove('active');
+                    transWrapper.classList.add('active');
+                } else {
+                    transWrapper.classList.remove('active');
+                    arabicWrapper.classList.add('active');
+                }
+            }
+        }
+
+        // ── Font Helpers ───────────────────────────────────
+        const ARABIC_FONT_MAP = {
+            'amiri':        "'Amiri', 'Traditional Arabic', serif",
+            'amiri-quran':  "'Amiri Quran', 'Traditional Arabic', serif",
+            'sakkal-majalla':"'Sakkal Majalla', 'Traditional Arabic', serif",
+            'myriad-arabic':"'Myriad Arabic', 'Segoe UI', sans-serif",
+            'noto-naskh':   "'Noto Naskh Arabic', 'Traditional Arabic', serif",
+            'scheherazade': "'Scheherazade New', 'Traditional Arabic', serif",
+            'lateef':       "'Lateef', 'Traditional Arabic', serif",
+            'uthmanic':     "'Noto Kufi Arabic', 'Traditional Arabic', serif",
+        };
+        const LATIN_FONT_MAP = {
+            'system':       "'Segoe UI', system-ui, sans-serif",
+            'roboto':       "'Roboto', sans-serif",
+            'outfit':       "'Outfit', sans-serif",
+            'raleway':      "'Raleway', sans-serif",
+            'playfair':     "'Playfair Display', serif",
+            'cinzel':       "'Cinzel', serif",
+            'inter':        "'Inter', sans-serif",
+            'montserrat':   "'Montserrat', sans-serif",
+            'lora':         "'Lora', Georgia, serif",
+            'nunito':       "'Nunito', sans-serif",
+            'poppins':      "'Poppins', sans-serif",
+        };
+        const ARABIC_GOOGLE_FONTS = {
+            'amiri-quran':  'https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap',
+            'noto-naskh':   'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap',
+            'scheherazade': 'https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap',
+            'lateef':       'https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&display=swap',
+            'uthmanic':     'https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap',
+        };
+        const LATIN_GOOGLE_FONTS = {
+            'roboto':       'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap',
+            'outfit':       'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap',
+            'raleway':      'https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap',
+            'playfair':     'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap',
+            'cinzel':       'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+            'inter':        'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap',
+            'montserrat':   'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap',
+            'lora':         'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+            'nunito':       'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap',
+            'poppins':      'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap',
+        };
+        const loadedFontLinks = new Set();
+        let lastArabicFont = '', lastLatinFont = '';
+
+        function injectFont(url) {
+            if (!url || loadedFontLinks.has(url)) return;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+            loadedFontLinks.add(url);
+        }
+
+        function applyFonts(arabicKey, latinKey) {
+            if (arabicKey && arabicKey !== lastArabicFont) {
+                injectFont(ARABIC_GOOGLE_FONTS[arabicKey]);
+                const family = ARABIC_FONT_MAP[arabicKey] || ARABIC_FONT_MAP['amiri'];
+                document.documentElement.style.setProperty('--arabic-font', family);
+                lastArabicFont = arabicKey;
+            }
+            if (latinKey && latinKey !== lastLatinFont) {
+                injectFont(LATIN_GOOGLE_FONTS[latinKey]);
+                const family = LATIN_FONT_MAP[latinKey] || LATIN_FONT_MAP['system'];
+                document.documentElement.style.setProperty('--latin-font', family);
+                lastLatinFont = latinKey;
+            }
+        }
+
+        // Apply fonts from localStorage on load
+        (function() {
+            const ar = localStorage.getItem('quran_arabic_font');
+            const lt = localStorage.getItem('quran_latin_font');
+            if (ar || lt) applyFonts(ar || 'amiri', lt || 'system');
+        })();
+
+        // FONT_UPDATE kini ditangani runtime bersama (onFonts di TemplateRuntime.init).
+    </script>
+</body>
+
+</html>

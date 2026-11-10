@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webquran Template: Lower Third (Dark)</title>
+    <!-- Font dibundel lokal: tetap benar tanpa internet -->
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <style>
+        :root {
+            --bg: transparent;
+            /* Lower Third Dark Theme: Deep Slate/Navy Glass with Metallic Gold & Emerald */
+            --panel-bg: rgba(15, 23, 42, 0.94);
+            --arabic-color: #ffffff;
+            --trans-color: #e2e8f0;
+            --info-color: #059669;
+            --accent: #d4af37;
+            --border-color: rgba(212, 175, 55, 0.4);
+            --panel-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            --arabic-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            --arabic-font: 'Amiri', 'Traditional Arabic', serif;
+            --latin-font: 'Montserrat', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: flex-end;
+            /* Posisi di paling bawah */
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.3s ease;
+            padding-bottom: clamp(56px, 7.5vh, 96px);
+            /* Jalur kosong untuk running text siaran. */
+        }
+
+        /* 
+           Layout Lower Third
+        */
+        /* 
+           Header Row & Info Badge - Posisi Atas Tengah Panel (Pill Badge Broadcast Elegan) 
+        */
+        .header-row {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 0 0 8px;
+            width: 100%;
+        }
+
+        .info-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* Label editorial (seragam dengan varian baru): teks emas kecil dengan
+               garis bawah tipis, bukan pil. */
+            background: none;
+            color: #f0c75e;
+            padding: 0 0 3px;
+            border-radius: 0;
+            font-family: var(--latin-font);
+            font-size: clamp(11px, 1.15vw, 14px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2.4px;
+            z-index: 20;
+            white-space: nowrap;
+            box-shadow: none;
+            border: none;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.65);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Sapuan halus pada garis label saat panel masuk (0,6 dtk). */
+        .info-badge::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background: linear-gradient(90deg, currentColor, rgba(255, 255, 255, 0));
+            transform: scaleX(1);
+            transform-origin: left center;
+            opacity: 0.9;
+        }
+
+        .panel-enter .info-badge::after {
+            animation: labelLine 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes labelLine {
+            from {
+                transform: scaleX(0);
+                opacity: 0.25;
+            }
+
+            to {
+                transform: scaleX(1);
+                opacity: 0.9;
+            }
+        }
+
+        /* Panel utama */
+        .lower-third-panel {
+            width: 100vw;
+            min-height: 0;
+            height: auto;
+            max-height: 42vh;
+            background: var(--panel-bg);
+            border-radius: 20px 20px 0 0;
+            border-top: 4px solid var(--accent);
+            border-bottom: 4px solid var(--info-color);
+            padding: 8px 4vw 6px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--panel-shadow);
+            position: relative;
+            z-index: 1;
+            overflow: visible;
+            transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease, min-height 0.3s ease;
+        }
+
+        .content-row {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            max-height: none;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .content-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Morphing Transition Styles */
+        .morph-wrapper {
+            flex-shrink: 0;
+            display: grid;
+            grid-template-rows: 0fr;
+            /* Animasi keluar (hide): Cepat, tanpa delay (langsung meluncur ke bawah) */
+            transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+            opacity: 0;
+            overflow: hidden;
+            width: 100%;
+            will-change: grid-template-rows, opacity;
+            transform: translateZ(0);
+        }
+
+        .morph-wrapper.active {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            /* Animasi masuk (show): Delay 0.2s menunggu elemen sebelumnya selesai hide */
+            transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, opacity 0.4s ease 0.2s;
+        }
+
+        /* Padding dipindah ke teks agar container bisa benar-benar tinggi 0 saat disembunyikan */
+        .morph-inner,
+        .morph-inner-latin {
+            min-height: 0;
+            padding: 0;
+            transform: translateY(20px);
+            /* Posisi awal/saat hide: tenggelam di bawah (slide down) */
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .morph-wrapper.active .morph-inner,
+        .morph-wrapper.active .morph-inner-latin {
+            transform: translateY(0);
+            /* Posisi saat tampil: naik ke tempat normal (slide up) */
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+        }
+
+        .arabic-text {
+            font-family: var(--arabic-font);
+            font-weight: 600;
+            font-size: clamp(32px, 3.5vw, 56px);
+            line-height: 2.25;
+            color: var(--arabic-color);
+            text-align: center;
+            direction: rtl;
+            text-shadow: var(--arabic-shadow);
+            word-wrap: break-word;
+            padding: 8px 0 6px;
+            transition: color 0.3s ease;
+            font-feature-settings: "kern" 1, "mark" 1, "mkmk" 1;
+            text-rendering: optimizeLegibility;
+        }
+
+        .waqaf-mark {
+            display: inline-block;
+            font-size: 0.65em;
+            color: #d4af37;
+            margin: 0 5px;
+            line-height: 1;
+            vertical-align: 0;
+            opacity: 0.95;
+            text-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+            font-weight: bold;
+        }
+
+        .trans-text {
+            font-family: var(--latin-font);
+            font-size: clamp(18px, 2vw, 28px);
+            color: var(--trans-color);
+            line-height: 1.55;
+            text-align: center;
+            font-style: normal;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            max-width: 90vw;
+            margin: 0 auto;
+            padding: 6px 0 4px;
+            transition: color 0.3s ease;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .waiting {
+            text-align: center;
+            color: var(--trans-color);
+            opacity: 0.7;
+            padding: 20px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+        }
+
+        .animate-out {
+            animation: slideDown 1.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes textFadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
+        /* ── Panel-level show/hide animation with clip-path ── */
+        #mainWrap {
+            /* Initial state hides everything via clip-path pulling from the bottom center */
+            clip-path: inset(100% 50% 0 50% round 20px 20px 0 0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes panelEnter {
+            0% {
+                opacity: 0;
+                clip-path: inset(100% 50% 0 50% round 20px 20px 0 0);
+                transform: translateY(16px);
+            }
+
+            35% {
+                opacity: 1;
+                /* Expands horizontally first */
+                clip-path: inset(100% 0% 0 0% round 20px 20px 0 0);
+                transform: translateY(8px);
+            }
+
+            100% {
+                opacity: 1;
+                /* Expands vertically to reveal full panel */
+                clip-path: inset(0% 0% 0 0% round 20px 20px 0 0);
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes panelExit {
+            0% {
+                opacity: 1;
+                clip-path: inset(0% 0% 0 0% round 20px 20px 0 0);
+                transform: translateY(0);
+            }
+
+            50% {
+                opacity: 1;
+                /* Shrinks vertically first */
+                clip-path: inset(100% 0% 0 0% round 20px 20px 0 0);
+                transform: translateY(8px);
+            }
+
+            100% {
+                opacity: 0;
+                /* Shrinks horizontally back to center */
+                clip-path: inset(100% 50% 0 50% round 20px 20px 0 0);
+                transform: translateY(16px);
+            }
+        }
+
+        @keyframes textReveal {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+                filter: blur(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0px);
+            }
+        }
+
+        .panel-enter {
+            animation: panelEnter 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            pointer-events: auto;
+        }
+
+        .panel-exit {
+            animation: panelExit 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            pointer-events: none;
+        }
+    </style>
+<script src="../js/quran-text-fit.js"></script>
+</head>
+
+<body>
+
+    <!-- Panel Lower Third -->
+    <div class="lower-third-panel" id="mainWrap">
+        <div class="waiting">
+            <h2>📡 Menunggu Ayat...</h2>
+        </div>
+    </div>
+
+
+    <!-- Runtime bersama: mode OBS, pendengar pesan, dan polling cadangan -->
+    <script src="../js/template-runtime.js"></script>
+    <script>
+        // Mode OBS (?obs) ditangani runtime bersama.
+
+        let currentFontSize = 100;
+        let isPanelVisible = false; // Panel mulai tersembunyi
+        let isAnimating = false;    // Flag: sedang dalam animasi exit, blokir update
+        let arTransitionTimer = null;
+        let trTransitionTimer = null;
+        let badgeTransitionTimer = null;
+
+        function showPanel(wrap) {
+            wrap.classList.remove('panel-exit');
+            void wrap.offsetWidth; // Force reflow agar animasi restart
+            wrap.classList.add('panel-enter');
+            isPanelVisible = true;
+            isAnimating = false;
+        }
+
+        function hidePanel(wrap) {
+            isAnimating = true;
+            if (arTransitionTimer) { clearTimeout(arTransitionTimer); arTransitionTimer = null; }
+            if (trTransitionTimer) { clearTimeout(trTransitionTimer); trTransitionTimer = null; }
+            if (badgeTransitionTimer) { clearTimeout(badgeTransitionTimer); badgeTransitionTimer = null; }
+
+            wrap.classList.remove('panel-enter');
+            void wrap.offsetWidth;
+            wrap.classList.add('panel-exit');
+            isPanelVisible = false;
+
+            // Segera hapus class active pada teks agar keduanya ikut merunduk (slide down)
+            const morphWrappers = wrap.querySelectorAll('.morph-wrapper');
+            morphWrappers.forEach(mw => mw.classList.remove('active'));
+
+            // Setelah animasi exit selesai, reset state panel ke kondisi awal yang bersih
+            function onExitEnd() {
+                wrap.removeEventListener('animationend', onExitEnd);
+                wrap.classList.remove('panel-exit');
+                isAnimating = false;
+            }
+            wrap.addEventListener('animationend', onExitEnd, { once: true });
+        }
+
+        // Helper: Animasi pergantian teks ayat tanpa glitch/flickering
+        function updateVerseText(el, newHtml, newSize, newLineHeight, isAlreadyVisible) {
+            if (!el) return;
+            newSize = QuranTextFit.size(el, newHtml, newSize, Math.round(newSize * (el.id === "arabicTextEl" ? 26 / 44 : 18 / 26)), newLineHeight, true);
+
+            // Jika konten sama persis, cukup sinkronkan ukuran font
+            if (el.innerHTML === newHtml) {
+                delete el.dataset.pendingHtml;
+                el.style.fontSize = `${newSize}px`;
+                el.style.lineHeight = newLineHeight;
+                return;
+            }
+
+            // Jika sedang dalam transisi menuju konten newHtml yang sama, jangan restart timer
+            if (el.dataset.pendingHtml === newHtml) {
+                return;
+            }
+
+            // Jika elemen masih kosong (pertama kali render) atau panel belum tampil:
+            // Langsung masukkan teks tanpa delay agar animasi show panel tetap instan
+            if (!el.innerHTML.trim() || !isAlreadyVisible) {
+                delete el.dataset.pendingHtml;
+                el.innerHTML = newHtml;
+                el.style.fontSize = `${newSize}px`;
+                el.style.lineHeight = newLineHeight;
+                el.style.opacity = '1';
+                el.style.filter = 'blur(0px)';
+                el.style.transform = 'translateY(0)';
+                return;
+            }
+
+            // Tandai target konten yang sedang dalam proses transisi
+            el.dataset.pendingHtml = newHtml;
+
+            // Panel sudah on-air dan terjadi pergantian ayat (misal tombol ArrowRight):
+            // Lakukan broadcast cross-dissolve halus untuk menghilangkan kedipan / strobe
+            if (el.id === 'arabicTextEl') {
+                if (arTransitionTimer) clearTimeout(arTransitionTimer);
+            } else {
+                if (trTransitionTimer) clearTimeout(trTransitionTimer);
+            }
+
+            // 1. Fade-out & blur halus teks ayat lama (130ms)
+            el.style.transition = 'opacity 0.13s ease-out, filter 0.13s ease-out, transform 0.13s ease-out';
+            el.style.opacity = '0';
+            el.style.filter = 'blur(6px)';
+            el.style.transform = 'translateY(-6px)';
+
+            const timer = setTimeout(() => {
+                // 2. Saat teks lama sudah 100% tak terlihat (opacity: 0):
+                // Masukkan teks baru dan ukuran font baru (cegah layout shift)
+                el.innerHTML = newHtml;
+                delete el.dataset.pendingHtml;
+                el.style.fontSize = `${newSize}px`;
+                el.style.lineHeight = newLineHeight;
+
+                // Set posisi awal teks baru (dari bawah, blur, transparan)
+                el.style.transition = 'none';
+                el.style.transform = 'translateY(10px)';
+                el.style.filter = 'blur(6px)';
+                el.style.opacity = '0';
+
+                // Force layout saat elemen masih 100% transparan
+                void el.offsetWidth;
+
+                // 3. Reveal teks baru masuk secara anggun
+                requestAnimationFrame(() => {
+                    el.style.transition = 'opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1), filter 0.32s cubic-bezier(0.16, 1, 0.3, 1), transform 0.32s cubic-bezier(0.16, 1, 0.3, 1)';
+                    el.style.opacity = '1';
+                    el.style.filter = 'blur(0px)';
+                    el.style.transform = 'translateY(0)';
+                });
+            }, 130);
+
+            if (el.id === 'arabicTextEl') {
+                arTransitionTimer = timer;
+            } else {
+                trTransitionTimer = timer;
+            }
+        }
+
+        function updateContent(arabic, translation, info, fontSize, theme, isVisible, isTransVisible) {
+            // Blokir update konten jika panel sedang dalam animasi exit (cegah glitch)
+            if (isAnimating) return;
+
+            const wrap = document.getElementById('mainWrap');
+
+            // ── Sembunyi: animasikan seluruh panel ke bawah ──
+            if (isVisible === false) {
+                if (isPanelVisible) hidePanel(wrap);
+                return;
+            }
+
+            // Simpan state trans visibility jika ada
+            if (isTransVisible !== undefined) {
+                document.body.dataset.transVisible = isTransVisible ? 'true' : 'false';
+            }
+
+            // ── Font Size & Auto-Scaling ──
+            currentFontSize = fontSize || 100;
+            const scale = currentFontSize / 100;
+            const baseAr = Math.round(44 * scale);
+            const baseTr = Math.round(26 * scale);
+            const inSize = Math.round(13 * scale); /* label editorial: kecil, rata kiri */
+
+            // ── Render konten ──
+            if (arabic && translation) {
+                // Micro-styling tanda waqaf agar tetap tampil indah tanpa menabrak baris atas
+                const formattedArabic = arabic.replace(/([\u06D6-\u06DC\u06E9\u06DF])/g, '<span class="waqaf-mark">$1</span>');
+
+                // Bersihkan angka catatan kaki dari terjemahan
+                const cleanTranslation = translation.replace(/(?<!\(\d*)\s*\d+\)/g, '');
+
+                let arSize = baseAr, trSize = baseTr;
+                const arLineHeight = 2.25, trLineHeight = 1.55;
+
+                // Cari elemen-elemennya. Jika belum ada (pertama kali), buat strukturnya.
+                let badge = wrap.querySelector('.info-badge');
+                let arTextEl = document.getElementById('arabicTextEl');
+                let trTextEl = document.getElementById('transTextEl');
+
+                const wasAlreadyVisible = isPanelVisible;
+
+                if (!arTextEl) {
+                    // Buat struktur permanen sekali saja
+                    wrap.innerHTML = `
+                        <div class="header-row">
+                            <div class="info-badge animate-in"></div>
+                        </div>
+                        <div class="content-row">
+                            <div class="morph-wrapper" id="arabicWrapper">
+                                <div class="morph-inner">
+                                    <div class="arabic-text" id="arabicTextEl"></div>
+                                </div>
+                            </div>
+                            <div class="morph-wrapper" id="transWrapper">
+                                <div class="morph-inner-latin">
+                                    <div class="trans-text" id="transTextEl"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    badge = wrap.querySelector('.info-badge');
+                    arTextEl = document.getElementById('arabicTextEl');
+                    trTextEl = document.getElementById('transTextEl');
+                }
+
+                // Update badge info & ukuran font halus
+                if (badge) {
+                    badge.style.fontSize = `${inSize}px`;
+                    if (badge.innerHTML !== `${info}`) {
+                        if (wasAlreadyVisible && badge.innerHTML.trim()) {
+                            if (badge.dataset.pendingInfo === `${info}`) {
+                                // Sudah dalam proses transisi ke info yang sama
+                            } else {
+                                badge.dataset.pendingInfo = `${info}`;
+                                if (badgeTransitionTimer) clearTimeout(badgeTransitionTimer);
+                                badge.style.transition = 'opacity 0.13s ease-out';
+                                badge.style.opacity = '0.3';
+                                badgeTransitionTimer = setTimeout(() => {
+                                    badge.innerHTML = `${info}`;
+                                    delete badge.dataset.pendingInfo;
+                                    badge.style.transition = 'opacity 0.25s ease-out';
+                                    badge.style.opacity = '1';
+                                }, 130);
+                            }
+                        } else {
+                            badge.innerHTML = `${info}`;
+                            delete badge.dataset.pendingInfo;
+                            badge.style.opacity = '1';
+                        }
+                    } else {
+                        delete badge.dataset.pendingInfo;
+                    }
+                }
+
+                // Update teks Arab & terjemahan dengan transisi halus bebas glitch
+                updateVerseText(arTextEl, formattedArabic, arSize, arLineHeight, wasAlreadyVisible);
+                updateVerseText(trTextEl, cleanTranslation, trSize, trLineHeight, wasAlreadyVisible);
+
+                // Update wrapper state
+                const arWrap = document.getElementById('arabicWrapper');
+                const trWrap = document.getElementById('transWrapper');
+                const isTransCurrent = document.body.dataset.transVisible === 'true';
+
+                if (arWrap && trWrap) {
+                    arWrap.classList.toggle('active', !isTransCurrent);
+                    trWrap.classList.toggle('active', isTransCurrent);
+                }
+            }
+
+            // ── Tampil: animasikan seluruh panel masuk (hanya jika baru visible) ──
+            if (!isPanelVisible) {
+                showPanel(wrap);
+            }
+        }
+
+        // Runtime bersama: pendengar pesan + polling cadangan + deteksi OBS.
+        // Dulu blok ini disalin di tiap template (lihat js/template-runtime.js).
+        TemplateRuntime.init({
+            onContent(data) {
+                updateContent(data.arabic, data.translation, data.info, data.fontSize, data.theme, data.isVisible, data.isTransVisible);
+            },
+            onTransVisible(isVisible) {
+                toggleTransVisibility(isVisible);
+            },
+            onFonts(arabicFont, latinFont) {
+                applyFonts(arabicFont, latinFont);
+            },
+        });
+
+        // Toggle Translation Visibility function
+        function toggleTransVisibility(isVisible) {
+            document.body.dataset.transVisible = isVisible ? 'true' : 'false';
+
+            if (isAnimating) return;
+
+            const transWrapper = document.getElementById('transWrapper');
+            const arabicWrapper = document.getElementById('arabicWrapper');
+
+            if (transWrapper && arabicWrapper) {
+                if (isVisible) {
+                    arabicWrapper.classList.remove('active');
+                    transWrapper.classList.add('active');
+                } else {
+                    transWrapper.classList.remove('active');
+                    arabicWrapper.classList.add('active');
+                }
+            }
+        }
+
+        // Polling cadangan ditangani runtime bersama (TemplateRuntime.init).
+
+        // ── Font Helpers ───────────────────────────────────
+        const ARABIC_FONT_MAP = {
+            'amiri':        "'Amiri', 'Traditional Arabic', serif",
+            'amiri-quran':  "'Amiri Quran', 'Traditional Arabic', serif",
+            'sakkal-majalla':"'Sakkal Majalla', 'Traditional Arabic', serif",
+            'myriad-arabic':"'Myriad Arabic', 'Segoe UI', sans-serif",
+            'noto-naskh':   "'Noto Naskh Arabic', 'Traditional Arabic', serif",
+            'scheherazade': "'Scheherazade New', 'Traditional Arabic', serif",
+            'lateef':       "'Lateef', 'Traditional Arabic', serif",
+            'uthmanic':     "'Noto Kufi Arabic', 'Traditional Arabic', serif",
+        };
+        const LATIN_FONT_MAP = {
+            'system':       "'Segoe UI', system-ui, sans-serif",
+            'roboto':       "'Roboto', sans-serif",
+            'outfit':       "'Outfit', sans-serif",
+            'raleway':      "'Raleway', sans-serif",
+            'playfair':     "'Playfair Display', serif",
+            'cinzel':       "'Cinzel', serif",
+            'inter':        "'Inter', sans-serif",
+            'montserrat':   "'Montserrat', sans-serif",
+            'lora':         "'Lora', Georgia, serif",
+            'nunito':       "'Nunito', sans-serif",
+            'poppins':      "'Poppins', sans-serif",
+        };
+        const ARABIC_GOOGLE_FONTS = {
+            'amiri-quran':  'https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap',
+            'noto-naskh': 'https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap',
+            'scheherazade': 'https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap',
+            'lateef': 'https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&display=swap',
+            'uthmanic': 'https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;700&display=swap',
+        };
+        const LATIN_GOOGLE_FONTS = {
+            'roboto':       'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap',
+            'outfit':       'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap',
+            'raleway':      'https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&display=swap',
+            'playfair':     'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap',
+            'cinzel':       'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap',
+            'inter': 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap',
+            'montserrat': 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap',
+            'lora': 'https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap',
+            'nunito': 'https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap',
+            'poppins': 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap',
+        };
+        const loadedFontLinks = new Set();
+        let lastArabicFont = '', lastLatinFont = '';
+
+        function injectFont(url) {
+            if (!url || loadedFontLinks.has(url)) return;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = url;
+            document.head.appendChild(link);
+            loadedFontLinks.add(url);
+        }
+
+        function applyFonts(arabicKey, latinKey) {
+            if (arabicKey && arabicKey !== lastArabicFont) {
+                injectFont(ARABIC_GOOGLE_FONTS[arabicKey]);
+                const family = ARABIC_FONT_MAP[arabicKey] || ARABIC_FONT_MAP['amiri'];
+                document.documentElement.style.setProperty('--arabic-font', family);
+                lastArabicFont = arabicKey;
+            }
+            if (latinKey && latinKey !== lastLatinFont) {
+                injectFont(LATIN_GOOGLE_FONTS[latinKey]);
+                const family = LATIN_FONT_MAP[latinKey] || LATIN_FONT_MAP['montserrat'];
+                document.documentElement.style.setProperty('--latin-font', family);
+                lastLatinFont = latinKey;
+            }
+        }
+
+        (function () {
+            const ar = localStorage.getItem('quran_arabic_font');
+            const lt = localStorage.getItem('quran_latin_font');
+            if (ar || lt) applyFonts(ar || 'amiri', lt || 'montserrat');
+        })();
+
+        // FONT_UPDATE kini ditangani runtime bersama (onFonts di TemplateRuntime.init).
+    </script>
+</body>
+
+</html>

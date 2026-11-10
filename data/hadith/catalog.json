@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "kitab-9-imam",
+      "group": "kitab",
+      "label": "Kitab 9 Imam",
+      "source_file": "hadits/Kitab Hadits/Kitab-9-Imam.chm",
+      "file": "data/hadith/kitab-9-imam-unik.json",
+      "count": 62198,
+      "pages": 16333,
+      "skipped_pages": 393,
+      "numbered": 62198,
+      "image_arabic": 0,
+      "bytes": 96700639,
+      "excluded_pages": [],
+      "rows": 48601,
+      "index": "data/hadith/index/kitab-9-imam.json.gz"
+    },
+    {
+      "id": "kitab-shahih-bukhari",
+      "group": "kitab",
+      "label": "Shahih Bukhari",
+      "source_file": "hadits/Kitab Hadits/shahih Bukhari.chm",
+      "file": "data/hadith/kitab-shahih-bukhari.json",
+      "count": 6978,
+      "pages": 3717,
+      "skipped_pages": 1,
+      "numbered": 6978,
+      "image_arabic": 0,
+      "bytes": 15707582,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-shahih-bukhari.json.gz"
+    },
+    {
+      "id": "kitab-shahih-muslim",
+      "group": "kitab",
+      "label": "Mukhtashar Shahih Muslim",
+      "source_file": "hadits/Kitab Hadits/shahih Muslim.chm",
+      "file": "data/hadith/kitab-shahih-muslim.json",
+      "count": 2186,
+      "pages": 1739,
+      "skipped_pages": 16,
+      "numbered": 2186,
+      "image_arabic": 0,
+      "bytes": 4566601,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-shahih-muslim.json"
+    },
+    {
+      "id": "kitab-shahih-sunan-abu-daud",
+      "group": "kitab",
+      "label": "Shahih Sunan Abu Daud",
+      "source_file": "hadits/Kitab Hadits/shahih sunan abu daud.chm",
+      "file": "data/hadith/kitab-shahih-sunan-abu-daud.json",
+      "count": 3996,
+      "pages": 1617,
+      "skipped_pages": 62,
+      "numbered": 3996,
+      "image_arabic": 0,
+      "bytes": 5755602,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-shahih-sunan-abu-daud.json"
+    },
+    {
+      "id": "kitab-shahih-sunan-ibnu-majah",
+      "group": "kitab",
+      "label": "Shahih Sunan Ibnu Majah",
+      "source_file": "hadits/Kitab Hadits/shahih sunan ibnu majah.chm",
+      "file": "data/hadith/kitab-shahih-sunan-ibnu-majah.json",
+      "count": 3508,
+      "pages": 1384,
+      "skipped_pages": 1,
+      "numbered": 3508,
+      "image_arabic": 0,
+      "bytes": 4412865,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-shahih-sunan-ibnu-majah.json"
+    },
+    {
+      "id": "kitab-shahih-sunan-tirmidzi",
+      "group": "kitab",
+      "label": "Shahih Sunan Tirmidzi",
+      "source_file": "hadits/Kitab Hadits/shahih sunan tirmidzi.chm",
+      "file": "data/hadith/kitab-shahih-sunan-tirmidzi.json",
+      "count": 3149,
+      "pages": 1932,
+      "skipped_pages": 9,
+      "numbered": 3149,
+      "image_arabic": 0,
+      "bytes": 6716873,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-shahih-sunan-tirmidzi.json"
+    },
+    {
+      "id": "kitab-sunan-ad-darimi",
+      "group": "kitab",
+      "label": "Sunan Ad-Darimi",
+      "source_file": "hadits/Kitab Hadits/sunan ad-darimi.chm",
+      "file": "data/hadith/kitab-sunan-ad-darimi.json",
+      "count": 3366,
+      "pages": 24,
+      "skipped_pages": 2,
+      "numbered": 3366,
+      "image_arabic": 0,
+      "bytes": 5146046,
+      "excluded_pages": [],
+      "index": "data/hadith/index/kitab-sunan-ad-darimi.json"
+    },
+    {
+      "id": "brosur-ahad-pagi-1995-2024",
+      "group": "brosur",
+      "label": "Brosur Ahad Pagi",
+      "source_file": "hadits/Brosur Ahad Pagi 1995 - 2024.chm",
+      "file": "data/hadith/brosur-ahad-pagi-1995-2024.json",
+      "count": 15387,
+      "pages": 1133,
+      "skipped_pages": 259,
+      "numbered": 2,
+      "image_arabic": 0,
+      "bytes": 19046423,
+      "excluded_pages": [],
+      "index": "data/hadith/index/brosur-ahad-pagi-1995-2024.json.gz"
+    },
+    {
+      "id": "kitab-sunan-nasai",
+      "group": "kitab",
+      "label": "Sunan Nasa’i",
+      "source_file": "hadits/Kitab Hadits/Sunan Nasa'i.chm",
+      "file": "data/hadith/kitab-sunan-nasai.json",
+      "count": 5559,
+      "pages": 50,
+      "skipped_pages": 3,
+      "numbered": 5559,
+      "image_arabic": 0,
+      "bytes": 10024969,
+      "excluded_pages": [
+        "6.Waktu-waktu Shalat.htm"
+      ],
+      "index": "data/hadith/index/kitab-sunan-nasai.json"
+    }
+  ],
+  "groups": [
+    {
+      "id": "kitab",
+      "label": "Kitab Hadits"
+    },
+    {
+      "id": "brosur",
+      "label": "Brosur Ahad Pagi"
+    }
+  ],
+  "search_extra": "data/hadith/search-extra.json"
+}

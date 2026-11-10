@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qur'an - Layar Presentasi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+        }
+
+        iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            /* Crossfade saat template diganti: tidak ada kedip hitam. */
+            opacity: 0;
+            transition: opacity 0.22s ease;
+        }
+
+        iframe.is-live {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Src diisi oleh skrip di bawah supaya flag ?obs ikut terpasang sejak muatan pertama -->
+    <iframe id="templateFrame" allowtransparency="true"></iframe>
+
+    <script>
+        // `let`, bukan `const`: switchTemplate() mengganti elemen ini dengan
+        // iframe baru saat crossfade. Dengan `const`, penggantian melempar
+        // TypeError sehingga pratinjau tidak pernah berganti template.
+        let frame = document.getElementById('templateFrame');
+
+        // Template awal bisa ditentukan lewat URL (?template=pip_video.html).
+        // Pratinjau Program Feed di panel memakai cara ini supaya tampilannya
+        // sudah benar sejak pemuatan pertama, tanpa bergantung pada postMessage
+        // yang bisa datang sebelum iframe siap.
+        const ALLOWED_TEMPLATE_FILES = ['default.html', 'lower_third.html', 'lower_third_dark.html', 'lower_third_dual.html', 'pip_video.html', 'lower_third_glass.html', 'lower_third_midnight.html', 'lower_third_paper.html', 'lower_third_dual_sapphire.html'];
+        const requestedTemplate = new URLSearchParams(window.location.search).get('template');
+        let currentTemplate = ALLOWED_TEMPLATE_FILES.includes(requestedTemplate)
+            ? 'templates/' + requestedTemplate
+            : 'templates/default.html';
+
+        let currentState = {
+            arabic: '',
+            translation: '',
+            info: '',
+            fontSize: 100,
+            theme: 'dark',
+            isVisible: false,  // Mulai blank — animasi muncul saat operator klik Tampil
+            isTransVisible: false, // Terjemahan tersembunyi sampai operator klik Tampil Terjemahan
+            scrollPaused: false    // Jeda gulir otomatis (template dua kolom)
+        };
+
+        let currentArabicFont = null;
+        let currentLatinFont = null;
+
+        let lastDataKey = null;
+
+        // Auto-detect OBS mode via URL parameter ?obs
+        const isObs = window.location.search.includes('obs');
+
+        // ?side=left diteruskan ke template (dipakai template PiP: panel ayat di kiri,
+        // area kamera di kanan). Default: panel di kanan.
+        const isLeftSide = new URLSearchParams(window.location.search).get('side') === 'left';
+
+        // Sufiks query yang selalu diteruskan ke template
+        function querySuffix() {
+            const parts = [];
+            if (isObs) parts.push('obs');
+            if (isLeftSide) parts.push('side=left');
+            return parts.length ? '?' + parts.join('&') : '';
+        }
+
+        // Fungsi sinkronisasi state ke iframe
+        function syncIframe() {
+            if (!frame.contentWindow) return;
+
+            // Gerbang tunggal: layar hanya boleh "tampil" bila benar-benar ada ayat.
+            // Tanpa ini, template menampilkan kartu "Menunggu Operator" di OBS
+            // segera setelah aplikasi dibuka — padahal belum ada yang dipilih.
+            const hasContent = !!(currentState.arabic && currentState.translation);
+            const isVisible = currentState.isVisible && hasContent;
+
+            // Kirim data ayat
+            frame.contentWindow.postMessage({
+                type: 'QURAN_UPDATE',
+                arabic: currentState.arabic,
+                translation: currentState.translation,
+                info: currentState.info,
+                fontSize: currentState.fontSize,
+                theme: currentState.theme,
+                isVisible: isVisible,
+                isTransVisible: currentState.isTransVisible,
+                scrollPaused: currentState.scrollPaused
+            }, '*');
+
+            // Kompatibilitas untuk default.html yg sudah ada sebelumnya
+            frame.contentWindow.postMessage({
+                type: 'FONT_SIZE_UPDATE',
+                fontSize: currentState.fontSize
+            }, '*');
+
+            if (currentArabicFont || currentLatinFont) {
+                frame.contentWindow.postMessage({
+                    type: 'FONT_UPDATE',
+                    arabicFont: currentArabicFont,
+                    latinFont: currentLatinFont
+                }, '*');
+            }
+        }
+
+        // Kirim HANYA perubahan trans visibility ke iframe (tanpa re-render seluruh ayat)
+        function syncTransVisibility() {
+            if (!frame.contentWindow) return;
+            frame.contentWindow.postMessage({
+                type: 'TRANS_VISIBILITY_UPDATE',
+                isTransVisible: currentState.isTransVisible,
+                scrollPaused: currentState.scrollPaused
+            }, '*');
+        }
+
+        // Ketika iframe selesai loading, kirim data terakhir
+        frame.addEventListener('load', () => {
+            syncIframe();
+        });
+
+        // Muat template awal sekali saja, lengkap dengan flag overlay & sisi panel.
+        // Dulu flag hanya dipasang saat template diganti, sehingga Browser Source
+        // OBS/vMix selalu mendapat latar opak pada pemuatan pertama.
+        frame.src = currentTemplate + querySuffix();
+        frame.classList.add('is-live');
+
+        // ── Ganti template tanpa kedip hitam (B10) ─────────────────
+        // Template baru dimuat di iframe tersembunyi, menerima state terakhir,
+        // lalu baru ditampilkan sambil yang lama memudar. Dengan cara ini layar
+        // siaran tidak pernah kosong sesaat seperti saat `frame.src` diganti.
+        let switchToken = 0;
+
+        function switchTemplate(newFile) {
+            if (!newFile) return;
+            const token = ++switchToken;
+            const old = frame;
+
+            const next = document.createElement('iframe');
+            next.setAttribute('allowtransparency', 'true');
+            // Jangan set style.opacity inline: inline style mengalahkan aturan
+            // CSS `iframe.is-live { opacity: 1 }`, sehingga iframe baru tidak
+            // akan pernah muncul (layar jadi hitam karena yang lama sudah pudar).
+            next.style.opacity = '';
+            (old.parentNode || document.body).appendChild(next);
+            next.src = newFile + querySuffix();
+
+            let settled = null;
+            // Jaring pengaman: bila crossfade gagal (template tidak memuat, atau
+            // ada galat di tengah jalan), layar TIDAK boleh menjadi hitam. Kita
+            // kembali ke cara lama yang terbukti: muat langsung di iframe aktif.
+            const fallback = (reason) => {
+                clearTimeout(settled);
+                if (next.isConnected !== false) next.remove();
+                console.warn('Crossfade dilewati (' + reason + '), memuat template langsung:', newFile);
+                currentTemplate = newFile;
+                frame.src = newFile + querySuffix();
+                frame.classList.add('is-live');
+                frame.style.opacity = '1';
+            };
+
+            const abortTimer = setTimeout(() => {
+                if (token !== switchToken) return;
+                fallback('template tidak selesai dimuat');
+            }, 5000);
+
+            next.addEventListener('load', () => {
+                if (token !== switchToken) { next.remove(); return; }
+                // Beri satu putaran agar skrip template memasang pendengar pesan.
+                settled = setTimeout(() => {
+                    if (token !== switchToken) { next.remove(); return; }
+                    clearTimeout(abortTimer);
+
+                    try {
+                        frame = next;
+                        old.removeAttribute('id');
+                        next.id = 'templateFrame';
+                        currentTemplate = newFile;
+
+                        syncIframe();                 // isi state ke template baru
+                        // Tampilkan eksplisit: inline style menang atas stylesheet, dan
+                        // memang itu yang diinginkan di sini (dulu iframe baru dikunci
+                        // opacity:0 secara inline sehingga tidak pernah muncul).
+                        next.classList.add('is-live');
+                        next.style.opacity = '1';
+                        old.classList.remove('is-live');
+                        old.style.opacity = '0';
+                        setTimeout(() => old.remove(), 260); // setelah memudar
+
+                        // Kirim ulang keadaan sekali lagi: sebagian template baru
+                        // selesai memasang pendengar setelah jeda singkat.
+                        setTimeout(() => {
+                            if (frame === next) syncIframe();
+                        }, 250);
+                        console.info('[Presentation] template aktif:', newFile);
+                    } catch (err) {
+                        fallback('galat: ' + err.message);
+                    }
+                }, 60);
+            });
+        }
+
+        // ── Sinkronisasi Data ───────────────────────────────────────
+        const isElectron = !!(window.electronAPI && window.electronAPI.isElectron);
+
+        if (isElectron) {
+            window.electronAPI.onVerseUpdate((data) => {
+                if (data && data.arabic) {
+                    lastDataKey = data.ts || JSON.stringify({ a: data.arabic, t: data.translation });
+                    currentState.arabic = data.arabic;
+                    currentState.translation = data.translation;
+                    currentState.info = data.info;
+                    syncIframe();
+                }
+            });
+
+            window.electronAPI.onFontSizeUpdate((size) => {
+                currentState.fontSize = size;
+                syncIframe();
+            });
+
+            window.electronAPI.onThemeUpdate((theme) => {
+                currentState.theme = theme;
+                syncIframe();
+            });
+
+            window.electronAPI.onVisibilityUpdate((isVisible) => {
+                currentState.isVisible = isVisible;
+                syncIframe();
+            });
+
+            window.electronAPI.onScrollPauseUpdate?.((scrollPaused) => {
+            currentState.scrollPaused = !!scrollPaused;
+            if (frame && frame.contentWindow) {
+                frame.contentWindow.postMessage({ type: 'SCROLL_PAUSE', paused: !!scrollPaused }, '*');
+            }
+        });
+
+        window.electronAPI.onTransVisibilityUpdate((isTransVisible) => {
+                currentState.isTransVisible = isTransVisible;
+                syncTransVisibility();
+            });
+
+            window.electronAPI.onFontUpdate((fontData) => {
+                currentArabicFont = fontData.arabicFont;
+                currentLatinFont = fontData.latinFont;
+                if (frame.contentWindow) {
+                    frame.contentWindow.postMessage({
+                        type: 'FONT_UPDATE',
+                        arabicFont: currentArabicFont,
+                        latinFont: currentLatinFont
+                    }, '*');
+                }
+            });
+
+            // IPC untuk perubahan Template
+            window.electronAPI.onTemplateUpdate((templateName) => {
+                let newFile = 'templates/' + templateName;
+                if (currentTemplate !== newFile) {
+                    // Ganti mulus: param ?obs / ?side tetap diteruskan ke iframe baru
+                    switchTemplate(newFile);
+                }
+            });
+        }
+
+        // ── Polling HTTP untuk OBS Browser Source ─────────────────
+        // OBS tidak punya akses IPC, jadi gunakan polling HTTP
+        async function pollVerseAPI() {
+            try {
+                const res = await fetch('/api/verse');
+                const data = await res.json();
+            if (data.scrollPaused !== undefined && data.scrollPaused !== currentState.scrollPaused) {
+                currentState.scrollPaused = !!data.scrollPaused;
+                if (frame && frame.contentWindow) {
+                    frame.contentWindow.postMessage({ type: 'SCROLL_PAUSE', paused: currentState.scrollPaused }, '*');
+                }
+            }
+
+                if (!data) return;
+
+                let needsSync = false;
+
+                // Selalu update fontSize & theme (diperlukan saat panel ditampilkan)
+                if (data.fontSize && data.fontSize !== currentState.fontSize) {
+                    currentState.fontSize = data.fontSize;
+                    if (currentState.isVisible) needsSync = true;
+                }
+                if (data.theme && data.theme !== currentState.theme) {
+                    currentState.theme = data.theme;
+                    if (currentState.isVisible) needsSync = true;
+                }
+
+                // Visibility: SELALU sync agar animasi masuk/keluar terpicu
+                if (data.isVisible !== undefined && data.isVisible !== currentState.isVisible) {
+                    currentState.isVisible = data.isVisible;
+                    needsSync = true;
+                }
+
+                // Trans Visibility: sync agar toggle terjemahan terpicu
+                if (data.isTransVisible !== undefined && data.isTransVisible !== currentState.isTransVisible) {
+                    currentState.isTransVisible = data.isTransVisible;
+                    syncTransVisibility();
+                }
+
+                // Font Sync
+                if ((data.arabicFont && data.arabicFont !== currentArabicFont) || 
+                    (data.latinFont && data.latinFont !== currentLatinFont)) {
+                    currentArabicFont = data.arabicFont || currentArabicFont;
+                    currentLatinFont = data.latinFont || currentLatinFont;
+                    if (frame.contentWindow) {
+                        frame.contentWindow.postMessage({
+                            type: 'FONT_UPDATE',
+                            arabicFont: currentArabicFont,
+                            latinFont: currentLatinFont
+                        }, '*');
+                    }
+                }
+
+                // Cek template berubah
+                if (data.template) {
+                    let newFile = 'templates/' + data.template;
+                    if (currentTemplate !== newFile) {
+                        switchTemplate(newFile);
+                        return; // template baru akan menerima state terakhir
+                    }
+                }
+
+                if (data.arabic) {
+                    const key = data.ts || JSON.stringify({ a: data.arabic, t: data.translation });
+                    if (key !== lastDataKey) {
+                        lastDataKey = key;
+                        currentState.arabic = data.arabic;
+                        currentState.translation = data.translation;
+                        currentState.info = data.info;
+                        // Hanya sync konten jika panel sedang TERLIHAT
+                        // Jika hidden: data tersimpan di cache, akan dikirim saat Tampil ditekan
+                        if (currentState.isVisible) needsSync = true;
+                    }
+                } else if (currentState.arabic || currentState.translation) {
+                    // Server tidak lagi menyimpan ayat (mis. aplikasi dijalankan ulang).
+                    // Jangan tayangkan ayat lama: kosongkan panggung dan minta operator
+                    // memilih serta menayangkan ayat kembali.
+                    lastDataKey = null;
+                    currentState.arabic = '';
+                    currentState.translation = '';
+                    currentState.info = '';
+                    currentState.isVisible = false;
+                    currentState.isTransVisible = false;
+                    needsSync = true;
+                }
+
+                if (needsSync) {
+                    syncIframe();
+                }
+            } catch (e) { }
+        }
+
+        // ── Listener untuk Direct PostMessage (Live Confidence Monitor) ──
+        window.addEventListener('message', (e) => {
+            if (!e.data) return;
+
+            // Laporan "teks terpotong" dari template. Bila halaman ini berjalan
+            // di dalam pratinjau Program Feed panel, teruskan ke panel agar
+            // operator melihat peringatannya.
+            if (e.data.type === 'QURAN_FIT') {
+                if (window.self !== window.top) {
+                    try {
+                        window.parent.postMessage({ type: 'QURAN_FIT', clipped: !!e.data.clipped }, '*');
+                    } catch (err) { /* induk tidak dapat dijangkau */ }
+                }
+                return;
+            }
+
+            if (e.data.type === 'CONFIDENCE_SYNC') {
+                let hasChanges = false;
+                let contentChanged = false;
+
+                if (e.data.template) {
+                    let newFile = 'templates/' + e.data.template;
+                    if (currentTemplate !== newFile) {
+                        switchTemplate(newFile);
+                        return;
+                    }
+                }
+
+                if (e.data.arabic && (e.data.arabic !== currentState.arabic || e.data.translation !== currentState.translation || e.data.info !== currentState.info)) {
+                    currentState.arabic = e.data.arabic;
+                    currentState.translation = e.data.translation;
+                    currentState.info = e.data.info;
+                    lastDataKey = e.data.ts || JSON.stringify({ a: e.data.arabic, t: e.data.translation });
+                    hasChanges = true;
+                    contentChanged = true;
+                }
+
+                if (e.data.isVisible !== undefined && e.data.isVisible !== currentState.isVisible) {
+                    currentState.isVisible = e.data.isVisible;
+                    hasChanges = true;
+                }
+
+                if (e.data.isTransVisible !== undefined && e.data.isTransVisible !== currentState.isTransVisible) {
+                    currentState.isTransVisible = e.data.isTransVisible;
+                    if (!contentChanged) {
+                        syncTransVisibility();
+                        return;
+                    }
+                    hasChanges = true;
+                }
+
+                if (e.data.fontSize && e.data.fontSize !== currentState.fontSize) {
+                    currentState.fontSize = e.data.fontSize;
+                    hasChanges = true;
+                }
+
+                if (e.data.theme && e.data.theme !== currentState.theme) {
+                    currentState.theme = e.data.theme;
+                    hasChanges = true;
+                }
+
+                if (hasChanges) {
+                    syncIframe();
+                }
+            }
+        });
+
+        // Polling HTTP: kebutuhan utama untuk OBS Browser Source (tanpa IPC).
+        // Di jendela dual-screen Electron, pembaruan sudah datang lewat IPC,
+        // jadi polling cukup sebagai jaring pengaman (3 detik, bukan 0,5 detik).
+        const isEmbedded = (window.self !== window.top);
+        const hasIpc = !!(window.electronAPI && window.electronAPI.isElectron);
+        if (!isEmbedded) {
+            setInterval(pollVerseAPI, hasIpc ? 3000 : 500);
+        }
+
+        // Panggil polling pertama kali saat init
+        pollVerseAPI();
+
+    </script>
+</body>
+
+</html>
