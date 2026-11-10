@@ -716,13 +716,8 @@ body.light-mode .hd-launch kbd{
 @media (max-width: 1300px) {
   header .badge-operator-tag { display: none; }
 }
-@media (max-width: 1300px) {
-  header .header-kbd-hint,
-  header .btn-header-hadith span:not(.hadith-header-live-dot),
-  header .btn-header-dualscreen span,
-  header #headerBtnMonitor span,
-  header .btn-header-template span { display: none; }
-}
+/* Label tombol header di layar sempit kini diatur blok "UI POLISH" di styles.css
+   (tombol jarang dipakai pindah ke menu Lainnya, sisanya tetap berlabel). */
 .hd-presentation-toolbar {
   display: flex;
   align-items: center;

@@ -295,6 +295,13 @@ function setBroadcastMode(mode) {
         btn.setAttribute('aria-pressed', String(btn.dataset.broadcastMode === broadcastMode));
     });
 
+    // Chip PVW/PGM + TAKE hanya berarti di mode PVW; di mode Langsung
+    // keduanya disembunyikan dari bar siaran (lihat .pvw-only di styles.css).
+    const dock = document.getElementById('liveControlDock');
+    if (dock && dock.classList) {
+        if (isPvwMode()) dock.classList.add('is-pvw-mode'); else dock.classList.remove('is-pvw-mode');
+    }
+
     const label = document.getElementById('primaryActionLabel');
     if (label) label.textContent = isPvwMode() ? 'MUAT (PVW)' : 'TAMPILKAN AYAT';
 

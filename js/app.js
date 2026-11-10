@@ -158,3 +158,73 @@ document.addEventListener('keydown', e => {
 document.addEventListener('DOMContentLoaded', () => {
     autoLoadData();
 });
+
+// --- MENU "LAINNYA" (layar sempit) ---
+// Tombol setup/aksi sekunder dipindah ke menu berlabel saat ruang sempit,
+// bukan dibiarkan jadi deretan ikon tanpa nama. Item menu meneruskan klik ke
+// tombol aslinya (data-proxy), jadi logika & status tetap satu sumber.
+(function initOverflowMenus() {
+    function closeMenu(menu, focusTrigger) {
+        const list = menu.querySelector('.overflow-menu-list');
+        const trigger = menu.querySelector('.overflow-trigger');
+        if (!list || list.hidden) return;
+        list.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+        if (focusTrigger) trigger.focus();
+    }
+
+    function closeAll(except) {
+        document.querySelectorAll('[data-overflow-menu]').forEach(m => { if (m !== except) closeMenu(m, false); });
+    }
+
+    function openMenu(menu) {
+        closeAll(menu);
+        const list = menu.querySelector('.overflow-menu-list');
+        const trigger = menu.querySelector('.overflow-trigger');
+        list.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+        const first = list.querySelector('[role="menuitem"]');
+        if (first) first.focus();
+    }
+
+    document.addEventListener('click', event => {
+        const target = event.target instanceof Element ? event.target : null;
+        const trigger = target && target.closest('.overflow-trigger');
+        if (trigger) {
+            const menu = trigger.closest('[data-overflow-menu]');
+            const list = menu.querySelector('.overflow-menu-list');
+            if (list.hidden) openMenu(menu); else closeMenu(menu, false);
+            return;
+        }
+        const item = target && target.closest('[data-overflow-menu] [role="menuitem"]');
+        if (item) {
+            const menu = item.closest('[data-overflow-menu]');
+            closeMenu(menu, false);
+            const original = document.getElementById(item.dataset.proxy);
+            if (original) original.click();
+            return;
+        }
+        closeAll(null);
+    });
+
+    document.addEventListener('keydown', event => {
+        const menu = event.target instanceof Element ? event.target.closest('[data-overflow-menu]') : null;
+        if (!menu) return;
+        const list = menu.querySelector('.overflow-menu-list');
+        if (list.hidden) return;
+        const items = Array.from(list.querySelectorAll('[role="menuitem"]'));
+        const index = items.indexOf(document.activeElement);
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            closeMenu(menu, true);
+        } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            event.stopPropagation();
+            const step = event.key === 'ArrowDown' ? 1 : -1;
+            items[(index + step + items.length) % items.length].focus();
+        } else if (event.key === 'Tab') {
+            closeMenu(menu, false);
+        }
+    }, true);
+})();

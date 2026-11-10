@@ -33,7 +33,7 @@
 
   <header>
     <div class="app-brand-wrap">
-      <button class="btn-hamburger" id="sidebarToggle" title="Toggle Sidebar">
+      <button class="btn-hamburger" id="sidebarToggle" title="Tampilkan / sembunyikan sidebar" aria-label="Tampilkan / sembunyikan sidebar">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -62,7 +62,7 @@
     <div class="header-tools">
       <!-- Hadits Search Trigger Button -->
       <button class="btn-header btn-header-hadith" id="headerBtnHadith" onclick="openHadithSearch()"
-        title="Pencarian Hadits (Tekan F7)">
+        title="Pencarian Hadits (Tekan F7)" aria-label="Pencarian Hadits (F7)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -74,7 +74,7 @@
           hidden></span>
       </button>
       <button class="btn-header btn-header-omnibar" onclick="openOmnibar()"
-        title="Universal Smart Quick Jump (Tekan Ctrl+K atau /)">
+        title="Quick Jump: lompat ke surat & ayat (Ctrl+K atau /)" aria-label="Quick Jump (Ctrl+K)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
@@ -84,42 +84,29 @@
         <span class="header-kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd></span>
       </button>
 
-      <!-- Vertical Divider -->
-      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+      <div class="header-divider" aria-hidden="true"></div>
 
-      <!-- Broadcast Screen Tally Button -->
-      <button class="btn-header-tally tally-live" id="btnVisibility" onclick="toggleVisibility()"
-        title="Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)" aria-pressed="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-          <circle cx="12" cy="12" r="3"></circle>
-        </svg>
+      <!-- Status layar ayat (indikator saja). Kendalinya ada di bar panggung
+           (tombol ON AIR/BLANK) dan tombol Spasi — dulu ada tiga tombol merah
+           yang bersaing untuk satu fungsi. -->
+      <div class="header-status status-live" id="btnVisibility" role="status" aria-live="polite"
+        title="Status layar ayat: ON AIR. Kendali ada di bar panggung (Spasi).">
         <span class="tally-dot dot-live"></span>
         <span id="visText">ON AIR</span>
-      </button>
+      </div>
 
-      <!-- Translation Sub-Tally Button -->
-      <button class="btn-header-tally tally-trans-off" id="btnTransVisibility" onclick="toggleTransVisibility()"
-        title="Terjemahan sedang SEMBUNYI di layar presentasi. Klik untuk tampilkan">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <polyline points="10 9 9 9 8 9"></polyline>
-        </svg>
+      <!-- Status terjemahan (indikator saja; kendali: tombol TR di bar panggung atau T) -->
+      <div class="header-status status-trans-off" id="btnTransVisibility" role="status" aria-live="polite"
+        title="Status terjemahan: sembunyi. Kendali ada di bar panggung (T).">
         <span class="tally-dot dot-trans-off"></span>
-        <span id="transVisText">Terjemahan: OFF</span>
-      </button>
+        <span id="transVisText">Terjemahan OFF</span>
+      </div>
 
-      <!-- Vertical Divider -->
-      <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+      <div class="header-divider" aria-hidden="true"></div>
 
       <!-- Dual Screen -->
-      <button class="btn-header btn-header-dualscreen" id="dualScreenBtn" onclick="togglePresentationWindow()"
-        title="Buka Layar Presentasi Dual Screen">
+      <button class="btn-header btn-header-dualscreen header-secondary" id="dualScreenBtn" onclick="togglePresentationWindow()"
+        title="Buka layar presentasi (Dual Screen)" aria-label="Dual Screen">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -131,7 +118,7 @@
 
       <!-- Live Confidence Monitor Toggle Button -->
       <button class="btn-header active" id="headerBtnMonitor" onclick="toggleConfidenceMonitor()"
-        title="Tampilkan / Sembunyikan Live Confidence Monitor 16:9">
+        title="Tampilkan / sembunyikan Program Feed (F9)" aria-label="Program Feed (F9)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -142,8 +129,8 @@
       </button>
 
       <!-- Template Selector -->
-      <button class="btn-header btn-header-template" onclick="showTemplateModal()"
-        title="Pilih Template Layout Display & OBS">
+      <button class="btn-header btn-header-template header-secondary" id="headerBtnTemplate" onclick="showTemplateModal()"
+        title="Pilih template tampilan layar & OBS" aria-label="Template">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -154,7 +141,7 @@
       </button>
 
       <!-- Theme Mode -->
-      <button class="btn-header-round" onclick="toggleTheme()" id="themeToggle" title="Ganti tema panel. Tema juga mengubah template Full Screen & PiP; template Lower Third punya desain tetap.">
+      <button class="btn-header-round header-secondary" onclick="toggleTheme()" id="themeToggle" aria-label="Ganti tema terang / gelap" title="Ganti tema panel. Tema juga mengubah template Full Screen & PiP; template Lower Third punya desain tetap.">
         <span id="themeIcon">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -172,7 +159,7 @@
       </button>
 
       <!-- Help -->
-      <button class="btn-header" onclick="showHelpModal()" title="Panduan & Bantuan Operator">
+      <button class="btn-header header-secondary" id="headerBtnHelp" onclick="showHelpModal()" title="Panduan & bantuan operator (F1)" aria-label="Bantuan (F1)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
@@ -181,6 +168,24 @@
         </svg>
         <span>Bantuan</span>
       </button>
+
+      <!-- Layar sempit: tombol setup yang jarang dipakai pindah ke menu ini,
+           tetap berlabel (bukan deretan ikon tanpa nama). -->
+      <div class="overflow-menu header-overflow" data-overflow-menu>
+        <button type="button" class="btn-header overflow-trigger" aria-haspopup="menu" aria-expanded="false"
+          aria-label="Menu lainnya" title="Dual Screen, Template, Tema, Bantuan">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+            <circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle>
+          </svg>
+          <span>Lainnya</span>
+        </button>
+        <div class="overflow-menu-list" role="menu" hidden>
+          <button type="button" role="menuitem" data-proxy="dualScreenBtn">Dual Screen</button>
+          <button type="button" role="menuitem" data-proxy="headerBtnTemplate">Template</button>
+          <button type="button" role="menuitem" data-proxy="themeToggle">Ganti tema</button>
+          <button type="button" role="menuitem" data-proxy="headerBtnHelp">Bantuan <kbd>F1</kbd></button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -533,14 +538,11 @@
               <span class="breadcrumb-ayah" id="breadcrumbAyah">—</span>
             </div>
           </div>
-        </div>
-
-        <!-- Center: Live Control Dock -->
-        <div class="breadcrumb-center" id="liveControlDock">
-          <div class="live-dock-cluster">
+          <!-- Navigasi ayat: "di mana saya" — dipisah dari kendali siaran -->
+          <div class="live-dock-cluster dock-nav-cluster" role="group" aria-label="Navigasi ayat">
             <!-- Prev Button -->
             <button class="btn-dock-nav" id="dockBtnPrev" onclick="navAyah(-1)"
-              title="Ayat Sebelumnya (Arrow Left / ←)">
+              title="Ayat sebelumnya (←)" aria-label="Ayat sebelumnya">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
@@ -556,7 +558,7 @@
 
             <!-- Next Button -->
             <button class="btn-dock-nav" id="dockBtnNext" onclick="navAyah(1)"
-              title="Ayat Selanjutnya (Arrow Right / →)">
+              title="Ayat berikutnya (→)" aria-label="Ayat berikutnya">
               <span>Next</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -565,12 +567,14 @@
               <kbd class="dock-kbd">→</kbd>
             </button>
           </div>
+        </div>
 
-          <!-- Divider -->
-          <div class="live-dock-sep"></div>
-
+        <!-- Kendali siaran: "apa yang tayang". PVW/PGM + TAKE hanya tampil di mode PVW → TAKE
+             (di mode Langsung PVW selalu = PGM dan TAKE selalu nonaktif). -->
+        <div class="breadcrumb-center broadcast-group" id="liveControlDock" role="group" aria-label="Kendali siaran">
+          <span class="broadcast-group-label" aria-hidden="true">Siaran</span>
           <!-- Sprint 5 · F5: PVW / PGM + TAKE -->
-          <div class="live-dock-cluster pvw-pgm-cluster">
+          <div class="live-dock-cluster pvw-pgm-cluster pvw-only">
             <div class="pvw-pgm-chip" id="pvwPgmChip"
               title="PVW = isi panggung operator (belum tentu mengudara) · PGM = yang sedang mengudara">
               <span class="pvw-pgm-row">
@@ -591,18 +595,10 @@
               <span>TAKE</span>
               <kbd class="dock-kbd">⇧⏎</kbd>
             </button>
-            <button class="btn-dock-pause" id="scrollPauseBtn" onclick="toggleScrollPause()"
-              title="Jeda gulir otomatis (P)" aria-pressed="false">
-              <svg id="scrollPauseIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"
-                stroke="none">
-                <rect x="6" y="5" width="4" height="14" rx="1"></rect>
-                <rect x="14" y="5" width="4" height="14" rx="1"></rect>
-              </svg>
-            </button>
           </div>
 
-          <!-- Quick Tally Buttons Cluster -->
-          <div class="live-dock-cluster">
+          <!-- ON AIR / BLANK (kendali utama) + Terjemahan -->
+          <div class="live-dock-cluster tally-cluster">
             <!-- Screen Tally (ON AIR / BLANK) -->
             <button class="btn-dock-tally tally-live" id="dockBtnVisibility" onclick="toggleVisibility()"
               title="Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)" aria-pressed="true">
@@ -617,25 +613,35 @@
               <span id="dockTransVisText">TR: OFF</span>
             </button>
           </div>
+
+          <!-- Jeda gulir otomatis (template dua kolom) -->
+          <button class="btn-dock-pause" id="scrollPauseBtn" onclick="toggleScrollPause()"
+            title="Jeda gulir otomatis (P)" aria-label="Jeda gulir otomatis (P)" aria-pressed="false">
+            <svg id="scrollPauseIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"
+              stroke="none">
+              <rect x="6" y="5" width="4" height="14" rx="1"></rect>
+              <rect x="14" y="5" width="4" height="14" rx="1"></rect>
+            </svg>
+          </button>
         </div>
 
-        <!-- Right: Secondary Actions -->
+        <!-- Right: Secondary Actions (layar sempit: pindah ke menu Lainnya) -->
         <div class="breadcrumb-right">
-          <button class="btn-action btn-bookmark" id="btnBookmarkAyah" title="Simpan ke Bookmark">
+          <button class="btn-action btn-bookmark dock-secondary" id="btnBookmarkAyah" title="Simpan ke Bookmark" aria-label="Bookmark ayat ini">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
             </svg>
             <span>Bookmark</span>
           </button>
-          <button class="btn-action btn-copy" id="btnCopyInfo" title="Salin Info Surat & Ayat">
+          <button class="btn-action btn-copy dock-secondary" id="btnCopyInfo" title="Salin info surat & ayat" aria-label="Salin info surat & ayat">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
               <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
             </svg>
             <span>Copy Info</span>
           </button>
-          <button class="btn-action btn-search-dock" id="dockBtnToggleSearch" onclick="toggleSearchDrawer()"
-            title="Buka Panel Pencarian Latin & Terjemahan (F3 / F4)">
+          <button class="btn-action btn-search-dock dock-secondary" id="dockBtnToggleSearch" onclick="toggleSearchDrawer()"
+            title="Buka panel pencarian Latin & terjemahan (F3 / F4)" aria-label="Cari Latin & terjemahan (F3/F4)">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -643,15 +649,21 @@
             </svg>
             <span>Cari (F3/F4)</span>
           </button>
-          <button class="btn-action btn-monitor-dock active" id="dockBtnToggleMonitor"
-            onclick="toggleConfidenceMonitor()" title="Toggle Live Program Feed (Confidence Monitor)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <span>Monitor</span>
-          </button>
+          <!-- Tombol "Monitor" di sini dihapus: sama persis dengan "Program Feed" di header (F9). -->
+          <div class="overflow-menu dock-overflow" data-overflow-menu>
+            <button type="button" class="btn-action overflow-trigger" aria-haspopup="menu" aria-expanded="false"
+              aria-label="Aksi ayat lainnya" title="Bookmark, salin info, cari">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                <circle cx="5" cy="12" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="19" cy="12" r="2"></circle>
+              </svg>
+              <span>Lainnya</span>
+            </button>
+            <div class="overflow-menu-list" role="menu" hidden>
+              <button type="button" role="menuitem" data-proxy="btnBookmarkAyah">Bookmark ayat ini</button>
+              <button type="button" role="menuitem" data-proxy="btnCopyInfo">Salin info surat &amp; ayat</button>
+              <button type="button" role="menuitem" data-proxy="dockBtnToggleSearch">Cari Latin &amp; terjemahan <kbd>F3</kbd></button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -950,7 +962,7 @@
         <div id="helpTab-features" class="help-tab-pane active" role="tabpanel"
           aria-labelledby="helpTabButton-features">
           <div class="features-grid">
-            <div class="feature-card highlighted-card">
+            <div class="feature-card">
               <div class="feature-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -960,14 +972,13 @@
               <div class="feature-details">
                 <div class="feature-head-badge">
                   <h4>Perpustakaan Hadits Lengkap (F7)</h4>
-                  <span class="badge-new">UNGGULAN</span>
                 </div>
                 <p>Akses 9 kitab hadits mu'tabar (Shahih Bukhari, Muslim, Abu Daud, Tirmidzi, Nasai, Ibnu Majah, Malik,
                   Ahmad, Darimi) dengan total puluhan ribu hadits beserta nomor perawi.</p>
               </div>
             </div>
 
-            <div class="feature-card highlighted-card">
+            <div class="feature-card">
               <div class="feature-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
@@ -977,14 +988,13 @@
               <div class="feature-details">
                 <div class="feature-head-badge">
                   <h4>Pencarian Teks Arab Cerdas Hadits</h4>
-                  <span class="badge-new">UNGGULAN</span>
                 </div>
                 <p>Pencarian teks Arab dengan normalisasi harakat cerdas. Anda dapat mengetikkan lafadz Arab gundul
                   maupun berharakat untuk menemukan matan hadits secara akurat.</p>
               </div>
             </div>
 
-            <div class="feature-card highlighted-card">
+            <div class="feature-card">
               <div class="feature-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="2" y="3" width="20" height="14" rx="2"></rect>
@@ -995,7 +1005,6 @@
               <div class="feature-details">
                 <div class="feature-head-badge">
                   <h4>Hadits Dual Mode: Lower Third & Fullscreen</h4>
-                  <span class="badge-new">UNGGULAN</span>
                 </div>
                 <p>Pilihan tayangan live fleksibel untuk Hadits: Mode <strong>Lower Third</strong> untuk siaran
                   streaming/vMix/OBS atau Mode <strong>Fullscreen</strong> untuk proyektor/layar panggung pengajian.</p>
@@ -2257,18 +2266,17 @@
       const dockBtn = document.getElementById('dockBtnVisibility');
 
       if (btn) {
-        // Label = STATUS (bukan perintah), supaya tidak terbaca terbalik.
-        // "ON AIR" mustahil disalahartikan sebagai "tekan untuk tampil".
+        // Header = indikator status saja (bukan tombol). Kendalinya tombol
+        // ON AIR/BLANK di bar panggung dan Spasi.
         if (isPresentationVisible) {
-          btn.className = 'btn-header-tally tally-live';
-          btn.innerHTML = `${SVG_EYE} <span class="tally-dot dot-live"></span> <span id="visText">ON AIR</span>`;
-          btn.title = 'Layar ayat sedang TAMPIL (ON AIR). Klik untuk memotong ke hitam (Spasi)';
+          btn.className = 'header-status status-live';
+          btn.innerHTML = `<span class="tally-dot dot-live"></span> <span id="visText">ON AIR</span>`;
+          btn.title = 'Status layar ayat: ON AIR. Kendali ada di bar panggung (Spasi).';
         } else {
-          btn.className = 'btn-header-tally tally-blank';
-          btn.innerHTML = `${SVG_EYE_OFF} <span class="tally-dot dot-blank"></span> <span id="visText">BLANK</span>`;
-          btn.title = 'Layar KOSONG (tidak menayangkan ayat). Klik untuk menayangkan kembali (Spasi)';
+          btn.className = 'header-status status-blank';
+          btn.innerHTML = `<span class="tally-dot dot-blank"></span> <span id="visText">BLANK</span>`;
+          btn.title = 'Status layar ayat: KOSONG. Kendali ada di bar panggung (Spasi).';
         }
-        btn.setAttribute('aria-pressed', String(isPresentationVisible));
       }
 
       if (dockBtn) {
@@ -2308,13 +2316,13 @@
 
       if (btn) {
         if (isTranslationVisible) {
-          btn.className = 'btn-header-tally tally-trans-on';
-          btn.innerHTML = `${SVG_DOC} <span class="tally-dot dot-trans-on"></span> <span id="transVisText">Terjemahan: ON</span>`;
-          btn.title = 'Terjemahan sedang TAMPIL di layar presentasi. Klik untuk sembunyikan.';
+          btn.className = 'header-status status-trans-on';
+          btn.innerHTML = `<span class="tally-dot dot-trans-on"></span> <span id="transVisText">Terjemahan ON</span>`;
+          btn.title = 'Status terjemahan: tampil. Kendali ada di bar panggung (T).';
         } else {
-          btn.className = 'btn-header-tally tally-trans-off';
-          btn.innerHTML = `${SVG_DOC} <span class="tally-dot dot-trans-off"></span> <span id="transVisText">Terjemahan: OFF</span>`;
-          btn.title = 'Terjemahan sedang SEMBUNYI di layar presentasi. Klik untuk tampilkan.';
+          btn.className = 'header-status status-trans-off';
+          btn.innerHTML = `<span class="tally-dot dot-trans-off"></span> <span id="transVisText">Terjemahan OFF</span>`;
+          btn.title = 'Status terjemahan: sembunyi. Kendali ada di bar panggung (T).';
         }
       }
 

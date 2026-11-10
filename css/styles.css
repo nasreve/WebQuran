@@ -18,6 +18,36 @@
   --content-bg: #0f172a;
   --arabic-color: #ffffff;
   --trans-color: #e2e8f0;
+
+  /* Token kontrol (dipakai blok "UI POLISH" di akhir berkas) */
+  --ctl-bg: rgba(255, 255, 255, 0.05);
+  --ctl-bg-hover: rgba(255, 255, 255, 0.1);
+  --ctl-border: rgba(255, 255, 255, 0.1);
+  --ctl-border-hover: rgba(255, 255, 255, 0.2);
+  --ctl-text: #e2e8f0;
+  --ctl-text-muted: #94a3b8;
+  --accent-soft: rgba(59, 130, 246, 0.16);
+  --accent-soft-border: rgba(96, 165, 250, 0.45);
+  --accent-soft-text: #bfdbfe;
+  --live-soft: rgba(239, 68, 68, 0.14);
+  --live-border: rgba(239, 68, 68, 0.55);
+  --live-text: #fca5a5;
+  --warn-soft: rgba(245, 158, 11, 0.12);
+  --warn-border: rgba(245, 158, 11, 0.45);
+  --warn-text: #fcd34d;
+  --field-bg: #0b1220;
+  --field-bg-focus: #0d1526;
+  --field-border: rgba(148, 163, 184, 0.18);
+  --field-text: #e2e8f0;
+  --field-placeholder: #55637a;
+  --section-bg: rgba(148, 163, 184, 0.04);
+  --section-border: rgba(148, 163, 184, 0.13);
+  --section-title: #c7d2e0;
+  --section-icon: #7c8aa0;
+  --chip-bg: rgba(148, 163, 184, 0.08);
+  --chip-border: rgba(148, 163, 184, 0.16);
+  --chip-text: #cbd5e1;
+  --tag-bg: rgba(148, 163, 184, 0.16);
 }
 
 /* === LIGHT MODE === */
@@ -36,6 +66,35 @@ body.light-mode {
   --content-bg: #f8fafc;
   --arabic-color: #1e293b;
   --trans-color: #475569;
+
+  --ctl-bg: #ffffff;
+  --ctl-bg-hover: #f1f5f9;
+  --ctl-border: #e2e8f0;
+  --ctl-border-hover: #cbd5e1;
+  --ctl-text: #1e293b;
+  --ctl-text-muted: #64748b;
+  --accent-soft: #eff6ff;
+  --accent-soft-border: #93c5fd;
+  --accent-soft-text: #1d4ed8;
+  --live-soft: #fef2f2;
+  --live-border: #fca5a5;
+  --live-text: #b91c1c;
+  --warn-soft: #fffbeb;
+  --warn-border: #fcd34d;
+  --warn-text: #b45309;
+  --field-bg: #ffffff;
+  --field-bg-focus: #ffffff;
+  --field-border: #cbd5e1;
+  --field-text: #0f172a;
+  --field-placeholder: #94a3b8;
+  --section-bg: #ffffff;
+  --section-border: #e2e8f0;
+  --section-title: #334155;
+  --section-icon: #64748b;
+  --chip-bg: #f8fafc;
+  --chip-border: #e2e8f0;
+  --chip-text: #334155;
+  --tag-bg: #e2e8f0;
 }
 
 /* === RESET === */
@@ -6507,3 +6566,431 @@ body.light-mode #helpModal .shortcut-kbd {
 }
 
 .btn-dock-pause:active { transform: translateY(0); }
+
+/* ============================================================
+   UI POLISH (review desain 2026-11) — hanya memakai token di :root
+   & body.light-mode. Diletakkan paling akhir agar menang dari blok
+   lama yang menulis warna gelap secara langsung.
+   ============================================================ */
+
+/* ── 1 · Tema terang: kontrol sidebar & dock tidak lagi "gelap tertinggal" ── */
+.sidebar input,
+.sidebar select,
+.sidebar .app-select,
+.sidebar .custom-select-wrapper {
+  background: var(--field-bg);
+  border-color: var(--field-border);
+  color: var(--field-text);
+}
+
+.sidebar .custom-select-wrapper .app-select { background: transparent; color: var(--field-text); }
+.sidebar input::placeholder { color: var(--field-placeholder); }
+
+.sidebar input:focus,
+.sidebar select:focus,
+.sidebar .app-select:focus { background: var(--field-bg-focus); }
+
+.sidebar-section {
+  background: var(--section-bg);
+  border-color: var(--section-border);
+}
+
+.sidebar-section-header {
+  color: var(--section-title);
+  border-bottom-color: var(--section-border);
+}
+
+.sidebar-section-header svg,
+.sidebar .custom-select-wrapper .select-leading-icon { color: var(--section-icon); }
+
+.sidebar label { color: var(--ctl-text-muted); }
+
+.broadcast-mode {
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+}
+
+.broadcast-mode-btn { color: var(--ctl-text-muted); }
+.broadcast-mode-btn:hover { color: var(--ctl-text); background: var(--ctl-bg-hover); }
+
+.broadcast-mode-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent-soft-text);
+  box-shadow: inset 0 0 0 1px var(--accent-soft-border);
+}
+
+.broadcast-mode-hint { color: var(--ctl-text-muted); }
+
+.pvw-pgm-chip {
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+  color: var(--chip-text);
+}
+
+.pvw-pgm-tag.pvw { background: var(--tag-bg); color: var(--chip-text); }
+.pvw-pgm-tag.pgm { background: var(--live-soft); color: var(--live-text); }
+
+.pvw-pgm-chip.is-dirty { border-color: var(--warn-border); background: var(--warn-soft); }
+.pvw-pgm-chip.is-dirty .pvw-pgm-tag.pvw { background: var(--warn-border); color: var(--warn-text); }
+
+/* TAKE nonaktif: jelas nonaktif, tapi tetap terbaca (dulu opacity 0,45) */
+.btn-dock-take:disabled {
+  opacity: 1;
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+  color: var(--ctl-text-muted);
+}
+
+.btn-dock-pause {
+  background: var(--warn-soft);
+  border-color: var(--warn-border);
+  color: var(--warn-text);
+}
+
+.cm-btn-cut {
+  background: var(--warn-soft);
+  border-color: var(--warn-border);
+  color: var(--warn-text);
+}
+
+.cm-btn-cut:disabled {
+  opacity: 1;
+  background: var(--chip-bg);
+  border-color: var(--chip-border);
+  color: var(--ctl-text-muted);
+}
+
+.stage-trans-selector { background: var(--chip-bg); border-color: var(--chip-border); color: var(--ctl-text-muted); }
+.stage-trans-select { color: var(--chip-text); }
+.badge-verses-count { background: var(--chip-bg); border-color: var(--chip-border); color: var(--chip-text); }
+
+body.light-mode .btn-sidebar-secondary,
+body.light-mode .btn-sidebar-secondary:hover,
+body.light-mode .sidebar-kbd {
+  background: var(--ctl-bg-hover);
+  border-color: var(--ctl-border-hover);
+  color: var(--ctl-text);
+}
+
+body.light-mode .btn-sidebar-primary .sidebar-kbd {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+/* Tally dock (satu-satunya kendali ON AIR/TR) — terbaca di dua tema */
+.btn-dock-tally.tally-live {
+  background: var(--live-soft) !important;
+  border: 1px solid var(--live-border) !important;
+  color: var(--live-text) !important;
+}
+
+.btn-dock-tally.tally-blank,
+.btn-dock-tally.tally-trans-off {
+  background: var(--chip-bg) !important;
+  border: 1px solid var(--chip-border) !important;
+  color: var(--ctl-text-muted) !important;
+}
+
+.btn-dock-tally.tally-trans-on {
+  background: var(--accent-soft) !important;
+  border: 1px solid var(--accent-soft-border) !important;
+  color: var(--accent-soft-text) !important;
+}
+
+/* ── 2 · Status siaran di header: indikator, bukan tombol kedua ── */
+.header-divider {
+  width: 1px;
+  height: 24px;
+  margin: 0 2px;
+  background: var(--ctl-border);
+  flex: 0 0 auto;
+}
+
+.header-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--chip-border);
+  background: var(--chip-bg);
+  color: var(--ctl-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+
+.header-status.status-live {
+  border-color: var(--live-border);
+  background: var(--live-soft);
+  color: var(--live-text);
+}
+
+.header-status.status-trans-on { color: var(--ctl-text); }
+
+/* ── 5 · Satu warna aksen: tombol header & dock netral, biru hanya untuk
+        status aktif, merah hanya untuk siaran ── */
+.header-tools .btn-header,
+.header-tools .btn-header-round,
+.header-tools .btn-header.btn-header-hadith,
+.header-tools .btn-header-dualscreen,
+.header-tools .btn-header-template,
+.header-tools .btn-header-omnibar {
+  background: var(--ctl-bg) !important;
+  border: 1px solid var(--ctl-border) !important;
+  color: var(--ctl-text) !important;
+  box-shadow: none !important;
+}
+
+.header-tools .btn-header:hover,
+.header-tools .btn-header-round:hover,
+.header-tools .btn-header.btn-header-hadith:hover,
+.header-tools .btn-header-dualscreen:hover,
+.header-tools .btn-header-template:hover,
+.header-tools .btn-header-omnibar:hover {
+  background: var(--ctl-bg-hover) !important;
+  border-color: var(--ctl-border-hover) !important;
+  color: var(--ctl-text) !important;
+  box-shadow: none !important;
+}
+
+/* Toggle yang sedang aktif (mis. Program Feed tampil) */
+.header-tools .btn-header.active {
+  background: var(--accent-soft) !important;
+  border-color: var(--accent-soft-border) !important;
+  color: var(--accent-soft-text) !important;
+}
+
+/* Hadits sedang tayang tetap merah: itu status siaran, bukan dekorasi */
+.header-tools .btn-header.btn-header-hadith.hadith-live-on-air {
+  background: var(--live-soft) !important;
+  border-color: var(--live-border) !important;
+  color: var(--live-text) !important;
+}
+
+.breadcrumb-right .btn-action,
+.breadcrumb-right .btn-search-dock {
+  background: var(--ctl-bg);
+  border: 1px solid var(--ctl-border);
+  color: var(--ctl-text);
+}
+
+.breadcrumb-right .btn-action:hover,
+.breadcrumb-right .btn-search-dock:hover {
+  background: var(--ctl-bg-hover);
+  border-color: var(--ctl-border-hover);
+  color: var(--ctl-text);
+}
+
+.breadcrumb-right .btn-search-dock.active,
+.breadcrumb-right .btn-bookmark.bookmark-active {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft-border);
+  color: var(--accent-soft-text);
+}
+
+/* ── 3 · Menu "Lainnya" untuk layar sempit ── */
+.overflow-menu { position: relative; display: none; }
+
+.overflow-menu-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1200;
+  min-width: 220px;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1px solid var(--ctl-border-hover);
+  background: var(--bg-panel);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.overflow-menu-list[hidden] { display: none; }
+
+.overflow-menu-list [role="menuitem"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ctl-text);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.overflow-menu-list [role="menuitem"]:hover,
+.overflow-menu-list [role="menuitem"]:focus-visible {
+  background: var(--ctl-bg-hover);
+  outline: none;
+}
+
+.overflow-menu-list kbd {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--ctl-border-hover);
+  color: var(--ctl-text-muted);
+  background: transparent;
+}
+
+/* Fokus keyboard terlihat di semua kontrol header & dock */
+.header-tools button:focus-visible,
+.surah-breadcrumb button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Label header tetap tampil di 1101–1366 px (dulu disembunyikan mulai 1300 px). */
+@media (max-width: 1366px) {
+  .header-tools .header-secondary { display: none !important; }
+  .header-overflow { display: block; }
+
+  .breadcrumb-right .dock-secondary { display: none !important; }
+  .dock-overflow { display: block; }
+
+  .header-tools .btn-header > span:not(.tally-dot):not(.header-kbd-hint):not(.hadith-header-live-dot),
+  .breadcrumb-right .btn-action > span { display: inline; }
+  .header-tools .header-kbd-hint { display: none; }
+}
+
+@media (max-width: 1240px) {
+  .header-tools .btn-header > span:not(.tally-dot):not(.header-kbd-hint):not(.hadith-header-live-dot) { display: inline; }
+}
+
+/* Kendali ON AIR/TR di dock tidak boleh hilang di layar sempit (header kini
+   hanya indikator). Teks statusnya tetap tampil. */
+@media (max-width: 1320px) {
+  .breadcrumb-center .live-dock-cluster:last-of-type .btn-dock-tally span:not(.tally-dot) { display: inline; }
+}
+
+@media (max-width: 1180px) {
+  .breadcrumb-center .live-dock-sep,
+  .breadcrumb-center .live-dock-cluster:last-of-type { display: flex; }
+  .breadcrumb-center .live-dock-sep { display: block; }
+}
+
+@media (max-width: 1100px) {
+  /* Benar-benar sempit: tombol header jadi ikon (semua punya aria-label & tooltip),
+     status siaran tetap berteks. */
+  .header-tools .btn-header > span:not(.hadith-header-live-dot) { display: none; }
+  .breadcrumb-right .btn-action > span { display: none; }
+}
+
+/* Panel Program Feed di laptop (<=1280 px, lebar 286 px): label status &
+   tombol Cut Black tidak boleh terbungkus jadi dua baris. */
+.cm-tally-label,
+.cm-btn-cut { white-space: nowrap; }
+
+.cm-footer-info { min-width: 0; }
+.cm-status-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Prev/Next tetap berlabel selama ruang dock cukup (dulu jadi ikon mulai 1320 px) */
+@media (max-width: 1320px) and (min-width: 1181px) {
+  .breadcrumb-center .btn-dock-nav span { display: inline; }
+}
+
+/* Panel 286 px: kepala panel muat tanpa memotong "Default 16:9" */
+@media (max-width: 1280px) {
+  .cm-header { gap: 6px; }
+  .cm-tally-indicator { padding: 4px 8px; gap: 5px; }
+  .cm-template-badge { padding: 4px 7px; gap: 5px; }
+}
+
+/* ── 6 · Bar panggung: NAVIGASI di kiri, SIARAN di kanan ──
+   Dulu Prev/Next, PVW/PGM, TAKE, ON AIR dan TR berjejer di satu cluster
+   tengah dengan bobot sama. Sekarang dua kelompok yang jelas; ON AIR paling
+   menonjol karena itu kendali paling penting saat siaran. */
+.breadcrumb-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 12px;
+  overflow: visible;
+}
+
+.breadcrumb-left > div:not(.live-dock-cluster) { min-width: 0; overflow: hidden; }
+.dock-nav-cluster { flex-shrink: 0; margin-left: 4px; }
+
+.breadcrumb-center.broadcast-group {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 3px 4px 3px 12px;
+  border: 1px solid var(--chip-border);
+  border-radius: 11px;
+  background: var(--chip-bg);
+}
+
+.broadcast-group-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ctl-text-muted);
+  margin-right: 2px;
+  user-select: none;
+}
+
+/* Di dalam wadah SIARAN, cluster tidak perlu "sumur" gelap sendiri */
+.breadcrumb-center.broadcast-group .live-dock-cluster {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  gap: 4px;
+}
+
+/* PVW/PGM + TAKE hanya di mode PVW → TAKE */
+.broadcast-group .pvw-only { display: none !important; }
+.broadcast-group.is-pvw-mode .pvw-only { display: inline-flex !important; }
+
+/* ON AIR / BLANK = kendali utama: lebih besar & tegas dari TR */
+#dockBtnVisibility {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+#dockBtnVisibility.tally-live { border-width: 1.5px !important; }
+
+#dockBtnTransVisibility {
+  height: 30px;
+  padding: 0 9px;
+  font-size: 10.5px;
+}
+
+.broadcast-group .btn-dock-pause {
+  margin-left: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.breadcrumb-right { flex: 0 0 auto; }
+
+@media (max-width: 1500px) {
+  .dock-nav-cluster .dock-kbd { display: none; }
+}
+
+/* Mode PVW menambah chip PVW/PGM + TAKE: di <=1500 px aksi sekunder pindah
+   ke menu Lainnya agar nama surat tidak terpotong. */
+@media (max-width: 1500px) {
+  .surah-breadcrumb:has(.broadcast-group.is-pvw-mode) .dock-secondary { display: none !important; }
+  .surah-breadcrumb:has(.broadcast-group.is-pvw-mode) .dock-overflow { display: block; }
+}
