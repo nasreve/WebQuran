@@ -22,3 +22,6 @@ data/hadith/kitab-9-imam.json
 
 # Log
 *.log
+
+# Feed vMix yang ditulis ulang aplikasi setiap ayat tayang (main.js saveVmixFeed)
+vmix-feed.json
