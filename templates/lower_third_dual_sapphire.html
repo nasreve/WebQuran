@@ -404,10 +404,18 @@
                 // panel sampai 40vh, dan gulir hanya sebagai jalan terakhir (bisa dijeda).
                 arTextEl.innerText = cleanArabic;
                 trTextEl.innerText = translation;
+                // Batas bawah ukuran huruf dijaga tetap terbaca dari jauh: ayat yang
+                // tetap tak muat pada ukuran ini akan BERGULIR, bukan terus mengecil
+                // sampai 22/13 px seperti sebelumnya.
+                let fit = null;
                 if (window.DualFit) {
-                    DualFit.apply({
+                    fit = DualFit.apply({
                         panel: wrap,
                         scale: scale,
+                        arabicMax: 46,
+                        latinMax: 24,
+                        arabicMin: 30,
+                        latinMin: 20,
                         arabic: { el: arTextEl, col: document.getElementById('arabicColumn'),
                                   wrap: document.getElementById('arabicScroll'), lineHeight: 2.2 },
                         latin: { el: trTextEl, col: document.getElementById('latinColumn'),
@@ -416,12 +424,14 @@
                 }
 
                 // Laporkan bila teks masih meluber keluar panel walau sudah mengecil,
-                // supaya panel operator bisa menampilkan peringatan.
+                // supaya panel operator bisa menampilkan peringatan. Teks yang sedang
+                // bergulir memang lebih tinggi dari panel; itu bukan terpotong.
                 try {
                     const wrapRect = wrap.getBoundingClientRect();
                     const arRect = arTextEl.getBoundingClientRect();
                     const trRect = trTextEl.getBoundingClientRect();
-                    const clipped = arRect.bottom > wrapRect.bottom + 2 || trRect.bottom > wrapRect.bottom + 2;
+                    const clipped = !(fit && fit.scrolling) &&
+                        (arRect.bottom > wrapRect.bottom + 2 || trRect.bottom > wrapRect.bottom + 2);
                     document.body.dataset.clipped = clipped ? 'true' : 'false';
                     if (window.parent && window.parent !== window) {
                         window.parent.postMessage({ type: 'QURAN_FIT', clipped }, '*');
