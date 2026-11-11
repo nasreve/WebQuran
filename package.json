@@ -1,7 +1,7 @@
 {
     "name": "webquran",
-    "version": "5.4.0",
-    "description": "Webquran v5.4 - Aplikasi Al-Quran & Hadits untuk Presentasi & Live Streaming",
+    "version": "5.5.0",
+    "description": "Webquran v5.5 - Aplikasi Al-Quran & Hadits untuk Presentasi & Live Streaming",
     "main": "main.js",
     "author": "Ahmad Nas",
     "license": "MIT",
@@ -56,6 +56,7 @@
             "!settings.json",
             "!settings.json.tmp",
             "!data/hadith/reading",
+            "!data/hadith/kitab-9-imam.json",
             "!data/*.json",
             "!data/surah-list.json",
             "!data/vmix_feed.json",

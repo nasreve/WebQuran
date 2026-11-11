@@ -1,4 +1,4 @@
-# 📖 Panduan Penggunaan Operator — Webquran v5.4
+# 📖 Panduan Penggunaan Operator — Webquran v5.5
 **Aplikasi Al-Qur'an Interaktif untuk Siaran Langsung, Presentasi Proyektor, & Produksi Broadcast (OBS / vMix)**
 
 ---
@@ -23,6 +23,13 @@
 ## 🚀 Tentang Webquran v5
 
 **Webquran v5** adalah sistem kontrol dan presentasi Al-Qur'an profesional berkecepatan tinggi yang dirancang khusus untuk operator siaran masjid, kajian langsung, live streaming YouTube/Facebook, TV dakwah, dan presentasi proyektor. 
+
+### Pembaruan Utama di Versi 5.5:
+- **Tiga template Mihrab baru**: **Lower Third Mihrab**, **Layar Penuh Mihrab**, dan **Dual Mihrab**. Selebar layar, ayat muncul kata demi kata, dan menyisakan ruang bawah untuk running text.
+- **Motion masuk–keluar hadits**: Lower Third Gelap dan Putih kini terbuka seperti tirai dengan rel hijau dan garis emas; **Full Screen hadits didesain ulang** (riwayat jadi label emas di atas, pola bintang samar, ornamen penutup) dengan motion baru.
+- **Kolom ganda lebih andal**: Dual Mihrab dan Dual Split Sapphire menggulir ayat panjang alih-alih mengecilkan huruf terlalu kecil; berpindah ayat (mis. Al-Baqarah 255 → 256) tidak lagi terpotong.
+- **Thumbnail template asli**: setiap kartu di modal Template menampilkan tangkapan tampilan sebenarnya.
+- **Tampilan panel lebih menyatu**: modal Pencarian Hadits (panel baca di samping daftar hasil) dan Bantuan (tema terang terbaca) dipoles; warna tombol siaran seragam (biru = tampilkan, merah = sedang tayang).
 
 ### Pembaruan Utama di Versi 5.4:
 - **Mode siaran PVW → TAKE**: siapkan ayat di panggung tanpa mengudara, lalu tekan **TAKE** (`Shift+Enter`). Chip **PVW/PGM** di dock menunjukkan apa yang disiapkan dan apa yang sedang tayang.
@@ -462,4 +469,4 @@ Lakukan pemeriksaan ini **sebelum** siaran dimulai — terutama di venue yang ba
 
 ---
 
-*Webquran v5.4 — Memberikan Kemudahan, Kecepatan, & Keanggunan Visual dalam Setiap Siaran Kalamullah.*
+*Webquran v5.5 — Memberikan Kemudahan, Kecepatan, & Keanggunan Visual dalam Setiap Siaran Kalamullah.*

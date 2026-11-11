@@ -182,6 +182,8 @@ Suite setelah F5: **58/58** (14 berkas uji, +6 asersi PVW/PGM).
 
 Rilis: **v5.4.0** — `dist/Webquran-v5.4.0-Portable.exe` (160,9 MB). EXE diuji jalan: judul `Webquran v5.4 — Operator`, badge `v5.4 PRO`, chip PVW/PGM ada, tombol Copy/CSV sidebar hilang, `data/kemenag2002.json` (1,19 MB) dan `/api/verse` merespons 200.
 
+Rilis: **v5.5.0** — `dist/Webquran-v5.5.0-Portable.exe` (176,4 MB). EXE diuji jalan: judul jendela `Webquran v5.5 — Operator` (kini diisi dari `app.getVersion()`, begitu pula lencana Bantuan), template Mihrab, thumbnail template, layar hadits, katalog & data hadits, `/api/verse` dan `/api/hadith` merespons 200. `data/hadith/kitab-9-imam.json` (data mentah 131 MB, hanya dipakai skrip analisis) dikecualikan dari build. Suite: **100/100**.
+
 ---
 
 ## 1. What the application is, as built

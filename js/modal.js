@@ -117,6 +117,23 @@ function checkShowHelpOnLoad() {
 
 document.addEventListener("DOMContentLoaded", checkShowHelpOnLoad);
 
+// Label versi (judul tab & lencana Bantuan) diambil dari app.getVersion(),
+// jadi cukup ubah "version" di package.json saat rilis. Di luar Electron
+// (browser/uji) teks bawaan di index.html tetap dipakai.
+function applyAppVersionLabels() {
+    const full = window.electronAPI && window.electronAPI.appVersion;
+    if (!full || !/^\d+\.\d+/.test(full)) return;
+    const short = full.split('.').slice(0, 2).join('.');
+    document.title = `Webquran v${short} — Operator`;
+    const badge = document.getElementById('appVersionBadge');
+    if (badge) {
+        badge.textContent = 'v' + short;
+        badge.title = 'Versi ' + full;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", applyAppVersionLabels);
+
 document.addEventListener("DOMContentLoaded", () => {
     const tabList = document.querySelector('.help-nav-tabs');
     if (!tabList) return;
