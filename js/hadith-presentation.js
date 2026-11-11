@@ -222,9 +222,9 @@
 
     if (!reduceMotion && currentlyVisible && !nextVisible) {
       card.classList.add('hp-leaving');
-      // Semua lower third punya gerakan keluar ±0,45 dtk (CSS hpFullOut / hpLtOut);
-      // Full Screen tetap memakai pudar singkat.
-      const exitMs = document.body.classList.contains('hp-fullscreen') ? 180 : 460;
+      // Durasi = animasi keluar di CSS: lower third ±0,45 dtk (hpFullOut / hpLtOut),
+      // Full Screen ±0,48 dtk (hpFsOut).
+      const exitMs = document.body.classList.contains('hp-fullscreen') ? 500 : 460;
       transitionTimer = setTimeout(() => {
         if (sequence !== transitionSequence) return;
         commitRender(state);

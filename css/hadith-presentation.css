@@ -75,18 +75,6 @@ body.hp-preview {
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(calc(8px * var(--hp-scale))); }
 }
-/* Full Screen memusatkan panel dengan transform: translateY(-50%). Animasi masuk
-   yang generik berakhir di translateY(0) dan — karena fill-mode "both" — nilainya
-   bertahan, sehingga panel bergeser turun 32vh dan baris riwayat terpotong.
-   Varian animasi di bawah mempertahankan offset -50% tersebut. */
-@keyframes hpPanelEnterFullscreen {
-  from { opacity: 0; transform: translateY(calc(-50% + 14px * var(--hp-scale))); }
-  to { opacity: 1; transform: translateY(-50%); }
-}
-@keyframes hpPanelExitFullscreen {
-  from { opacity: 1; transform: translateY(-50%); }
-  to { opacity: 0; transform: translateY(calc(-50% + 8px * var(--hp-scale))); }
-}
 .hp-content {
   flex: 1 1 auto;
   display: flex;
@@ -322,56 +310,194 @@ body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving .h
   animation: hpLtFade .18s ease-in forwards;
 }
 
-/* Full screen uses the same content slots with a solid projector background. */
-body.hp-fullscreen { background: radial-gradient(ellipse at 50% 15%, #203854, transparent 75%), #0a1220; }
+/* ── Full Screen (proyektor) ─────────────────────────────────────────
+   Tanpa kartu: teks langsung di panggung tinta dengan pola bintang samar.
+   Riwayat menjadi label emas di atas (terbaca dari jauh), ornamen emas
+   menutup di bawah. Panel tetap dipusatkan dengan translateY(-50%); semua
+   keyframes di bawah mempertahankan offset itu. */
+body.hp-fullscreen {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 46%, #12304a 0%, #0a1a2b 52%, #050c16 100%);
+}
+.hp-fullscreen .hp-stage::before,
+.hp-fullscreen .hp-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* Pola bintang delapan, sangat samar */
+.hp-fullscreen .hp-stage::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cpath d='M48 20l6.6 11.4 12.9-2.9-2.9 12.9L76 48l-11.4 6.6 2.9 12.9-12.9-2.9L48 76l-6.6-11.4-12.9 2.9 2.9-12.9L20 48l11.4-6.6-2.9-12.9 12.9 2.9z' fill='none' stroke='%23d9b45a' stroke-width='1.2'/%3E%3C/svg%3E") center / calc(96px * var(--hp-scale)) calc(96px * var(--hp-scale));
+  opacity: .045;
+}
+/* Vinyet agar mata tertuju ke tengah */
+.hp-fullscreen .hp-stage::after {
+  background: radial-gradient(ellipse 85% 75% at 50% 50%, transparent 55%, rgba(2, 6, 12, .55) 100%);
+}
 .hp-fullscreen .hp-lower-third {
-  left: 5%;
-  right: 5%;
+  z-index: 1;
+  left: 8%;
+  right: 8%;
   top: 50%;
   bottom: auto;
   height: auto;
+  min-height: 0;
+  /* Batas tinggi: kutipan sangat panjang bergulir di dalam .hp-content,
+     bukan meluap keluar layar. */
+  max-height: 92vh;
   transform: translateY(-50%);
-  min-height: 64vh;
-  max-height: none;
   display: flex;
   flex-direction: column;
-  border-top: calc(4px * var(--hp-scale)) solid var(--hp-emerald);
-  background: linear-gradient(135deg, #142238, #0e192b);
-}
-.hp-fullscreen .hp-lower-third::before { display: none; }
-.hp-fullscreen .hp-lower-third:not([hidden]) {
-  animation-name: hpPanelEnterFullscreen;
-}
-.hp-fullscreen .hp-lower-third.hp-leaving {
-  animation-name: hpPanelExitFullscreen;
-}
-.hp-fullscreen .hp-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: calc(48px * var(--hp-scale)) calc(64px * var(--hp-scale));
+  align-items: stretch;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   overflow: visible;
 }
-.hp-fullscreen .hp-arabic { line-height: 1.52; }
+.hp-fullscreen .hp-lower-third::before { display: none; }
+/* Ornamen penutup: garis emas yang memudar ke kedua sisi, dengan wajik di tengah */
+.hp-fullscreen .hp-lower-third::after {
+  content: "";
+  order: 3;
+  flex: 0 0 auto;
+  align-self: center;
+  width: 26%;
+  height: calc(14px * var(--hp-scale));
+  margin-top: calc(22px * var(--hp-scale));
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M7 0l7 7-7 7-7-7z' fill='%23d9b45a'/%3E%3C/svg%3E") center / calc(13px * var(--hp-scale)) calc(13px * var(--hp-scale)) no-repeat,
+    linear-gradient(90deg, transparent, rgba(217, 180, 90, .75) 30%, rgba(217, 180, 90, .75) 70%, transparent) center / 100% max(1px, calc(1.5px * var(--hp-scale))) no-repeat;
+}
 .hp-fullscreen .hp-reference {
+  order: -1;
   justify-content: center;
-  padding: calc(13px * var(--hp-scale)) calc(36px * var(--hp-scale));
-  border-top: 1px solid rgba(148, 163, 184, .2);
-  background: rgba(4, 12, 25, .36);
-  color: #bfdbfe;
-  font-size: calc(28px * var(--hp-scale));
+  gap: calc(22px * var(--hp-scale));
+  padding: 0 0 calc(30px * var(--hp-scale));
+  border: 0;
+  background: none;
+  color: #e9cf86;
+  font-size: calc(30px * var(--hp-scale));
+  font-weight: 600;
+  letter-spacing: calc(1.2px * var(--hp-scale));
   text-align: center;
 }
-.hp-fullscreen .hp-reference::before { display: none; }
+.hp-fullscreen .hp-reference::before,
+.hp-fullscreen .hp-reference::after {
+  content: "";
+  display: block;
+  flex: 0 1 calc(140px * var(--hp-scale));
+  width: auto;
+  height: max(1px, calc(1.5px * var(--hp-scale)));
+  border-radius: 999px;
+}
+.hp-fullscreen .hp-reference::before { background: linear-gradient(90deg, transparent, #d9b45a); }
+.hp-fullscreen .hp-reference::after { background: linear-gradient(90deg, #d9b45a, transparent); }
+.hp-fullscreen .hp-content {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(8px * var(--hp-scale)) 0;
+  overflow-y: auto;
+}
+.hp-fullscreen .hp-arabic {
+  line-height: 1.6;
+  text-align: center;
+  text-shadow: 0 calc(2px * var(--hp-scale)) calc(18px * var(--hp-scale)) rgba(0, 0, 0, .45);
+}
+.hp-fullscreen .hp-translation {
+  color: #eef2f6;
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+}
 .hp-fullscreen .hp-images { flex-direction: column; }
 .hp-fullscreen .hp-images img { max-height: 52vh; }
+
+/* Motion Full Screen.
+   MASUK (±1,1 dtk): label riwayat turun dan garis emasnya tumbuh ke luar,
+   teks naik, lalu ornamen bawah menyapu dari tengah.
+   KELUAR (±0,5 dtk): teks naik memudar, label & ornamen menghilang. Durasi
+   keluar harus sama dengan exitMs di js/hadith-presentation.js. */
+@keyframes hpFsIn {
+  from { opacity: 0; transform: translateY(-50%); }
+  to   { opacity: 1; transform: translateY(-50%); }
+}
+@keyframes hpFsOut {
+  0%   { opacity: 1; transform: translateY(-50%); }
+  100% { opacity: 0; transform: translateY(-50%); }
+}
+@keyframes hpFsDrop {
+  from { opacity: 0; transform: translateY(calc(-16px * var(--hp-scale))); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hpFsRise {
+  from { opacity: 0; transform: translateY(calc(30px * var(--hp-scale))); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hpFsGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes hpFsLeaveUp {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(calc(-18px * var(--hp-scale))); }
+}
+@keyframes hpFsFade {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.hp-fullscreen .hp-lower-third:not([hidden]) {
+  animation: hpFsIn .3s ease-out both;
+}
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference {
+  animation: hpFsDrop .55s cubic-bezier(.16, 1, .3, 1) .08s backwards;
+}
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference::before {
+  transform-origin: right center;
+  animation: hpFsGrow .6s cubic-bezier(.16, 1, .3, 1) .22s backwards;
+}
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference::after {
+  transform-origin: left center;
+  animation: hpFsGrow .6s cubic-bezier(.16, 1, .3, 1) .22s backwards;
+}
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-arabic,
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-translation,
+.hp-fullscreen .hp-lower-third:not([hidden]) .hp-images {
+  animation: hpFsRise .7s cubic-bezier(.16, 1, .3, 1) .3s backwards;
+}
+.hp-fullscreen .hp-lower-third:not([hidden])::after {
+  transform-origin: center;
+  animation: hpFsGrow .7s cubic-bezier(.65, 0, .35, 1) .55s backwards;
+}
+.hp-fullscreen .hp-lower-third.hp-leaving {
+  animation: hpFsOut .2s ease-in .28s forwards;
+}
+.hp-fullscreen .hp-lower-third.hp-leaving .hp-content {
+  animation: hpFsLeaveUp .32s cubic-bezier(.55, 0, .75, .25) forwards;
+}
+.hp-fullscreen .hp-lower-third.hp-leaving .hp-reference,
+.hp-fullscreen .hp-lower-third.hp-leaving::after {
+  animation: hpFsFade .26s ease-in .06s forwards;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .hp-lower-third:not([hidden]),
   .hp-lower-third.hp-leaving,
   .hp-fullscreen .hp-lower-third:not([hidden]),
   .hp-fullscreen .hp-lower-third.hp-leaving,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference::before,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-reference::after,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-arabic,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-translation,
+  .hp-fullscreen .hp-lower-third:not([hidden]) .hp-images,
+  .hp-fullscreen .hp-lower-third:not([hidden])::after,
+  .hp-fullscreen .hp-lower-third.hp-leaving .hp-content,
+  .hp-fullscreen .hp-lower-third.hp-leaving .hp-reference,
+  .hp-fullscreen .hp-lower-third.hp-leaving::after,
   .hp-lower-third-full .hp-lower-third:not([hidden]),
   .hp-lower-third-full .hp-lower-third:not([hidden])::before,
   .hp-lower-third-full .hp-lower-third:not([hidden]) .hp-arabic,
