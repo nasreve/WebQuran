@@ -41,7 +41,7 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </button>
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="hstack gap-10">
         <div class="app-brand-badge">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
@@ -224,7 +224,7 @@
         <!-- SECTION: Versi Terjemahan -->
         <div class="sidebar-section">
           <div class="sidebar-section-header">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -256,7 +256,7 @@
         <!-- SECTION: Pemilihan Font -->
         <div class="sidebar-section" id="sectionFont">
           <div class="sidebar-section-header" onclick="toggleSection('sectionFont')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="4 7 4 4 20 4 20 7"></polyline>
@@ -302,10 +302,10 @@
                 </svg>
               </div>
             </div>
-            <div
-              style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; display: flex; align-items: center; gap: 6px;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent); flex-shrink: 0;">
+            <div class="hint-note hstack gap-6"
+             >
+              <svg class="hint-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="16" x2="12" y2="12"></line>
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -321,7 +321,7 @@
         <!-- SECTION: Navigasi Ayat (default: open) -->
         <div class="sidebar-section" id="sectionNav">
           <div class="sidebar-section-header" onclick="toggleSection('sectionNav')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -345,14 +345,14 @@
               </div>
             </div>
 
-            <div class="sidebar-input-row"
-              style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 8px; margin-bottom: 12px;">
-              <div class="control-group" style="margin-bottom: 0;">
+            <div class="sidebar-input-row is-split"
+             >
+              <div class="control-group">
                 <label class="label-with-hint" for="ayahInput">No. Ayat</label>
                 <input type="number" id="ayahInput" placeholder="Contoh: 1" min="1" onkeypress="handleEnter(event)"
                   ondblclick="this.select()" onclick="this.select()">
               </div>
-              <div class="control-group" style="margin-bottom: 0;">
+              <div class="control-group">
                 <label class="label-with-hint" for="ayahCountInput">
                   <span>Jumlah</span>
                   <span class="label-hint">maks. 10</span>
@@ -413,7 +413,7 @@
         <!-- SECTION: Cari Latin (default: collapsed) -->
         <div class="sidebar-section collapsed" id="sectionLatin">
           <div class="sidebar-section-header" onclick="toggleSection('sectionLatin')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -429,7 +429,7 @@
             <div class="control-group">
               <label>Ketik Latin (Tanpa Spasi OK)</label>
               <input type="text" id="latinInput" placeholder="Contoh: Yasalunaka..." oninput="handleLatinSearch(event)">
-              <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+              <div class="hint-text">
                 Hasil pencarian muncul di panel kanan.
               </div>
             </div>
@@ -439,7 +439,7 @@
         <!-- SECTION: Cari Terjemahan (default: collapsed) -->
         <div class="sidebar-section collapsed" id="sectionTrans">
           <div class="sidebar-section-header" onclick="toggleSection('sectionTrans')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -459,7 +459,7 @@
               <label>Ketik Kata Indonesia</label>
               <input type="text" id="transInput" placeholder="Contoh: rezeki, surga, sabar..."
                 oninput="handleTranslationSearch(event)">
-              <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
+              <div class="hint-text">
                 Cari kata atau kalimat terjemahan. Hasil muncul di panel kanan.
               </div>
             </div>
@@ -469,7 +469,7 @@
         <!-- SECTION: History (default: collapsed) -->
         <div class="sidebar-section collapsed" id="sectionHistory">
           <div class="sidebar-section-header" onclick="toggleSection('sectionHistory')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
@@ -482,7 +482,7 @@
               <span class="section-chevron">▾</span>
             </div>
           </div>
-          <div class="sidebar-section-body" style="padding: 0;">
+          <div class="sidebar-section-body is-flush">
             <div class="history-list" id="historyList">
               <div class="history-empty">Belum ada riwayat</div>
             </div>
@@ -495,7 +495,7 @@
         <!-- SECTION: Bookmark (default: collapsed) -->
         <div class="sidebar-section collapsed" id="sectionBookmark">
           <div class="sidebar-section-header" onclick="toggleSection('sectionBookmark')">
-            <span style="display:flex; align-items:center; gap:8px;">
+            <span class="hstack">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
               </svg>
@@ -507,7 +507,7 @@
               <span class="section-chevron">▾</span>
             </div>
           </div>
-          <div class="sidebar-section-body" style="padding: 0;">
+          <div class="sidebar-section-body is-flush">
             <div class="bookmark-list" id="bookmarkList">
               <div class="bookmark-empty">Belum ada bookmark</div>
             </div>
@@ -532,7 +532,7 @@
             </svg>
           </div>
           <div>
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="hstack">
               <span class="breadcrumb-surah" id="breadcrumbSurah">—</span>
               <span class="breadcrumb-sep">•</span>
               <span class="breadcrumb-ayah" id="breadcrumbAyah">—</span>
@@ -850,11 +850,11 @@
   <!-- STATUS BAR (Footer) -->
   <footer class="status-bar">
     <div class="status-item">
-      <span class="tally-dot dot-live" style="margin-right: 2px;"></span>
-      <span style="font-weight: 600;">Siap</span>
-      <span style="color:var(--border); margin:0 6px;">|</span>
-      <span style="font-size:11px;">F11: Fullscreen</span>
-      <span style="color:var(--border); margin:0 6px;">|</span>
+      <span class="tally-dot dot-live status-dot"></span>
+      <span class="status-strong">Siap</span>
+      <span class="status-sep">|</span>
+      <span class="status-small">F11: Fullscreen</span>
+      <span class="status-sep">|</span>
       <span class="vmix-indicator" id="vmixIndicator" title="vMix JSON belum tersimpan">
         <span class="vmix-dot"></span>
         <span class="vmix-label">vMix JSON</span>
@@ -862,14 +862,14 @@
     </div>
     <!-- Font Size Slider (Moved from Sidebar) -->
     <div class="status-slider-container" id="statusBarSlider">
-      <span style="font-size:11px; color:var(--text-muted); cursor:pointer; user-select:none;" onclick="resetFontSize()"
+      <span class="status-slider-label" onclick="resetFontSize()"
         title="Mengubah ukuran teks di layar proyektor / OBS / vMix. Klik untuk reset ke 100%.">Ukuran Tayang:</span>
       <button class="status-btn-step" onclick="stepFontSize(-5)" title="Perkecil teks tayang">−</button>
       <input type="range" id="fontSlider" min="50" max="200" value="100" step="5"
         aria-label="Ukuran teks tayang di proyektor atau OBS"
         oninput="handleFontSizeChange(this.value)">
       <button class="status-btn-step" onclick="stepFontSize(5)" title="Perbesar teks tayang">+</button>
-      <span id="fontPercentDisplay" style="min-width:38px; text-align:right; font-weight:600; cursor:pointer;"
+      <span class="status-slider-value" id="fontPercentDisplay"
         onclick="resetFontSize()" title="Klik untuk Reset ke 100%">100%</span>
     </div>
   </footer>
@@ -893,7 +893,7 @@
           </div>
           <div>
             <div class="help-title-row">
-              <h2 id="helpModalTitle" class="modal-title" style="margin: 0;">Panduan & Referensi Operator</h2>
+              <h2 id="helpModalTitle" class="modal-title">Panduan & Referensi Operator</h2>
               <span class="badge-v5-pill">v5.4</span>
             </div>
             <p id="helpModalSubtitle" class="help-subtitle">Webquran Broadcast Console • Al-Qur'an & Hadits, Navigasi
@@ -965,7 +965,7 @@
           aria-labelledby="helpTabButton-features">
           <div class="features-grid">
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                   <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
@@ -981,7 +981,7 @@
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -997,7 +997,7 @@
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="2" y="3" width="20" height="14" rx="2"></rect>
                   <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -1014,7 +1014,7 @@
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -1029,7 +1029,7 @@
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1043,7 +1043,7 @@
             </div>
 
             <div class="feature-card">
-              <div class="feature-icon" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;">
+              <div class="feature-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
@@ -1144,7 +1144,7 @@
           hidden>
           <!-- OBS Integration -->
           <div class="info-box">
-            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+            <div class="info-box-title hstack gap-6">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"></rect>
@@ -1153,7 +1153,7 @@
               </svg>
               <span>1. OBS Studio & vMix — Browser Source Overlay</span>
             </div>
-            <div class="info-box-note" style="margin-top: 0;">
+            <div class="info-box-note">
               Tambahkan source bertipe <strong>Browser</strong> di OBS Studio & vMix. Gunakan source terpisah untuk
               Al-Qur'an dan Hadits:<br>
               <div class="browser-source-label">
@@ -1162,9 +1162,9 @@
                 <span>Ayat dan terjemahan</span>
               </div>
               <button type="button" class="copy-box" onclick="copyObsUrlFromModal()" title="Salin URL OBS">
-                <span id="obsUrlDisplay" class="copy-box-text" style="color:#38bdf8;">Memuat...</span>
-                <span class="copy-box-btn"
-                  style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; display: inline-flex; align-items: center; gap: 5px;">
+                <span id="obsUrlDisplay" class="copy-box-text is-quran">Memuat...</span>
+                <span class="copy-box-btn is-quran"
+                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1178,9 +1178,9 @@
               </div>
               <button type="button" class="copy-box" onclick="copyObsOverlayUrlFromModal()"
                 title="Salin URL overlay transparan untuk OBS/vMix">
-                <span id="obsOverlayUrlDisplay" class="copy-box-text" style="color:#34d399;">Memuat...</span>
-                <span class="copy-box-btn"
-                  style="background: rgba(16, 185, 129, 0.18); border: 1px solid #10b981; color: #34d399; display: inline-flex; align-items: center; gap: 5px;">
+                <span id="obsOverlayUrlDisplay" class="copy-box-text is-overlay">Memuat...</span>
+                <span class="copy-box-btn is-overlay"
+                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1204,7 +1204,7 @@
                   <span>Salin</span>
                 </span>
               </button>
-              <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin-top: 6px;">
+              <div class="info-box-hint">
                 💡 <strong>Rekomendasi Setelan OBS:</strong> Width: <code>1920</code> • Height: <code>1080</code> • FPS:
                 <code>60</code> (atau <code>30</code>). Centang <em>"Shutdown source when not visible"</em> agar hemat
                 resource kartu grafis.
@@ -1213,8 +1213,8 @@
           </div>
 
           <!-- Akses Jaringan Lokal -->
-          <div class="info-box" style="margin-top: 14px;">
-            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+          <div class="info-box">
+            <div class="info-box-title hstack gap-6">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
@@ -1224,7 +1224,7 @@
               </svg>
               <span>2. Akses dari Komputer Lain (Jaringan Lokal)</span>
             </div>
-            <div class="info-box-note" style="margin-top: 0;">
+            <div class="info-box-note">
               Secara bawaan server hanya menerima sambungan dari komputer ini. Aktifkan pilihan berikut bila
               <strong>vMix atau OBS berjalan di komputer lain</strong> dalam jaringan yang sama.
             </div>
@@ -1248,9 +1248,9 @@
               </div>
               <button type="button" class="copy-box" onclick="copyLanUrl('quran')"
                 title="Salin URL ayat untuk komputer lain di jaringan">
-                <span id="lanQuranUrl" class="copy-box-text" style="color:#38bdf8;">—</span>
-                <span class="copy-box-btn"
-                  style="background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; display: inline-flex; align-items: center; gap: 5px;">
+                <span id="lanQuranUrl" class="copy-box-text is-quran">—</span>
+                <span class="copy-box-btn is-quran"
+                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1280,8 +1280,8 @@
           </div>
 
           <!-- vMix Integration -->
-          <div class="info-box" style="margin-top: 14px;">
-            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+          <div class="info-box">
+            <div class="info-box-title hstack gap-6">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"></path>
@@ -1292,13 +1292,13 @@
               </svg>
               <span>3. vMix Title Editor — JSON Data Source</span>
             </div>
-            <div class="info-box-note" style="margin-top: 0;">
+            <div class="info-box-note">
               Webquran otomatis memperbarui berkas feed JSON lokal setiap Anda memilih atau menavigasi ayat:<br>
               <button type="button" class="copy-box" onclick="copyVmixPath()" title="Salin lokasi feed JSON vMix">
-                <span id="vmixPathDisplay" class="copy-box-text" style="color:#10b981;">[Pilih ayat dulu untuk
+                <span id="vmixPathDisplay" class="copy-box-text is-overlay">[Pilih ayat dulu untuk
                   copy]</span>
-                <span class="copy-box-btn"
-                  style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; display: inline-flex; align-items: center; gap: 5px;">
+                <span class="copy-box-btn is-overlay"
+                 >
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="9" y="9" width="13" height="13" rx="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1307,22 +1307,22 @@
                 </span>
               </button>
 
-              <div
-                style="margin-top: 10px; background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; border: 1px dashed rgba(255,255,255,0.12);">
-                <strong style="color: #f1f5f9; font-size: 12px;">Langkah Pemasangan di vMix:</strong>
-                <ol
-                  style="padding-left: 18px; margin-top: 6px; margin-bottom: 0; font-size: 11.5px; line-height: 1.6; color: #cbd5e1;">
+              <div class="vmix-steps"
+               >
+                <strong class="vmix-steps-title">Langkah Pemasangan di vMix:</strong>
+                <ol class="vmix-steps-list"
+                 >
                   <li>Buka <strong>Title Editor</strong> pada input Title vMix Anda.</li>
                   <li>Klik <strong>Data Source</strong> → <strong>Manage</strong> → Tambahkan data source tipe
                     <strong>"JSON"</strong>.</li>
                   <li>Paste path file di atas ke kolom <strong>Filename / URL</strong>.</li>
-                  <li>Petakan kolom teks: <strong style="color:#38bdf8;">Arab</strong>, <strong
-                      style="color:#38bdf8;">Terjemahan</strong>, dan <strong style="color:#38bdf8;">Judul</strong> ke
+                  <li>Petakan kolom teks: <strong class="vmix-field">Arab</strong>, <strong class="vmix-field"
+                     >Terjemahan</strong>, dan <strong class="vmix-field">Judul</strong> ke
                     field teks title Anda.</li>
                 </ol>
               </div>
 
-              <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
+              <div class="info-box-hint is-compact">
                 🚦 <strong>Indikator vMix di Status Bar:</strong> 🟢 Berkedip Hijau = Feed JSON berhasil ditulis • 🔴
                 Berkedip Merah = Izin folder penyimpanan terhambat.
               </div>
@@ -1348,8 +1348,8 @@
               <div class="workflow-step-num">2</div>
               <div class="workflow-step-content">
                 <h4>Memuat Ayat Secara Cepat</h4>
-                <p>Gunakan Universal Omnibar (<kbd class="shortcut-kbd"
-                    style="font-size:10px; padding:1px 5px;">Ctrl+K</kbd>) untuk langsung mengetik nama surat dan nomor
+                <p>Gunakan Universal Omnibar (<kbd class="shortcut-kbd is-inline"
+                   >Ctrl+K</kbd>) untuk langsung mengetik nama surat dan nomor
                   ayat (misal: <code>al-kahf 1</code>). Teks Arab, latin, dan terjemahan akan langsung termuat tanpa
                   perlu mencari satu per satu.</p>
               </div>
@@ -1359,7 +1359,7 @@
               <div class="workflow-step-num">3</div>
               <div class="workflow-step-content">
                 <h4>Navigasi Mengikuti Bacaan</h4>
-                <p>Tekan tombol panah <kbd class="shortcut-kbd" style="font-size:10px; padding:1px 5px;">→</kbd> untuk
+                <p>Tekan tombol panah <kbd class="shortcut-kbd is-inline">→</kbd> untuk
                   melangkah ke ayat berikutnya seirama dengan bacaan qari. Webquran secara cerdas akan otomatis
                   berpindah ke surat berikutnya jika ayat terakhir surat telah selesai dibaca.</p>
               </div>
@@ -1369,7 +1369,7 @@
               <div class="workflow-step-num">4</div>
               <div class="workflow-step-content">
                 <h4>Blackout & Tally Siaran</h4>
-                <p>Tekan <kbd class="shortcut-kbd" style="font-size:10px; padding:1px 5px;">Spasi</kbd> kapan saja untuk
+                <p>Tekan <kbd class="shortcut-kbd is-inline">Spasi</kbd> kapan saja untuk
                   melakukan Cut to Black (menyembunyikan tampilan layar tanpa mematikan koneksi). Indikator Tally di
                   header akan berubah warna menjadi abu-abu HIDE, memberi kepastian status on-air 100%.</p>
               </div>
@@ -1391,14 +1391,14 @@
         <div id="helpTab-diagnostics" class="help-tab-pane" role="tabpanel"
           aria-labelledby="helpTabButton-diagnostics" hidden>
           <div class="info-box">
-            <div class="info-box-title" style="display: flex; align-items: center; gap: 6px;">
+            <div class="info-box-title hstack gap-6">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
               </svg>
               <span>Pemeriksaan Siaran (sebelum mulai)</span>
             </div>
-            <div class="info-box-note" style="margin-top: 0;">
+            <div class="info-box-note">
               Periksa hal-hal yang paling sering gagal di venue baru: font, server, layar, folder feed vMix, dan data
               hadits. Jalankan sebelum siaran dimulai, bukan saat sudah mengudara.
             </div>
@@ -1458,7 +1458,7 @@
         <button class="modal-close tpl-close" onclick="closeTemplateModal()" aria-label="Tutup">&times;</button>
       </div>
 
-      <div class="modal-body" style="padding: 24px 28px;">
+      <div class="modal-body">
         <section class="tpl-group">
           <h3 class="tpl-group-title">Layar penuh &amp; studio<span class="tpl-group-hint">Untuk proyektor, TV, atau siaran dengan kamera</span></h3>
           <div class="template-grid-pro">
