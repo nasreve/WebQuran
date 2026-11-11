@@ -250,6 +250,78 @@ body.hp-preview {
   animation: hpFullFade .2s ease-in forwards;
 }
 
+/* Motion Lower Third Gelap & Putih (bawaan).
+   MASUK (±0,9 dtk): bilah terbuka seperti tirai dari kiri, rel hijau di tepi
+   kiri tumbuh dari tengah, Arab/terjemahan naik, lalu riwayat masuk dari kiri
+   dengan garis emas yang menyapu.
+   KELUAR (±0,45 dtk): isi memudar lebih dulu, rel menyusut, bilah menutup ke
+   kanan. Durasi keluar harus sama dengan exitMs di js/hadith-presentation.js. */
+@keyframes hpLtIn {
+  0%   { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateX(calc(-24px * var(--hp-scale))); }
+  35%  { opacity: 1; }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); transform: translateX(0); }
+}
+@keyframes hpLtOut {
+  0%   { opacity: 1; clip-path: inset(0 0 0 0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; clip-path: inset(0 0 0 100%); }
+}
+@keyframes hpLtRailIn {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+@keyframes hpLtRailOut {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0); }
+}
+@keyframes hpLtRise {
+  from { opacity: 0; transform: translateY(calc(16px * var(--hp-scale))); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes hpLtRefIn {
+  from { opacity: 0; transform: translateX(calc(-28px * var(--hp-scale))); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes hpLtLineIn {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes hpLtFade {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) {
+  animation: hpLtIn .62s cubic-bezier(.16, 1, .3, 1) both;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden])::before {
+  transform-origin: center;
+  animation: hpLtRailIn .45s cubic-bezier(.16, 1, .3, 1) .18s backwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-arabic {
+  animation: hpLtRise .5s cubic-bezier(.16, 1, .3, 1) .26s backwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-translation,
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-images {
+  animation: hpLtRise .5s cubic-bezier(.16, 1, .3, 1) .34s backwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-reference {
+  animation: hpLtRefIn .45s cubic-bezier(.16, 1, .3, 1) .44s backwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-reference::before {
+  transform-origin: left center;
+  animation: hpLtLineIn .5s cubic-bezier(.65, 0, .35, 1) .5s backwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving {
+  animation: hpLtOut .34s cubic-bezier(.55, 0, .75, .25) .1s forwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving::before {
+  animation: hpLtRailOut .2s ease-in forwards;
+}
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving .hp-content,
+body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving .hp-reference {
+  animation: hpLtFade .18s ease-in forwards;
+}
+
 /* Full screen uses the same content slots with a solid projector background. */
 body.hp-fullscreen { background: radial-gradient(ellipse at 50% 15%, #203854, transparent 75%), #0a1220; }
 .hp-fullscreen .hp-lower-third {
@@ -309,7 +381,18 @@ body.hp-fullscreen { background: radial-gradient(ellipse at 50% 15%, #203854, tr
   .hp-lower-third-full .hp-lower-third.hp-leaving,
   .hp-lower-third-full .hp-lower-third.hp-leaving::before,
   .hp-lower-third-full .hp-lower-third.hp-leaving .hp-content,
-  .hp-lower-third-full .hp-lower-third.hp-leaving .hp-reference { animation: none; }
+  .hp-lower-third-full .hp-lower-third.hp-leaving .hp-reference,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]),
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden])::before,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-arabic,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-translation,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-images,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-reference,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third:not([hidden]) .hp-reference::before,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving::before,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving .hp-content,
+  body:not(.hp-fullscreen):not(.hp-lower-third-full) .hp-lower-third.hp-leaving .hp-reference { animation: none; }
   .hp-content,
   .hp-reference { transition: none; }
 }
