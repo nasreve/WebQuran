@@ -248,9 +248,9 @@ body.light-mode header {
 
 /* Dual Screen Button */
 .btn-header-dualscreen {
-  background: rgba(124, 58, 237, 0.15) !important;
-  border: 1px solid rgba(124, 58, 237, 0.4) !important;
-  color: #c084fc !important;
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  color: #c084fc;
 }
 
 .btn-header-dualscreen:hover {
@@ -261,9 +261,9 @@ body.light-mode header {
 
 /* Template Button */
 .btn-header-template {
-  background: rgba(14, 165, 233, 0.15) !important;
-  border: 1px solid rgba(14, 165, 233, 0.4) !important;
-  color: #38bdf8 !important;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  color: #38bdf8;
 }
 
 .btn-header-template:hover {
@@ -1344,9 +1344,9 @@ body.light-mode .sidebar-kbd {
 }
 
 .btn-dock-tally.tally-trans-off {
-  background: rgba(100, 116, 139, 0.15) !important;
-  border: 1px solid rgba(148, 163, 184, 0.25) !important;
-  color: var(--text-muted) !important;
+  background: rgba(100, 116, 139, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  color: var(--text-muted);
 }
 
 .breadcrumb-right {
@@ -2986,7 +2986,7 @@ body.light-mode .btn-fullscreen-theme:hover {
 
   .container {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: column;
     height: auto !important;
     min-height: auto !important;
     overflow: visible !important;
@@ -3015,14 +3015,14 @@ body.light-mode .btn-fullscreen-theme:hover {
   }
 
   .content {
-    flex: none !important;
+    flex: none;
     height: auto !important;
     min-height: 50vh;
     overflow: visible !important;
-    padding: 15px !important;
-    padding-bottom: 100px !important;
+    padding: 15px;
+    padding-bottom: 100px;
     width: 100% !important;
-    align-items: stretch !important;
+    align-items: stretch;
   }
 
   .result-card {
@@ -3032,29 +3032,29 @@ body.light-mode .btn-fullscreen-theme:hover {
   }
 
   .card-body {
-    padding: 15px !important;
+    padding: 15px;
   }
 
   .arabic-text {
     font-size: var(--fs-3xl) !important;
-    line-height: 1.9 !important;
+    line-height: 1.9;
     word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 
   .trans-text {
     font-size: var(--fs-lg) !important;
-    line-height: 1.7 !important;
+    line-height: 1.7;
     word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
+    overflow-wrap: break-word;
+    white-space: normal;
   }
 
   .card-header {
     flex-wrap: wrap;
     height: auto !important;
-    padding: 10px 15px !important;
+    padding: 10px 15px;
     gap: 10px;
   }
 
@@ -3065,7 +3065,7 @@ body.light-mode .btn-fullscreen-theme:hover {
 
   .btn-action {
     font-size: var(--fs-2xs) !important;
-    padding: 0 10px !important;
+    padding: 0 10px;
     height: 30px !important;
   }
 
@@ -3252,16 +3252,16 @@ footer.status-bar {
   max-width: 960px !important;
   width: 95% !important;
   max-height: 90vh !important;
-  background: linear-gradient(180deg, #0f172a 0%, #090e1a 100%) !important;
+  background: linear-gradient(180deg, #0f172a 0%, #090e1a 100%);
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-radius: var(--radius-2xl) !important;
-  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .modal-header-pro {
-  padding: 22px 28px 18px 28px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: #090e1a !important;
+  padding: 22px 28px 18px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #090e1a;
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0 !important;
 }
 
@@ -3293,9 +3293,9 @@ footer.status-bar {
 }
 
 .template-card-pro.active {
-  border-color: var(--success) !important;
-  box-shadow: 0 0 0 1.5px var(--success), 0 12px 30px -5px rgba(16, 185, 129, 0.4) !important;
-  background: rgba(16, 185, 129, 0.08) !important;
+  border-color: var(--success);
+  box-shadow: 0 0 0 1.5px var(--success), 0 12px 30px -5px rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
 }
 
 /* Status Badge Top-Right */
@@ -4737,12 +4737,12 @@ body.light-mode mark.search-highlight {
   max-width: 820px !important;
   width: 94% !important;
   max-height: 88vh !important;
-  background: linear-gradient(180deg, #0f172a 0%, #090e1a 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: var(--radius-2xl) !important;
-  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  background: linear-gradient(180deg, #0f172a 0%, #090e1a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.05);
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: column;
   overflow: hidden !important;
 }
 
@@ -4811,9 +4811,9 @@ body.light-mode mark.search-highlight {
 }
 
 .modal-body-help {
-  padding: 22px 26px !important;
+  padding: 22px 26px;
   overflow-y: auto !important;
-  flex: 1 !important;
+  flex: 1;
 }
 
 .help-tab-pane {
@@ -5063,10 +5063,10 @@ body.light-mode mark.search-highlight {
 /* Light Mode Overrides for Help Modal Pro */
 body.light-theme .modal-content.modal-help-pro,
 body.light-mode .modal-content.modal-help-pro {
-  background: #ffffff !important;
-  border-color: #cbd5e1 !important;
+  background: #ffffff;
+  border-color: #cbd5e1;
   color: #1e293b;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
 }
 
 body.light-theme .modal-content.modal-help-pro .modal-header-pro,
@@ -5166,7 +5166,7 @@ body.light-mode .workflow-step-content p {
 
 body.light-theme .modal-footer-pro,
 body.light-mode .modal-footer-pro {
-  background: #f8fafc !important;
+  background: #f8fafc;
   border-color: #e2e8f0 !important;
 }
 
@@ -5223,8 +5223,8 @@ body.light-mode .help-checkbox-wrap span {
 #helpModal .help-header {
   position: relative;
   min-height: 88px;
-  padding: 19px 24px 18px !important;
-  background: rgba(9, 14, 26, 0.42) !important;
+  padding: 19px 24px 18px;
+  background: rgba(9, 14, 26, 0.42);
   border-bottom: 1px solid var(--help-border) !important;
   border-radius: var(--radius-2xl) var(--radius-2xl) 0 0 !important;
   overflow: hidden;
@@ -5262,7 +5262,7 @@ body.light-mode .help-checkbox-wrap span {
 }
 
 #helpModal .modal-title {
-  color: var(--help-text) !important;
+  color: var(--help-text);
   font-size: clamp(17px, 2vw, 21px) !important;
   font-weight: 750;
   letter-spacing: -0.35px;
@@ -5572,7 +5572,7 @@ body.light-mode .help-checkbox-wrap span {
 
 #helpModal .copy-box-btn {
   min-height: 28px;
-  padding: 5px 9px !important;
+  padding: 5px 9px;
   border-radius: var(--radius-sm) !important;
 }
 
@@ -5912,7 +5912,7 @@ body.light-mode #helpModal .shortcut-kbd {
     left: 8px;
     width: auto !important;
     max-width: none !important;
-    margin: 0 !important;
+    margin: 0;
     height: min(94vh, 820px);
     max-height: 94vh !important;
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0 !important;
@@ -5920,7 +5920,7 @@ body.light-mode #helpModal .shortcut-kbd {
 
   #helpModal .help-header {
     min-height: 78px;
-    padding: 15px 16px !important;
+    padding: 15px 16px;
     border-radius: var(--radius-2xl) var(--radius-2xl) 0 0 !important;
   }
 
@@ -6150,7 +6150,7 @@ body.light-mode #helpModal .shortcut-kbd {
 }
 
 /* Baris angka ayat + jumlah */
-.sidebar-input-row { gap: 8px !important; margin-bottom: 0 !important; }
+.sidebar-input-row { gap: 8px; margin-bottom: 0; }
 
 /* Tombol aksi */
 .sidebar-action-group { display: flex; flex-direction: column; gap: 8px; }
@@ -6714,7 +6714,7 @@ body.light-mode .btn-sidebar-primary .sidebar-kbd {
 .btn-dock-tally.tally-trans-off {
   background: var(--chip-bg) !important;
   border: 1px solid var(--chip-border) !important;
-  color: var(--ctl-text-muted) !important;
+  color: var(--ctl-text-muted);
 }
 
 .btn-dock-tally.tally-trans-on {
@@ -6769,7 +6769,7 @@ body.light-mode .btn-sidebar-primary .sidebar-kbd {
   background: var(--ctl-bg) !important;
   border: 1px solid var(--ctl-border) !important;
   color: var(--ctl-text) !important;
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 .header-tools .btn-header:hover,
@@ -7297,7 +7297,7 @@ body.light-theme .btn-sidebar-primary {
   justify-content: space-between;
   gap: 16px;
   background: var(--bg-panel) !important;
-  border-bottom: 1px solid var(--section-border) !important;
+  border-bottom: 1px solid var(--section-border);
 }
 
 .tpl-header-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
